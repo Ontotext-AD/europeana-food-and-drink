@@ -16,7 +16,7 @@ public class HelloController {
 
 	@RequestMapping(method = RequestMethod.GET)
 	public String printWelcome(ModelMap model) {
-		efdRepositoryConnection.repositoryCheck();
+		//efdRepositoryConnection.repositoryCheck();
 
 		model.addAttribute("message", "Hello world!");
 		return "hello";

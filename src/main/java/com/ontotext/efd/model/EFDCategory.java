@@ -4,6 +4,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.openrdf.model.URI;
+import org.openrdf.model.impl.URIImpl;
+import org.openrdf.model.vocabulary.SKOS;
+
+import com.ontotext.efd.rdf.EFDTaxonomy;
+import com.ontotext.efd.services.EFDRepositoryConnection;
 
 public class EFDCategory {
     
@@ -80,75 +85,106 @@ public class EFDCategory {
         this.descArticleCount = c;
     }
     
+    public EFDCategory(URI uri, int level) {
+        this.uri = uri;
+        this.level = level;
+    }
+    
     /**
      * Default builder which tries to extract all available data about
      * a category from the Food and Drink repository.
      * @param uri The URI of the category we are trying to represent.
      */
-    public EFDCategory(URI uri, int level) {
+    public EFDCategory(URI uri) {
+        EFDRepositoryConnection repo = new EFDRepositoryConnection();
+        
         this.uri = uri;
-        this.level = level;
-        this.prefLabel = retrievePrefLabel();
-        this.parents = retrieveParents();
-        this.children = retrieveChildren();
-        this.localArticles = retrieveLocArticles();
-        this.descArticleCount = retrieveArtCount();
-        this.descCategoryCount = retrieveCatCount();
+        this.level = retrieveLevel(repo);
+        this.prefLabel = retrievePrefLabel(repo);
+        this.parents = retrieveParents(repo);
+        this.children = retrieveChildren(repo);
+        this.localArticles = retrieveLocArticles(repo);
+        this.descArticleCount = retrieveArtCount(repo);
+        this.descCategoryCount = retrieveCatCount(repo);
+    }
+    
+    /**
+     * Searches the repository for a treeLevel associated with the category.
+     * @param repo 
+     * @return
+     */
+    private int retrieveLevel(EFDRepositoryConnection repo) {
+        URI pred = new URIImpl(EFDTaxonomy.EFD_LEVEL);
+        String resp = repo.readObjectAsLiteral(this.uri, pred);
+        return (resp != null) ? Integer.parseInt(resp) : -1;
     }
     
     /**
      * Searches the repository for a prefLabel associated with category.
+     * @param repo 
      * @return
      */
-    private String retrievePrefLabel() {
-        return "";
+    private String retrievePrefLabel(EFDRepositoryConnection repo) {
+        return repo.readObjectAsLiteral(this.uri, SKOS.PREF_LABEL);
     }
     
     /**
      * Searches the repository for EFD-designated parents.
+     * @param repo 
      * @return
      */
-    private Set<URI> retrieveParents() {
-        Set<URI> emptySet = new HashSet<URI>();
-        return emptySet;
+    private Set<URI> retrieveParents(EFDRepositoryConnection repo) {
+        URI predicate = new URIImpl(EFDTaxonomy.EFD_CHILD);
+        Set<URI> parents = repo.readSubjectsAsURI(predicate, this.uri);
+        return parents;
     }
     
     /**
      * Searches the repository for EFD-designated children.
+     * @param repo 
      * @return
      */
-    private Set<URI> retrieveChildren() {
-        Set<URI> emptySet = new HashSet<URI>();
-        return emptySet;
+    private Set<URI> retrieveChildren(EFDRepositoryConnection repo) {
+        URI predicate = new URIImpl(EFDTaxonomy.EFD_CHILD);
+        Set<URI> children = repo.readObjectsAsURI(this.uri, predicate);
+        return children;
     }
     
     /**
      * Searches the repository for an entry indicating the number
      * of unique categories designated as EFD-descendants of this category.
+     * @param repo 
      * @return
      */
-    private int retrieveCatCount() {
-        return 0;
+    private int retrieveCatCount(EFDRepositoryConnection repo) {
+        URI predicate = new URIImpl(EFDTaxonomy.EFD_DESC_NUM);
+        String resp = repo.readObjectAsLiteral(this.uri, predicate);
+        return (resp != null) ? Integer.parseInt(resp) : -1;
     }
 
     /**
      * Searches the repository for an entry indicating the number
      * of articles connected to this node.
+     * @param repo 
      * @return
      */
-    private Set<URI> retrieveLocArticles() {
-        Set<URI> emptySet = new HashSet<URI>();
-        return emptySet;
+    private Set<URI> retrieveLocArticles(EFDRepositoryConnection repo) {
+        URI predicate = new URIImpl(EFDTaxonomy.DCT_SUBJECT);
+        Set<URI> articles = repo.readSubjectsAsURI(predicate, this.uri);
+        return articles;
     }
     
     /**
      * Searches the repository for an entry indicating the 
      * number of unique articles under categories designated 
      * as EFD-descendants of this category.
+     * @param repo 
      * @return
      */
-    private int retrieveArtCount() {
-        return 0;
+    private int retrieveArtCount(EFDRepositoryConnection repo) {
+        URI predicate = new URIImpl(EFDTaxonomy.EFD_ART_NUM);
+        String resp = repo.readObjectAsLiteral(this.uri, predicate);
+        return (resp != null) ? Integer.parseInt(resp) : -1;
     }
     
     public boolean equals(EFDCategory t) {

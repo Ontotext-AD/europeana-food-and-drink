@@ -6,21 +6,26 @@ import java.util.Map;
 import java.util.Set;
 
 import org.openrdf.model.URI;
+import org.openrdf.model.impl.URIImpl;
 
 import com.ontotext.efd.model.EFDCategory;
+import com.ontotext.efd.rdf.EFDTaxonomy;
 import com.ontotext.efd.services.EFDRepositoryConnection;
 
 public class TreeBuilder {
     
     Map<URI, EFDCategory> efdCategories;
     CandidateList efdCandidates;
+    long timeForDb = 0;
     
     EFDRepositoryConnection repoConn;
+    URI predicate;
 
     public TreeBuilder(URI rootName) {
         repoConn = new EFDRepositoryConnection();
         efdCategories = new HashMap<URI, EFDCategory>(250000);
         efdCandidates = new CandidateList();
+        predicate = new URIImpl(EFDTaxonomy.EFD_CHILD);
         
         EFDCategory root = new EFDCategory(rootName, 0);
         efdCategories.put(rootName, root);
@@ -31,9 +36,9 @@ public class TreeBuilder {
         long start = System.currentTimeMillis();
         while (!efdCandidates.isEmpty()) {
             // Just debugging/tracking progress.
-            if (i++ > 25000)
+            if (ll > 5)
                 break;
-            else if (i%2500 == 0) {
+            if (i++%1000 == 0) {
                 System.out.print("Processsed node number " + i + ". ");
                 System.out.print("Max depth reached is " + ll + ". ");
                 System.out.println("Candidates to look at " + efdCandidates.size() + ".");
@@ -41,8 +46,8 @@ public class TreeBuilder {
             
             try {
                 EFDCategory cat = efdCandidates.poll();
-                processCatChildren(cat);
                 efdCategories.put(cat.getUri(), cat);
+                processCatChildren(cat);
                 if (cat.getTreeLevel() > ll)
                     ll = cat.getTreeLevel();
             } catch (Exception e) {
@@ -51,7 +56,8 @@ public class TreeBuilder {
             }
         }
         long end = System.currentTimeMillis();
-        System.out.println("I made a very big tree in " + (end-start)/1000 + " seconds.");
+        System.out.print("I made a tree in " + (end-start)/1000 + " seconds ");
+        System.out.println("of which " + timeForDb/1000 + " seconds were DB retrieval.");
         System.out.println("Deepest level reached is " + ll);
         int cc = 0;
         for (EFDCategory cat : efdCategories.values()) {
@@ -62,16 +68,21 @@ public class TreeBuilder {
     
     private void processCatChildren(EFDCategory cat) {
         URI catUri = cat.getUri();
+        long stime = System.currentTimeMillis();
         List<URI> skosChildren = repoConn.getSkosChildren(catUri);
+        long etime = System.currentTimeMillis();
+        timeForDb += etime - stime;
         for (URI skosChild : skosChildren) {
             if (efdCategories.containsKey(skosChild)) {
                 // Node has been encountered and processed before. Ensure it is not
                 // ancestor of the current node before adding the connection to
                 // avoid adding a loop to the EFD graph.
+                
                 EFDCategory propChild = efdCategories.get(skosChild);
                 if (!checkAncestry(cat, propChild)) {
                     makeConnection(cat, propChild);
                 }
+                
             } else if (efdCandidates.contains(skosChild)) {
                 // Node has already been encountered but not yet processed,
                 // therefore it is not an ancestor and we can safely add the connection.
@@ -119,5 +130,9 @@ public class TreeBuilder {
         Set<URI> parents = child.getParents();
         parents.add(parent.getUri());
         child.setParents(parents);
+        
+        // Add to GraphDb. Hopefully it works :D
+        EFDRepositoryConnection repoConn = new EFDRepositoryConnection();
+        repoConn.addStatementWithURI(parent.getUri(), predicate, child.getUri());
     }
 }

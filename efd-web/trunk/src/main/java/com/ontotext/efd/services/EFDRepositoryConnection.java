@@ -300,6 +300,7 @@ public class EFDRepositoryConnection {
             connection.begin();
             Statement statement = new StatementImpl(subject, predicate, object);
             connection.remove(statement);
+            connection.commit();
             connection.close();            
         } catch (RepositoryException e) {
             e.printStackTrace();
@@ -332,6 +333,7 @@ public class EFDRepositoryConnection {
             Literal object = (objectStr != null) ? factory.createLiteral(objectStr) : null;
             Statement statement = new StatementImpl(subject, predicate, object);
             connection.remove(statement);
+            connection.commit();
             connection.close();            
         } catch (RepositoryException e) {
             e.printStackTrace();
@@ -356,29 +358,14 @@ public class EFDRepositoryConnection {
         try {
             connection = repo.getConnection();
             connection.begin();
-//            Statement statement = new StatementImpl(null, predicate, null);
-            connection.remove(connection.getStatements(null, predicate, null, false));
+            Statement statement = new StatementImpl(null, predicate, null);
+            connection.remove(statement);
+            connection.commit();
             connection.close();            
         } catch (RepositoryException e) {
             e.printStackTrace();
         } catch (Exception e) {
             System.err.println(e.getCause());
-            e.printStackTrace();
-        }
-    }
-    
-    public void removeAllUselessStuff() {
-        Repository repo = getRepository();
-        RepositoryConnection connection;
-        
-        try {
-            connection = repo.getConnection();
-            connection.begin();
-            Statement s = createStatement(null, EFDTaxonomy.EFD + "testChild", null);
-            connection.remove(s);
-            connection.commit();
-            connection.close();
-        } catch (RepositoryException e) {
             e.printStackTrace();
         }
     }

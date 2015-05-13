@@ -208,13 +208,30 @@ public class EFDCategory {
         if (irrelevantTo == null || irrelevantTo.toString() == null)
             return;
         EFDRepositoryConnection repo = new EFDRepositoryConnection();
-        URI pred = new URIImpl(EFDTaxonomy.EFD_IRRELEVANT);
-        repo.addStatementWithURI(this.uri, pred, irrelevantTo);
+        
+        // Add triple marking it as irrelevant to the topic.
+        URI irrPred = new URIImpl(EFDTaxonomy.EFD_IRRELEVANT);
+        repo.addStatementWithURI(this.uri, irrPred, irrelevantTo);
+        
+        // Remove all efd:child nodes leading to or from this category.
+        URI childPred = new URIImpl(EFDTaxonomy.EFD_CHILD);
+        repo.removeStatementWithURI(this.uri, childPred, null);
+        repo.removeStatementWithURI(null, childPred, this.uri);
+        
+        // Remove level, category count and article count literals about category.
+        URI levelPred = new URIImpl(EFDTaxonomy.EFD_LEVEL);
+        repo.removeStatementWithLiteral(this.uri, levelPred, null);
+        URI descCatPred = new URIImpl(EFDTaxonomy.EFD_DESC_NUM);
+        repo.removeStatementWithLiteral(this.uri, descCatPred, null);
+        URI descArtPred = new URIImpl(EFDTaxonomy.EFD_ART_NUM);
+        repo.removeStatementWithLiteral(this.uri, descArtPred, null);
     }
     
     /**
      * Removes a triple marking the category as irrelevant to a specified topic.
      * If null is passed, all irrelevant triples about category will be removed.
+     * NOTE: This is NOT the inverse of markAsIrrelevant as removed efd:child
+     * connection will not be restored until a full tree rebuild has been performed.
      * @param relevantTo
      */
     public void markAsRelevant(URI relevantTo) {

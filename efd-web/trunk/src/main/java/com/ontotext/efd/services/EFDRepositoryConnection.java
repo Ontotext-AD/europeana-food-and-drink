@@ -311,16 +311,15 @@ public class EFDRepositoryConnection {
         
     }
     /**
-     * Removes a specified triple with a Literal object. If 
-     * predicate is null or subject AND object are null, does 
-     * nothing. If only one of subject and object are null, 
-     * removes all triples the two specified URIs.
+     * Removes a specified triple with a Literal object. If predicate 
+     * or subject are null, the method does nothing. If the object 
+     * is null, removes all triples the two specified URIs.
      * @param subject
      * @param predicate
      * @param objectStr
      */
     public void removeStatementWithLiteral(URI subject, URI predicate, String objectStr) {
-        if (predicate == null || (subject == null && objectStr == null))
+        if (predicate == null || subject == null)
             return;
 
         Repository repo = getRepository();

@@ -1,6 +1,5 @@
 package com.ontotext.efd.model;
 
-import java.util.HashSet;
 import java.util.Set;
 
 import org.openrdf.model.URI;
@@ -91,24 +90,6 @@ public class EFDCategory {
     }
     
     /**
-     * Default builder which tries to extract all available data about
-     * a category from the Food and Drink repository.
-     * @param uri The URI of the category we are trying to represent.
-     */
-    public EFDCategory(URI uri) {
-        EFDRepositoryConnection repo = new EFDRepositoryConnection();
-        
-        this.uri = uri;
-        this.level = retrieveLevel(repo);
-        this.prefLabel = retrievePrefLabel(repo);
-        this.parents = retrieveParents(repo);
-        this.children = retrieveChildren(repo);
-        this.localArticles = retrieveLocArticles(repo);
-        this.descArticleCount = retrieveArtCount(repo);
-        this.descCategoryCount = retrieveCatCount(repo);
-    }
-    
-    /**
      * Searches the repository for a treeLevel associated with the category.
      * @param repo 
      * @return
@@ -185,6 +166,61 @@ public class EFDCategory {
         URI predicate = new URIImpl(EFDTaxonomy.EFD_ART_NUM);
         String resp = repo.readObjectAsLiteral(this.uri, predicate);
         return (resp != null) ? Integer.parseInt(resp) : -1;
+    }
+    
+    /**
+     * Default builder which tries to extract all available data about
+     * a category from the Food and Drink repository.
+     * @param uri The URI of the category we are trying to represent.
+     */
+    public EFDCategory(URI uri) {
+        EFDRepositoryConnection repo = new EFDRepositoryConnection();
+        
+        this.uri = uri;
+        this.level = retrieveLevel(repo);
+        this.prefLabel = retrievePrefLabel(repo);
+        this.parents = retrieveParents(repo);
+        this.children = retrieveChildren(repo);
+        this.localArticles = retrieveLocArticles(repo);
+        this.descArticleCount = retrieveArtCount(repo);
+        this.descCategoryCount = retrieveCatCount(repo);
+    }
+    
+    /**
+     * Checks whether the category has been marked as irrelevant in the repository.
+     * @return true if the category is marked as irrelevant in the repository
+     */
+    public boolean isIrrelevant() {
+        EFDRepositoryConnection repo = new EFDRepositoryConnection();
+        URI pred = new URIImpl(EFDTaxonomy.EFD_IRRELEVANT);
+        String resp = repo.readObjectAsLiteral(this.uri, pred);
+        if (resp != null) 
+            return true;
+        return false;
+    }
+    
+    /**
+     * Adds a triple marking the category as irrelevant to a specified topic.
+     * A specific topic needs to be specified as passing null will do nothing.
+     * @param irrelevantTo the topic to which the category is irrelevant
+     */
+    public void markAsIrrelevant(URI irrelevantTo) {
+        if (irrelevantTo == null || irrelevantTo.toString() == null)
+            return;
+        EFDRepositoryConnection repo = new EFDRepositoryConnection();
+        URI pred = new URIImpl(EFDTaxonomy.EFD_IRRELEVANT);
+        repo.addStatementWithURI(this.uri, pred, irrelevantTo);
+    }
+    
+    /**
+     * Removes a triple marking the category as irrelevant to a specified topic.
+     * If null is passed, all irrelevant triples about category will be removed.
+     * @param relevantTo
+     */
+    public void markAsRelevant(URI relevantTo) {
+        EFDRepositoryConnection repo = new EFDRepositoryConnection();
+        URI pred = new URIImpl(EFDTaxonomy.EFD_IRRELEVANT);
+        repo.removeStatementWithURI(this.uri, pred, relevantTo);
     }
     
     public boolean equals(EFDCategory t) {

@@ -1,5 +1,7 @@
 package com.ontotext.efd.model;
 
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Test;
 import org.openrdf.model.URI;
 import org.openrdf.model.impl.URIImpl;
@@ -30,6 +32,21 @@ public class EFDCategoryTest {
         System.out.println();
         System.out.println("Descended categories: " + cat.getDescCategoryCount());
         System.out.println("Descended articles: " + cat.getDescArticleCount());
+        
+        URI topic = new URIImpl(EFDTaxonomy.DBCAT + "SomethingTotallyUnrelatedToBeer");
+        boolean irrelevant = cat.isIrrelevant();
+        assertTrue("Category is marked as irrelevant from the start!", !irrelevant);
+        System.out.println("Category correctly idetified as relevant.");
+        
+        cat.markAsIrrelevant(topic);
+        irrelevant = cat.isIrrelevant();
+        assertTrue("Category is marked as relevant when it shouldn't be!", irrelevant);
+        System.out.println("Category succesfully marked as irrelevant.");
+        
+        cat.markAsRelevant(topic);
+        irrelevant = cat.isIrrelevant();
+        assertTrue("Category is marked as irrelevant when it shouldn't be", !irrelevant);
+        System.out.println("Irrelevant marking has been successfully removed.");
     }
 
 }

@@ -7,10 +7,12 @@ import java.util.Set;
 
 import org.openrdf.OpenRDFException;
 import org.openrdf.model.Literal;
+import org.openrdf.model.Model;
 import org.openrdf.model.URI;
 import org.openrdf.model.Statement;
 import org.openrdf.model.Value;
 import org.openrdf.model.ValueFactory;
+import org.openrdf.model.impl.LinkedHashModel;
 import org.openrdf.model.impl.StatementImpl;
 import org.openrdf.model.impl.ValueFactoryImpl;
 import org.openrdf.query.BindingSet;
@@ -24,7 +26,7 @@ import org.openrdf.repository.RepositoryResult;
 import org.openrdf.repository.http.HTTPRepository;
 import org.springframework.stereotype.Service;
 
-import com.ontotext.efd.rdf.EFDTaxonomy;
+import com.ontotext.efd.model.URIPair;
 
 @Service
 public class EFDRepositoryConnection {
@@ -34,6 +36,14 @@ public class EFDRepositoryConnection {
 
     //@org.springframework.beans.factory.annotation.Value("${repository.id}")
     private String repositoryID = "DBpedia-efd-inf";
+    
+    private Model queuedWrites;
+    private int WRITE_QUEUE_THRESHOLD = 5000;
+    
+    public EFDRepositoryConnection() {
+        super();
+        queuedWrites = new LinkedHashModel();
+    }
 
     /**
      * Open a connection to the repository. Used by all the methods for
@@ -58,6 +68,7 @@ public class EFDRepositoryConnection {
      * @param object
      * @return
      */
+    /*
     private Statement createStatement(String subject, String predicate, String object) {
         ValueFactory factory = ValueFactoryImpl.getInstance();
         URI s = (subject != null) ? factory.createURI(subject) : null;
@@ -66,6 +77,7 @@ public class EFDRepositoryConnection {
         Statement statement = new StatementImpl(s, p, o);
         return statement;
     }
+    */
 
     /**
      * Used during the tree building stage when we have skos:broader
@@ -166,6 +178,67 @@ public class EFDRepositoryConnection {
             e.printStackTrace();
         }
     }
+    
+    /**
+     * Adds a statement to the writing queue. If the queue
+     * is full, writes all statements from it into the repo.
+     * This version of the method deals with a URI object.
+     * If any of the provided URIs are null, the triple
+     * will not be added to the writing queue.
+     * @param s
+     * @param p
+     * @param o
+     */
+    public void queueAddStatement(URI s, URI p, URI o) {
+        if (s == null || p == null || o == null)
+            return;
+        queuedWrites.add(s, p, o);
+        if (queuedWrites.size() >= WRITE_QUEUE_THRESHOLD)
+            flushWriteQueue();
+    }
+    
+    /**
+     * Adds a statement to the writing queue. If the queue
+     * is full, writes all statements from it into the repo.
+     * This version of the method deals with a Literal object.
+     * If any of the provided URIs or Label are null, the
+     * triple will not be added to the writing queue.
+     * @param s
+     * @param p
+     * @param l
+     */
+    public void queueAddStatement(URI s, URI p, String l) {
+        if (s == null || p == null || l == null)
+            return;
+        ValueFactory factory = ValueFactoryImpl.getInstance();
+        queuedWrites.add(s, p, factory.createLiteral(l));
+        if (queuedWrites.size() >= WRITE_QUEUE_THRESHOLD)
+            flushWriteQueue();
+    }
+ 
+    /**
+     * Writes all the statements queued up for the database.
+     */
+    public void flushWriteQueue() {
+        
+        if (queuedWrites.isEmpty())
+            return;
+
+        Repository repo = getRepository();
+        RepositoryConnection connection;
+
+        try {
+            connection = repo.getConnection();
+            connection.begin();
+            connection.add(queuedWrites);
+            connection.commit();
+            connection.close();
+            queuedWrites.clear();
+        } catch (RepositoryException e) {
+            e.printStackTrace();
+        }
+        
+    }
  
     /**
      * Looks for a triple with the specified subject and predicate and,
@@ -244,13 +317,14 @@ public class EFDRepositoryConnection {
     /**
      * Looks for triples with the specified predicate and object and
      * tries to interpret their subjects as URIs that are all returned.
-     * If the object or predicate are null, returns null.
+     * If the predicate is null, returns null. If object is null, returns
+     * all subjects without duplicates (because Set<URI).
      * @param predicate URI of the triple's predicate.
      * @param object URI of the triple's object.
      * @return Set of all URIs encountered as subjects in the triples.
      */
     public Set<URI> readSubjectsAsURI(URI predicate, URI object) {
-        if (predicate == null || object == null) 
+        if (predicate == null) 
             return null;
         
         Set<URI> resp = new HashSet<URI>();
@@ -277,6 +351,45 @@ public class EFDRepositoryConnection {
         }
         
         return resp;
+    }
+    
+    /**
+     * Retrieves all triples connected with the provided predicate and
+     * returns the list of all subject-object pairs in the repository.
+     * Assumes all the subjects and objects are valid URIs.
+     * @param predicate
+     * @return
+     */
+    public List<URIPair> readStatementsWithPredicate(URI predicate) {
+        if (predicate == null) 
+            return null;
+        
+        List<URIPair> resp = new LinkedList<URIPair>();
+        Repository repo = getRepository();
+        RepositoryConnection connection;
+        
+        try {
+            connection = repo.getConnection();
+            connection.begin();
+            RepositoryResult<Statement> statements = 
+                    connection.getStatements(null, predicate, null, false);
+            while (statements.hasNext()) {
+                Statement s = statements.next();
+                String subj = s.getSubject().stringValue();
+                String obj = s.getObject().stringValue();
+                ValueFactory factory = ValueFactoryImpl.getInstance();
+                resp.add(new URIPair(factory.createURI(subj), factory.createURI(obj)));
+            }
+            connection.close();            
+        } catch (RepositoryException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            System.err.println(e.getCause());
+            e.printStackTrace();
+        }
+        
+        return resp;
+        
     }
     
     /**

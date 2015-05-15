@@ -8,9 +8,9 @@ import java.util.Set;
 import org.junit.Test;
 import org.openrdf.model.URI;
 import org.openrdf.model.ValueFactory;
-import org.openrdf.model.impl.URIImpl;
 import org.openrdf.model.impl.ValueFactoryImpl;
 
+import com.ontotext.efd.model.URIPair;
 import com.ontotext.efd.rdf.EFDTaxonomy;
 
 public class EFDRepositoryConnectionTest {
@@ -36,10 +36,23 @@ public class EFDRepositoryConnectionTest {
     Integer childLit = 7;
     
     @Test
-    public void removeStatementsWithPredicateTest() {
+    public void queueAndStatementsByPredicateTest() {
         EFDRepositoryConnection repoConn = new EFDRepositoryConnection();
         repoConn.removeStatementsWithPredicate(pred);
         System.out.println("Successfully removed all triples with test predicate.");
+
+        List<URIPair> r = repoConn.readStatementsWithPredicate(pred);
+        assertTrue("Found triples with test predicate after removal!.", r.size()==0);
+        System.out.println("Succesfully read no triples with test predicate (all removed).");
+        
+        repoConn.queueAddStatement(parent, pred, child);
+        repoConn.flushWriteQueue();
+        r = repoConn.readStatementsWithPredicate(pred);
+        URIPair writtenPair = r.get(0);
+        URIPair targetPair = new URIPair(parent, child);
+        boolean t = ((r.size() == 1) && writtenPair.equals(targetPair));
+        assertTrue("Failed to write through queue!", t);
+        System.out.println("Successfully added triple to queue, flushed queue and read the triple.");
     }
     
     @Test

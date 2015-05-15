@@ -19,6 +19,8 @@ public interface EFDTaxonomy {
     String DBR = DB + "resource/";
     String DBCAT = DBR + "Category:";
     String SKOS_CONCEPT = SKOS + "Concept";
+    String EFD_ANNOTATOR_MANUAL = EFD + "ManualJudgement";
+    String EFD_ANNOTATOR_AUTOMATED = EFD + "AutomatedJudgement";
     
     /**
      * Property URIs

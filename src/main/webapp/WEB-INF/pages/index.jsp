@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <HTML>
 <HEAD>
-	<%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %>
-	<c:set var="contextPath" value="${pageContext.request.contextPath}"/>
+	<%--<%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %>--%>
+	<%--<c:set var="contextPath" value="${pageContext.request.contextPath}"/>--%>
 
 
 	<TITLE> ZTREE DEMO - addNodes / editName / removeNode / removeChildNodes</TITLE>
@@ -21,13 +21,13 @@
 			},
 			edit: {
 				enable: true,
-				showRemoveBtn: false,
+				showRemoveBtn: true,
 				showRenameBtn: false
 			},
 			data: {
 				keep: {
-					parent:true,
-					leaf:true
+					parent:false,
+					leaf:false
 				},
 				simpleData: {
 					enable: true
@@ -141,46 +141,68 @@
 			zTree.removeChildNodes(treeNode);
 		};
 
-		$(document).load(function() {
-
-
-
-		});
-
+		var counter = 2;
 
 		$(document).ready(function(){
-			$.fn.zTree.init($("#treeDemo"), setting, zNodes);
-			$("#addParent").bind("click", {isParent:true}, add);
-			$("#addLeaf").bind("click", {isParent:false}, add);
-			$("#edit").bind("click", edit);
-			$("#remove").bind("click", remove);
-			$("#clearChildren").bind("click", clearChildren);
-
 			$.ajax({
-				url: "/jdummy"
+				url: "/jdummy?category=http://dbpedia.org/resource/Category:Food_and_drink"
 			}).done(function (data) {
-				alert(data);
-				var obj = JSON.parse(data);
-				createDummy(obj);
+				zNodes = createDummy(data, null);
+				$.fn.zTree.init($("#treeDemo"), setting, zNodes);
+				$("#addParent").bind("click", {isParent:true}, add);
+				$("#addLeaf").bind("click", {isParent:false}, add);
+				$("#edit").bind("click", edit);
+				$("#remove").bind("click", remove);
+				$("#clearChildren").bind("click", clearChildren);
+
 			});
-
-
-
-
-
 		});
 
-		function createDummy(obj) {
-			var arr = {};
-			arr["id"] = obj.treeLevel;
-			if(obj.treeLevel == 0) {
-				arr["pId"] = obj.treeLevel;
+		function createDummy(obj, parentNodeId) {
+			var arr = [];
+			var arrCount = 0;
+			var children = obj.children;
+			var localArticles = obj.localArticles;
+			if (parentNodeId == null) {
+				arr[arrCount++] = {id: obj.treeLevel + 1, pId: obj.treeLevel, name: obj.prefLabel };
+				$.each(children, function(i, val){
+					arr[arrCount++] = {id: counter++, pId: obj.treeLevel + 1, name: val.localName, click: "newNodes(this.id)"};
+				})
+				$.each(localArticles, function(i, val){
+					arr[arrCount++] = {id: counter++, pId: obj.treeLevel + 1, name: val.localName};
+				})
 			}
-			arr["name"] = obj.prefLabel;
+			else {
+				var children = obj.children;
+				$.each(children, function(i, val){
+					arr[arrCount++] = {id: counter++, pId: parentNodeId, name: val.localName, click: "newNodes(this.id)"};
+				})
+				$.each(localArticles, function(i, val){
+					arr[arrCount++] = {id: counter++, pId: parentNodeId, name: val.localName};
+				})
+			}
 
-
-			alert(arr);
+			return arr;
 		};
+
+var nodeID;
+		function newNodes(objId) {
+			nodeID = objId;
+			var title = $("#" + objId).attr("title");
+
+			$.ajax({
+				url: "/jdummy?category=http://dbpedia.org/resource/" + title
+			}).done(function (data) {
+
+				var treeObj = $.fn.zTree.getZTreeObj("treeDemo");
+				zNod = createDummy(data, treeObj.getSelectedNodes()[0].id );
+				zNod = treeObj.addNodes(treeObj.getSelectedNodes()[0], zNod, false)
+
+
+
+			});
+		}
+
 		//-->
 	</SCRIPT>
 </HEAD>
@@ -192,7 +214,7 @@
 	<div class="zTreeDemoBackground left">
 		<ul id="treeDemo" class="ztree"></ul>
 	</div>
-	<div class="right">
+<%--	<div class="right">
 		<ul class="info">
 			<li class="title"><h2>1, Explanation of 'addNodes / editName / removeNode / removeChildNodes' method</h2>
 				<ul class="list">
@@ -224,7 +246,7 @@
 				</ul>
 			</li>
 		</ul>
-	</div>
+	</div>--%>
 </div>
 </BODY>
 </HTML>

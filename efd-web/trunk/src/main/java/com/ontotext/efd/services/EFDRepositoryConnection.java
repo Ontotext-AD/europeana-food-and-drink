@@ -203,11 +203,30 @@ public class EFDRepositoryConnection {
      * This version of the method deals with a Literal object.
      * If any of the provided URIs or Label are null, the
      * triple will not be added to the writing queue.
-     * @param s
-     * @param p
-     * @param l
+     * @param s URI subject
+     * @param p URI predicate
+     * @param l String literal
      */
     public void queueAddStatement(URI s, URI p, String l) {
+        if (s == null || p == null || l == null)
+            return;
+        ValueFactory factory = ValueFactoryImpl.getInstance();
+        queuedWrites.add(s, p, factory.createLiteral(l));
+        if (queuedWrites.size() >= WRITE_QUEUE_THRESHOLD)
+            flushWriteQueue();
+    }
+
+    /**
+     * Adds a statement to the writing queue. If the queue
+     * is full, writes all statements from it into the repo.
+     * This version of the method deals with a Literal object.
+     * If any of the provided URIs or Label are null, the
+     * triple will not be added to the writing queue.
+     * @param s URI subject
+     * @param p URI predicate
+     * @param l Integer literal
+     */
+    public void queueAddStatement(URI s, URI p, Integer l) {
         if (s == null || p == null || l == null)
             return;
         ValueFactory factory = ValueFactoryImpl.getInstance();
@@ -430,8 +449,9 @@ public class EFDRepositoryConnection {
      * @param subject
      * @param predicate
      * @param objectStr
+     * @throws RepositoryException 
      */
-    public void removeStatementWithLiteral(URI subject, URI predicate, String objectStr) {
+    public void removeStatementWithLiteral(URI subject, URI predicate, String objectStr) throws RepositoryException {
         if (predicate == null || subject == null)
             return;
 
@@ -449,9 +469,7 @@ public class EFDRepositoryConnection {
             connection.close();            
         } catch (RepositoryException e) {
             e.printStackTrace();
-        } catch (Exception e) {
-            System.err.println(e.getCause());
-            e.printStackTrace();
+            throw e;
         }
         
     }
@@ -461,8 +479,9 @@ public class EFDRepositoryConnection {
      * This can be dangerous and should only be run whenever we are
      * about to rebuild the whole EFD category tree.
      * @param predicate triples with this predicate will be removed
+     * @throws RepositoryException 
      */
-    public void removeStatementsWithPredicate(URI predicate) {
+    public void removeStatementsWithPredicate(URI predicate) throws RepositoryException {
 
         Repository repo = getRepository();
         RepositoryConnection connection;
@@ -476,9 +495,7 @@ public class EFDRepositoryConnection {
             connection.close();            
         } catch (RepositoryException e) {
             e.printStackTrace();
-        } catch (Exception e) {
-            System.err.println(e.getCause());
-            e.printStackTrace();
+            throw e;
         }
     }
 

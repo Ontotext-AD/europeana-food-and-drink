@@ -8,6 +8,7 @@ import java.util.Set;
 
 import org.openrdf.model.URI;
 import org.openrdf.model.impl.URIImpl;
+import org.openrdf.repository.RepositoryException;
 
 import com.ontotext.efd.model.EFDTree;
 import com.ontotext.efd.model.TreeBuildingCat;
@@ -37,7 +38,7 @@ public class TreeBuilderService {
         this.predChild = predChild;
     }
     
-    public void buildTreeFromRoot(URI rootName) {
+    public void buildTreeFromRoot(URI rootName) throws RepositoryException {
         repoConn = new EFDRepositoryConnection();
         clearOldTree();
         
@@ -78,8 +79,9 @@ public class TreeBuilderService {
      * Removes all previous efd:child, efd:treeLevel, efd:descCount and
      * similar triples from the repository so we can build the tree from
      * a clean slate. 
+     * @throws RepositoryException 
      */
-    private void clearOldTree() {
+    private void clearOldTree() throws RepositoryException {
         repoConn.removeStatementsWithPredicate(predChild);
         repoConn.removeStatementsWithPredicate(predLevel);
     }

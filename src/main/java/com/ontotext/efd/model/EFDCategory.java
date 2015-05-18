@@ -5,6 +5,7 @@ import java.util.Set;
 import org.openrdf.model.URI;
 import org.openrdf.model.impl.URIImpl;
 import org.openrdf.model.vocabulary.SKOS;
+import org.openrdf.repository.RepositoryException;
 
 import com.ontotext.efd.rdf.EFDTaxonomy;
 import com.ontotext.efd.services.EFDRepositoryConnection;
@@ -198,8 +199,9 @@ public class EFDCategory {
      * Adds a triple marking the category as irrelevant to a specified topic.
      * A specific topic needs to be specified as passing null will do nothing.
      * @param irrelevantTo the topic to which the category is irrelevant
+     * @throws RepositoryException 
      */
-    public void markAsIrrelevant(URI irrelevantTo) {
+    public void markAsIrrelevant(URI irrelevantTo) throws RepositoryException {
         if (irrelevantTo == null || irrelevantTo.toString() == null)
             return;
         EFDRepositoryConnection repo = new EFDRepositoryConnection();

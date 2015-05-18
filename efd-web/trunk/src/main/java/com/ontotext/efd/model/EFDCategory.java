@@ -84,11 +84,6 @@ public class EFDCategory {
         this.descArticleCount = c;
     }
     
-    public EFDCategory(URI uri, int level) {
-        this.uri = uri;
-        this.level = level;
-    }
-    
     /**
      * Searches the repository for a treeLevel associated with the category.
      * @param repo 

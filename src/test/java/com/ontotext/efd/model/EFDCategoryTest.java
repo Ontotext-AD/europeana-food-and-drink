@@ -1,10 +1,12 @@
 package com.ontotext.efd.model;
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import org.junit.Test;
 import org.openrdf.model.URI;
 import org.openrdf.model.impl.URIImpl;
+import org.openrdf.repository.RepositoryException;
 
 import com.ontotext.efd.rdf.EFDTaxonomy;
 
@@ -38,7 +40,13 @@ public class EFDCategoryTest {
         assertTrue("Category is marked as irrelevant from the start!", !irrelevant);
         System.out.println("Category correctly idetified as relevant.");
         
-        cat.markAsIrrelevant(topic);
+        try {
+            cat.markAsIrrelevant(topic);
+        } catch (RepositoryException e) {
+            System.err.println("Failed to mark topic as irrelevant.");
+            e.printStackTrace();
+            fail();
+        }
         irrelevant = cat.isIrrelevant();
         assertTrue("Category is marked as relevant when it shouldn't be!", irrelevant);
         System.out.println("Category succesfully marked as irrelevant.");

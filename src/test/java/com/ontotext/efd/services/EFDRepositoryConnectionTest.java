@@ -1,6 +1,7 @@
 package com.ontotext.efd.services;
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.List;
 import java.util.Set;
@@ -9,6 +10,7 @@ import org.junit.Test;
 import org.openrdf.model.URI;
 import org.openrdf.model.ValueFactory;
 import org.openrdf.model.impl.ValueFactoryImpl;
+import org.openrdf.repository.RepositoryException;
 
 import com.ontotext.efd.model.URIPair;
 import com.ontotext.efd.rdf.EFDTaxonomy;
@@ -38,16 +40,22 @@ public class EFDRepositoryConnectionTest {
     @Test
     public void queueAndStatementsByPredicateTest() {
         EFDRepositoryConnection repoConn = new EFDRepositoryConnection();
-        repoConn.removeStatementsWithPredicate(pred);
+        try {
+            repoConn.removeStatementsWithPredicate(pred);
+        } catch (RepositoryException e) {
+            System.err.println("Failed to remove all triple with test predicate.");
+            e.printStackTrace();
+            fail();
+        }
         System.out.println("Successfully removed all triples with test predicate.");
 
-        List<URIPair> r = repoConn.readStatementsWithPredicate(pred);
+        List<URIPair> r = repoConn.readURIStatementsWithPredicate(pred);
         assertTrue("Found triples with test predicate after removal!.", r.size()==0);
         System.out.println("Succesfully read no triples with test predicate (all removed).");
         
         repoConn.queueAddStatement(parent, pred, child);
         repoConn.flushWriteQueue();
-        r = repoConn.readStatementsWithPredicate(pred);
+        r = repoConn.readURIStatementsWithPredicate(pred);
         URIPair writtenPair = r.get(0);
         URIPair targetPair = new URIPair(parent, child);
         boolean t = ((r.size() == 1) && writtenPair.equals(targetPair));
@@ -60,7 +68,13 @@ public class EFDRepositoryConnectionTest {
         EFDRepositoryConnection repoConn = new EFDRepositoryConnection();
         
         // Just remove everything with test predicate to ensure clean repo.
-        repoConn.removeStatementsWithPredicate(pred);
+        try {
+            repoConn.removeStatementsWithPredicate(pred);
+        } catch (RepositoryException e) {
+            System.err.println("Failed to remove statements with predicate from repo.");
+            e.printStackTrace();
+            fail();
+        }
         
         // Test adding the triple to repository.
         repoConn.addStatementWithURI(parent, pred, child);
@@ -88,7 +102,13 @@ public class EFDRepositoryConnectionTest {
         EFDRepositoryConnection repoConn = new EFDRepositoryConnection();
         
         // Just remove everything with test predicate to ensure clean repo.
-        repoConn.removeStatementsWithPredicate(pred);
+        try {
+            repoConn.removeStatementsWithPredicate(pred);
+        } catch (RepositoryException e) {
+            System.err.println("Failed to remove all triple with test predicate.");
+            e.printStackTrace();
+            fail();
+        }
         
         // Test adding the triple to the repository.
         repoConn.addStatementWithLiteral(parent, pred, childLit.toString());
@@ -101,7 +121,13 @@ public class EFDRepositoryConnectionTest {
         System.out.println("Succesfully retrieved a test statement with Literal object.");
         
         // Test removing the triple from the repository.
-        repoConn.removeStatementWithLiteral(parent, pred, childLit.toString());
+        try {
+            repoConn.removeStatementWithLiteral(parent, pred, childLit.toString());
+        }  catch (RepositoryException e) {
+            System.err.println("Failed to remove the test triple from the repo.");
+            e.printStackTrace();
+            fail();
+        }
         String resp = repoConn.readObjectAsLiteral(parent, pred);
         assertTrue("Failed to remove the triple!", resp == null);
         System.out.println("Successfully removed an EFD child statement.");

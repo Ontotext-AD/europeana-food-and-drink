@@ -16,6 +16,8 @@ import org.openrdf.model.impl.LinkedHashModel;
 import org.openrdf.model.impl.StatementImpl;
 import org.openrdf.model.impl.ValueFactoryImpl;
 import org.openrdf.query.BindingSet;
+import org.openrdf.query.MalformedQueryException;
+import org.openrdf.query.QueryEvaluationException;
 import org.openrdf.query.QueryLanguage;
 import org.openrdf.query.TupleQuery;
 import org.openrdf.query.TupleQueryResult;
@@ -26,6 +28,7 @@ import org.openrdf.repository.RepositoryResult;
 import org.openrdf.repository.http.HTTPRepository;
 import org.springframework.stereotype.Service;
 
+import com.ontotext.efd.model.URIIntPair;
 import com.ontotext.efd.model.URIPair;
 
 @Service
@@ -208,12 +211,8 @@ public class EFDRepositoryConnection {
      * @param l String literal
      */
     public void queueAddStatement(URI s, URI p, String l) {
-        if (s == null || p == null || l == null)
-            return;
         ValueFactory factory = ValueFactoryImpl.getInstance();
-        queuedWrites.add(s, p, factory.createLiteral(l));
-        if (queuedWrites.size() >= WRITE_QUEUE_THRESHOLD)
-            flushWriteQueue();
+        queueAddStatement(s, p, factory.createLiteral(l));
     }
 
     /**
@@ -227,10 +226,29 @@ public class EFDRepositoryConnection {
      * @param l Integer literal
      */
     public void queueAddStatement(URI s, URI p, Integer l) {
+        ValueFactory factory = ValueFactoryImpl.getInstance();
+        queueAddStatement(s, p, factory.createLiteral(l));
+    }
+
+    /**
+     * Adds a statement to the writing queue. If the queue
+     * is full, writes all statements from it into the repo.
+     * This version of the method deals with a Literal object.
+     * If any of the provided URIs or Label are null, the
+     * triple will not be added to the writing queue.
+     * @param s URI subject
+     * @param p URI predicate
+     * @param l Double literal
+     */
+    public void queueAddStatement(URI s, URI p, double l) {
+        ValueFactory factory = ValueFactoryImpl.getInstance();
+        queueAddStatement(s, p, factory.createLiteral(l));
+    }
+    
+    private void queueAddStatement(URI s, URI p, Literal l) {
         if (s == null || p == null || l == null)
             return;
-        ValueFactory factory = ValueFactoryImpl.getInstance();
-        queuedWrites.add(s, p, factory.createLiteral(l));
+        queuedWrites.add(s, p, l);
         if (queuedWrites.size() >= WRITE_QUEUE_THRESHOLD)
             flushWriteQueue();
     }
@@ -379,7 +397,7 @@ public class EFDRepositoryConnection {
      * @param predicate
      * @return
      */
-    public List<URIPair> readStatementsWithPredicate(URI predicate) {
+    public List<URIPair> readURIStatementsWithPredicate(URI predicate) {
         if (predicate == null) 
             return null;
         
@@ -402,13 +420,44 @@ public class EFDRepositoryConnection {
             connection.close();            
         } catch (RepositoryException e) {
             e.printStackTrace();
-        } catch (Exception e) {
-            System.err.println(e.getCause());
+        }
+        
+        return resp;        
+    }
+    
+    /**
+     * Retrieves all triples connected with the provided predicate and
+     * returns the list of all subject-object pairs in the repository.
+     * Assumes all subjects are valid URIs and all objects are xsd:int.
+     * @param predicate
+     * @return
+     */
+    public List<URIIntPair> readIntStatementsWithPredicate(URI predicate) {
+        if (predicate == null) 
+            return null;
+        
+        List<URIIntPair> resp = new LinkedList<URIIntPair>();
+        Repository repo = getRepository();
+        RepositoryConnection connection;
+        
+        try {
+            connection = repo.getConnection();
+            connection.begin();
+            RepositoryResult<Statement> statements = 
+                    connection.getStatements(null, predicate, null, false);
+            while (statements.hasNext()) {
+                Statement s = statements.next();
+                String subj = s.getSubject().stringValue();
+                String obj = s.getObject().stringValue();
+                ValueFactory factory = ValueFactoryImpl.getInstance();
+                resp.add(new URIIntPair(factory.createURI(subj), Integer.parseInt(obj)));
+            }
+            connection.close();            
+        } catch (RepositoryException e) {
             e.printStackTrace();
         }
         
-        return resp;
-        
+        return resp;              
     }
     
     /**
@@ -499,4 +548,54 @@ public class EFDRepositoryConnection {
         }
     }
 
+    /**
+     * Counts the number of articles per category for each English
+     * DBPedia category in the repository and returns the counts.
+     * @return
+     */
+    public List<URIIntPair> countArticleToCategoryConnections(URI pred) {
+        if (pred == null || pred.stringValue() == null)
+            return null;
+
+        List<URIIntPair> counts = new LinkedList<URIIntPair>();
+        try {
+            Repository repo = getRepository();
+            RepositoryConnection con = repo.getConnection();
+            try {
+                String rq = "SELECT ?cat (COUNT (*) as ?count) WHERE " +
+                            "{ ?s <" + pred.stringValue() + ">+ ?cat ." +
+                            "FILTER(strstarts(str(?cat), \"http://dbpedia.org/resource/Category:\"))" +
+                            " } GROUP BY ?cat";
+                TupleQuery tupleQuery = con.prepareTupleQuery(
+                        QueryLanguage.SPARQL, rq);
+                TupleQueryResult result = tupleQuery.evaluate();
+                try {
+                    // Extract the potential children URIs from the response.
+                    while (result.hasNext()) {
+                        BindingSet bindingSet = result.next();
+                        URI cat = (URI) bindingSet.getValue("cat");
+                        String countStr = bindingSet.getValue("count").stringValue();
+                        Integer count = Integer.parseInt(countStr);
+                        counts.add(new URIIntPair(cat, count));
+                    }
+                } finally {
+                    result.close();
+                }
+            } catch (MalformedQueryException e) {
+                System.err.println("Issue encountered with the efd:child+ query string.");
+                e.printStackTrace();
+            } catch (QueryEvaluationException e) {
+                System.err.println("Issue evaluating the efd:child+ query.");
+                e.printStackTrace();
+            } finally {
+                con.close();
+            }
+        } catch (RepositoryException e) {
+            System.err.println("Failed to make connection to the repository.");
+            e.printStackTrace();
+        }
+        
+        return counts;
+    }
+    
 }

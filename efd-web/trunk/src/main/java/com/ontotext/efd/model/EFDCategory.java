@@ -134,7 +134,7 @@ public class EFDCategory {
      * @return
      */
     private int retrieveCatCount(EFDRepositoryConnection repo) {
-        URI predicate = new URIImpl(EFDTaxonomy.EFD_DESC_NUM);
+        URI predicate = new URIImpl(EFDTaxonomy.EFD_DESC_CNT);
         String resp = repo.readObjectAsLiteral(this.uri, predicate);
         return (resp != null) ? Integer.parseInt(resp) : -1;
     }
@@ -159,7 +159,7 @@ public class EFDCategory {
      * @return
      */
     private int retrieveArtCount(EFDRepositoryConnection repo) {
-        URI predicate = new URIImpl(EFDTaxonomy.EFD_ART_NUM);
+        URI predicate = new URIImpl(EFDTaxonomy.EFD_DESC_ART_CNT);
         String resp = repo.readObjectAsLiteral(this.uri, predicate);
         return (resp != null) ? Integer.parseInt(resp) : -1;
     }
@@ -218,9 +218,9 @@ public class EFDCategory {
         // Remove level, category count and article count literals about category.
         URI levelPred = new URIImpl(EFDTaxonomy.EFD_LEVEL);
         repo.removeStatementWithLiteral(this.uri, levelPred, null);
-        URI descCatPred = new URIImpl(EFDTaxonomy.EFD_DESC_NUM);
+        URI descCatPred = new URIImpl(EFDTaxonomy.EFD_DESC_CNT);
         repo.removeStatementWithLiteral(this.uri, descCatPred, null);
-        URI descArtPred = new URIImpl(EFDTaxonomy.EFD_ART_NUM);
+        URI descArtPred = new URIImpl(EFDTaxonomy.EFD_DESC_ART_CNT);
         repo.removeStatementWithLiteral(this.uri, descArtPred, null);
     }
     

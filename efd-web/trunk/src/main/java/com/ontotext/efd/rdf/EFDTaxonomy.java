@@ -33,7 +33,8 @@ public interface EFDTaxonomy {
     
     String EFD_IRRELEVANT = EFD + "notRelevant";
     String EFD_LEVEL = EFD + "treeLevel";
-    String EFD_ART_NUM = EFD + "articleCount";
-    String EFD_DESC_NUM = EFD + "descendantCount";
+    String EFD_LOC_ART_CNT = EFD + "localArticleCount";
+    String EFD_DESC_ART_CNT = EFD + "descArticleCount";
+    String EFD_DESC_CNT = EFD + "descendantCount";
     String EFD_CHILD = EFD + "child";
 }

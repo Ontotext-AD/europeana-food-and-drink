@@ -36,7 +36,6 @@
 			callback: {
 				beforeDrag: beforeDrag,
 				beforeRemove: beforeRemove,
-				beforeRename: beforeRename,
 				onRemove: onRemove
 			}
 		};
@@ -65,6 +64,13 @@
 			return confirm("Confirm delete node '" + treeNode.name + "' it?");
 		}
 		function onRemove(e, treeId, treeNode) {
+
+			$.ajax({
+				url: "/remove?category=http://dbpedia.org/resource/" + treeNode.name
+			}).done(function (data) {
+				if(data.length != 0) alert("Exception occur");
+			});
+
 			showLog("[ "+getTime()+" onRemove ]&nbsp;&nbsp;&nbsp;&nbsp; " + treeNode.name);
 		}
 		function beforeRename(treeId, treeNode, newName) {
@@ -171,6 +177,7 @@
 				$.each(localArticles, function(i, val){
 					arr[arrCount++] = {id: counter++, pId: obj.treeLevel + 1, name: val.localName};
 				})
+
 			}
 			else {
 				var children = obj.children;
@@ -189,27 +196,26 @@ var nodeID;
 		function newNodes(objId) {
 			nodeID = objId;
 			var title = $("#" + objId).attr("title");
+			var treeObj = $.fn.zTree.getZTreeObj("treeDemo");
+			var selectedNode = treeObj.getSelectedNodes()[0];
+			if(selectedNode.isParent != undefined && !selectedNode.isParent) {
+				$.ajax({
+					url: "/jdummy?category=http://dbpedia.org/resource/" + title
+				}).done(function (data) {
+					zNod = createDummy(data, selectedNode.id );
+					zNod = treeObj.addNodes(treeObj.getSelectedNodes()[0], zNod, false)
 
-			$.ajax({
-				url: "/jdummy?category=http://dbpedia.org/resource/" + title
-			}).done(function (data) {
-
-				var treeObj = $.fn.zTree.getZTreeObj("treeDemo");
-				zNod = createDummy(data, treeObj.getSelectedNodes()[0].id );
-				zNod = treeObj.addNodes(treeObj.getSelectedNodes()[0], zNod, false)
-
-
-
-			});
-		}
+				});
+			};
+		};
 
 		//-->
 	</SCRIPT>
 </HEAD>
 
 <BODY>
-<h1>Edit Nodes - zTree methods</h1>
-<h6>[ File Path: exedit/edit_fun.html ]</h6>
+<%--<h1>Edit Nodes - zTree methods</h1>--%>
+<%--<h6>[ File Path: exedit/edit_fun.html ]</h6>--%>
 <div class="content_wrap">
 	<div class="zTreeDemoBackground left">
 		<ul id="treeDemo" class="ztree"></ul>

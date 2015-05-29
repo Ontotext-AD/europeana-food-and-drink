@@ -14,7 +14,7 @@ public class EFDCategoryTest {
 
     @Test
     public void test() {
-        EFDCategory cat = new EFDCategory(new URIImpl(EFDTaxonomy.DBCAT + "Beer_logos"));
+        EFDCategory cat = new EFDCategory(new URIImpl(EFDTaxonomy.DBCAT + "Turkish_cuisine"));
         System.out.println("Pref label: " + cat.getPrefLabel());
         System.out.println("Tree level: " + cat.getTreeLevel());
         System.out.print("Parents: ");
@@ -23,8 +23,8 @@ public class EFDCategoryTest {
         }
         System.out.println();
         System.out.print("Children: ");
-        for (URI child : cat.getChildren()) {
-            System.out.print(child.toString() + "  ");
+        for (EFDChild child : cat.getChildren()) {
+            System.out.print(child.getUri() + "(" + child.getArtCount() + ")  ");
         }
         System.out.println();
         System.out.print("Articles: ");

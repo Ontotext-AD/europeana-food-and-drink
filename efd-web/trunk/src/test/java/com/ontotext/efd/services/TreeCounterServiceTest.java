@@ -24,7 +24,11 @@ public class TreeCounterServiceTest {
         
         URI root = factory.createURI(EFDTaxonomy.DBCAT  + "Food_and_drink");
         try {
+            long sT = System.currentTimeMillis();
             counter.calculateTreeStats(root);
+            long eT = System.currentTimeMillis();
+            System.out.print("Performed all currently enabled tree counting in ");
+            System.out.println((eT-sT)/1000 + " seconds.");
         } catch (RepositoryException e) {
             System.err.println("Failed to calculate tree stats.");
             e.printStackTrace();

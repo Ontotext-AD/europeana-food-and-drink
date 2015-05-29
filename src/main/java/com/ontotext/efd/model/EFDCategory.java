@@ -1,5 +1,6 @@
 package com.ontotext.efd.model;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import org.openrdf.model.URI;
@@ -16,7 +17,7 @@ public class EFDCategory {
     private int level;
     private String prefLabel;
     private Set<URI> parents;
-    private Set<URI> children;
+    private Set<EFDChild> children;
     private Set<URI> localArticles;
     private int descCategoryCount;
     private int descArticleCount;
@@ -53,11 +54,11 @@ public class EFDCategory {
         this.parents = parents;
     }
     
-    public Set<URI> getChildren() {
+    public Set<EFDChild> getChildren() {
         return children;
     }
     
-    public void setChildren(Set<URI> children) {
+    public void setChildren(Set<EFDChild> children) {
         this.children = children;
     }
     
@@ -93,7 +94,8 @@ public class EFDCategory {
     private int retrieveLevel(EFDRepositoryConnection repo) {
         URI pred = new URIImpl(EFDTaxonomy.EFD_LEVEL);
         String resp = repo.readObjectAsLiteral(this.uri, pred);
-        return (resp != null) ? Integer.parseInt(resp) : -1;
+        Double d = Double.parseDouble(resp);
+        return (resp != null) ? d.intValue() : -1;
     }
     
     /**
@@ -121,10 +123,17 @@ public class EFDCategory {
      * @param repo 
      * @return
      */
-    private Set<URI> retrieveChildren(EFDRepositoryConnection repo) {
-        URI predicate = new URIImpl(EFDTaxonomy.EFD_CHILD);
-        Set<URI> children = repo.readObjectsAsURI(this.uri, predicate);
-        return children;
+    private Set<EFDChild> retrieveChildren(EFDRepositoryConnection repo) {
+        URI predChild = new URIImpl(EFDTaxonomy.EFD_CHILD);
+        URI predCount = new URIImpl(EFDTaxonomy.EFD_DESC_ART_CNT);
+        Set<URI> children = repo.readObjectsAsURI(this.uri, predChild);
+        Set<EFDChild> childrenFull = new HashSet<EFDChild>();
+        for (URI child : children) {
+            String cntStr = repo.readObjectAsLiteral(child, predCount);
+            double cnt = Double.parseDouble(cntStr);
+            childrenFull.add(new EFDChild(child, cnt));
+        }
+        return childrenFull;
     }
     
     /**
@@ -161,7 +170,8 @@ public class EFDCategory {
     private int retrieveArtCount(EFDRepositoryConnection repo) {
         URI predicate = new URIImpl(EFDTaxonomy.EFD_DESC_ART_CNT);
         String resp = repo.readObjectAsLiteral(this.uri, predicate);
-        return (resp != null) ? Integer.parseInt(resp) : -1;
+        Double d = Double.parseDouble(resp);
+        return (resp != null) ? d.intValue() : -1;
     }
     
     /**

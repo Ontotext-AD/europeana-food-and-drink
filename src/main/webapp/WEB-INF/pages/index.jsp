@@ -61,7 +61,7 @@
 		function beforeRemove(treeId, treeNode) {
 			className = (className === "dark" ? "":"dark");
 			showLog("[ "+getTime()+" beforeRemove ]&nbsp;&nbsp;&nbsp;&nbsp; " + treeNode.name);
-			return confirm("Confirm delete node '" + treeNode.name + "' it?");
+//			return confirm("Confirm delete node '" + treeNode.name + "' it?");
 		}
 		function onRemove(e, treeId, treeNode) {
 
@@ -151,7 +151,7 @@
 
 		$(document).ready(function(){
 			$.ajax({
-				url: "/jdummy?category=http://dbpedia.org/resource/Category:Food_and_drink"
+				url: "/tree/jdummy?category=http://dbpedia.org/resource/Category:${category}"
 			}).done(function (data) {
 				zNodes = createDummy(data, null);
 				$.fn.zTree.init($("#treeDemo"), setting, zNodes);
@@ -161,8 +161,56 @@
 				$("#remove").bind("click", remove);
 				$("#clearChildren").bind("click", clearChildren);
 
+
 			});
+
+//			$("#treeDemo_1_a").bind('click', function(){
+//				alert('kur da ti eba makata')
+//			});
+
+
+			$("#treeDemo_1_a").promise().done(function(){
+				var myChecker = setInterval(function () {
+					if ($("#treeDemo_1_a").length > 0) {
+//						alert('kur da ti eba makata')
+						$("#treeDemo_1_span").dblclick();
+//						alert('e');
+
+						$("#treeDemo_1_span").bind('click', function(){
+							attack();
+						});
+						$("#treeDemo_1_span").click();
+						clearInterval(myChecker);
+
+					}
+					else {
+					}
+				}, 500);
+
+			});
+
 		});
+
+		$("#treeDemo_1_span").click(function () {
+			alert('oio')
+		})
+
+		function attack(){
+			$('#treeDemo_1_ul').each(function(){
+				$(this).find('li').each(function(){
+					var current = $(this);
+					var ch = current.find('a').children();
+
+					console.log(ch.text());
+					if(ch.text().search('Category') == 0) {
+						var icon = ch[0];
+//						icon.attr('class', 'button ico_close');
+						$(icon).attr('class', 'button ico_close');
+					}
+				});
+			});
+		}
+
 
 		function createDummy(obj, parentNodeId) {
 			var arr = [];
@@ -170,9 +218,9 @@
 			var children = obj.children;
 			var localArticles = obj.localArticles;
 			if (parentNodeId == null) {
-				arr[arrCount++] = {id: obj.treeLevel + 1, pId: obj.treeLevel, name: obj.prefLabel };
+				arr[arrCount++] = {id: obj.treeLevel + 1, pId: obj.treeLevel, name: obj.prefLabel + " , articles:" + obj.descArticleCount };
 				$.each(children, function(i, val){
-					arr[arrCount++] = {id: counter++, pId: obj.treeLevel + 1, name: val.localName, click: "newNodes(this.id)"};
+					arr[arrCount++] = {id: counter++, pId: obj.treeLevel + 1, name: val.uri.localName + ", articles:" + val.artCount , click: "newNodes(this.id)"};
 				})
 				$.each(localArticles, function(i, val){
 					arr[arrCount++] = {id: counter++, pId: obj.treeLevel + 1, name: val.localName};
@@ -182,7 +230,7 @@
 			else {
 				var children = obj.children;
 				$.each(children, function(i, val){
-					arr[arrCount++] = {id: counter++, pId: parentNodeId, name: val.localName, click: "newNodes(this.id)"};
+					arr[arrCount++] = {id: counter++, pId: parentNodeId, name: val.uri.localName + ", articles:" + val.artCount , click: "newNodes(this.id)"};
 				})
 				$.each(localArticles, function(i, val){
 					arr[arrCount++] = {id: counter++, pId: parentNodeId, name: val.localName};
@@ -200,13 +248,14 @@ var nodeID;
 			var selectedNode = treeObj.getSelectedNodes()[0];
 			if(selectedNode.isParent != undefined && !selectedNode.isParent) {
 				$.ajax({
-					url: "/jdummy?category=http://dbpedia.org/resource/" + title
+					url: "/tree/jdummy?category=http://dbpedia.org/resource/" + title
 				}).done(function (data) {
 					zNod = createDummy(data, selectedNode.id );
 					zNod = treeObj.addNodes(treeObj.getSelectedNodes()[0], zNod, false)
-
+					attack();
 				});
 			};
+		attack();
 		};
 
 		//-->

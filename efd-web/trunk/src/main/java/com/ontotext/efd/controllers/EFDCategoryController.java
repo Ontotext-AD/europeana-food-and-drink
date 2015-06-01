@@ -24,9 +24,10 @@ public class EFDCategoryController {
 	EFDRepositoryConnection efdRepositoryConnection;
 
 
-	@RequestMapping(method = RequestMethod.GET)
-	public String printWelcome(ModelMap model) {
+	@RequestMapping(method = RequestMethod.GET, params = "category")
+	public String printWelcome(ModelMap model, @RequestParam("category") String category) {
 
+		model.addAttribute("category", category);
 		return "index";
 	}
 
@@ -36,8 +37,9 @@ public class EFDCategoryController {
 		long end = 0;
 		double result = 0;
 
+
 		start = new Date().getTime();
-		EFDCategory efdCategory = new EFDCategory(new URIImpl(category));
+		EFDCategory efdCategory = new EFDCategory(new URIImpl(category.split(",")[0]));
 		end = new Date().getTime();
 
 		result = (end - start);

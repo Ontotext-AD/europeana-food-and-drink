@@ -66,7 +66,7 @@
 		function onRemove(e, treeId, treeNode) {
 
 			$.ajax({
-				url: "/remove?category=http://dbpedia.org/resource/" + treeNode.name
+				url: "/tree/remove?category=http://dbpedia.org/resource/" + treeNode.name
 			}).done(function (data) {
 				if(data.length != 0) alert("Exception occur");
 			});
@@ -164,18 +164,11 @@
 
 			});
 
-//			$("#treeDemo_1_a").bind('click', function(){
-//				alert('kur da ti eba makata')
-//			});
-
 
 			$("#treeDemo_1_a").promise().done(function(){
 				var myChecker = setInterval(function () {
 					if ($("#treeDemo_1_a").length > 0) {
-//						alert('kur da ti eba makata')
 						$("#treeDemo_1_span").dblclick();
-//						alert('e');
-
 						$("#treeDemo_1_span").bind('click', function(){
 							attack();
 						});
@@ -191,10 +184,6 @@
 
 		});
 
-		$("#treeDemo_1_span").click(function () {
-			alert('oio')
-		})
-
 		function attack(){
 			$('#treeDemo_1_ul').each(function(){
 				$(this).find('li').each(function(){
@@ -204,7 +193,6 @@
 					console.log(ch.text());
 					if(ch.text().search('Category') == 0) {
 						var icon = ch[0];
-//						icon.attr('class', 'button ico_close');
 						$(icon).attr('class', 'button ico_close');
 					}
 				});
@@ -220,7 +208,7 @@
 			if (parentNodeId == null) {
 				arr[arrCount++] = {id: obj.treeLevel + 1, pId: obj.treeLevel, name: obj.prefLabel + " , articles:" + obj.descArticleCount };
 				$.each(children, function(i, val){
-					arr[arrCount++] = {id: counter++, pId: obj.treeLevel + 1, name: val.uri.localName + ", articles:" + val.artCount , click: "newNodes(this.id)"};
+					arr[arrCount++] = {id: counter++, pId: obj.treeLevel + 1, name: val.uri.localName + ", articles:" + val.artCount , click: "newNodes(this)"};
 				})
 				$.each(localArticles, function(i, val){
 					arr[arrCount++] = {id: counter++, pId: obj.treeLevel + 1, name: val.localName};
@@ -230,7 +218,7 @@
 			else {
 				var children = obj.children;
 				$.each(children, function(i, val){
-					arr[arrCount++] = {id: counter++, pId: parentNodeId, name: val.uri.localName + ", articles:" + val.artCount , click: "newNodes(this.id)"};
+					arr[arrCount++] = {id: counter++, pId: parentNodeId, name: val.uri.localName + ", articles:" + val.artCount , click: "newNodes(this)"};
 				})
 				$.each(localArticles, function(i, val){
 					arr[arrCount++] = {id: counter++, pId: parentNodeId, name: val.localName};
@@ -242,10 +230,10 @@
 
 var nodeID;
 		function newNodes(objId) {
-			nodeID = objId;
-			var title = $("#" + objId).attr("title");
+			nodeID = objId.id;
+			var title = objId.title;
 			var treeObj = $.fn.zTree.getZTreeObj("treeDemo");
-			var selectedNode = treeObj.getSelectedNodes()[0];
+			var selectedNode = treeObj.getNodeByTId($(objId).parent().attr('id'));
 			if(selectedNode.isParent != undefined && !selectedNode.isParent) {
 				$.ajax({
 					url: "/tree/jdummy?category=http://dbpedia.org/resource/" + title
@@ -255,7 +243,6 @@ var nodeID;
 					attack();
 				});
 			};
-		attack();
 		};
 
 		//-->

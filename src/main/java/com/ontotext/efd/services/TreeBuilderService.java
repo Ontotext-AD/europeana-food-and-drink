@@ -118,7 +118,7 @@ public class TreeBuilderService {
         
         TreeBuildingCat cat = tree.addCandidate(name, level);
         long stime = System.currentTimeMillis();
-        repoConn.queueAddStatement(name, predLevel, Integer.toString(level));
+        repoConn.queueAddStatement(name, predLevel, level);
         timeForDb += System.currentTimeMillis() - stime;
         return cat;
     }

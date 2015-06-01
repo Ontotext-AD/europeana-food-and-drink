@@ -1,7 +1,6 @@
 package com.ontotext.efd.model;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import org.openrdf.model.URI;
 import org.openrdf.model.impl.URIImpl;
@@ -17,7 +16,7 @@ public class EFDCategory {
     private int level;
     private String prefLabel;
     private Set<URI> parents;
-    private Set<EFDChild> children;
+    private List<EFDChild> children;
     private Set<URI> localArticles;
     private int descCategoryCount;
     private int descArticleCount;
@@ -54,11 +53,11 @@ public class EFDCategory {
         this.parents = parents;
     }
     
-    public Set<EFDChild> getChildren() {
+    public List<EFDChild> getChildren() {
         return children;
     }
     
-    public void setChildren(Set<EFDChild> children) {
+    public void setChildren(List<EFDChild> children) {
         this.children = children;
     }
     
@@ -123,16 +122,17 @@ public class EFDCategory {
      * @param repo 
      * @return
      */
-    private Set<EFDChild> retrieveChildren(EFDRepositoryConnection repo) {
+    private List<EFDChild> retrieveChildren(EFDRepositoryConnection repo) {
         URI predChild = new URIImpl(EFDTaxonomy.EFD_CHILD);
         URI predCount = new URIImpl(EFDTaxonomy.EFD_DESC_ART_CNT);
         Set<URI> children = repo.readObjectsAsURI(this.uri, predChild);
-        Set<EFDChild> childrenFull = new HashSet<EFDChild>();
+        List<EFDChild> childrenFull = new ArrayList<>();
         for (URI child : children) {
             String cntStr = repo.readObjectAsLiteral(child, predCount);
-            double cnt = Double.parseDouble(cntStr);
-            childrenFull.add(new EFDChild(child, cnt));
+            Double cnt = Double.parseDouble(cntStr);
+            childrenFull.add(new EFDChild(child, cnt.intValue()));
         }
+        Collections.sort(childrenFull);
         return childrenFull;
     }
     

@@ -46,7 +46,7 @@ public class TreeCounterService {
         // TODO: Allow these variables to be set by the user.
         this.calcCategoryLevel = true;
         this.countDescArticles = true;
-        this.countDescCategories = false;
+        this.countDescCategories = true;
     }
     
     public void calculateTreeStats(URI root) throws RepositoryException {

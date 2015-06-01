@@ -240,7 +240,7 @@ public class EFDRepositoryConnection {
      * @param p URI predicate
      * @param l Double literal
      */
-    public void queueAddStatement(URI s, URI p, double l) {
+    public void queueAddStatement(URI s, URI p, Double l) {
         ValueFactory factory = ValueFactoryImpl.getInstance();
         queueAddStatement(s, p, factory.createLiteral(l));
     }

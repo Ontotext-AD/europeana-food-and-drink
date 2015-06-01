@@ -93,8 +93,7 @@ public class EFDCategory {
     private int retrieveLevel(EFDRepositoryConnection repo) {
         URI pred = new URIImpl(EFDTaxonomy.EFD_LEVEL);
         String resp = repo.readObjectAsLiteral(this.uri, pred);
-        Double d = Double.parseDouble(resp);
-        return (resp != null) ? d.intValue() : -1;
+        return (resp != null) ? Integer.parseInt(resp) : -1;
     }
     
     /**
@@ -170,8 +169,11 @@ public class EFDCategory {
     private int retrieveArtCount(EFDRepositoryConnection repo) {
         URI predicate = new URIImpl(EFDTaxonomy.EFD_DESC_ART_CNT);
         String resp = repo.readObjectAsLiteral(this.uri, predicate);
-        Double d = Double.parseDouble(resp);
-        return (resp != null) ? d.intValue() : -1;
+        if (resp != null) {
+            Double d = Double.parseDouble(resp);
+            return d.intValue();
+        }
+        return -1;
     }
     
     /**

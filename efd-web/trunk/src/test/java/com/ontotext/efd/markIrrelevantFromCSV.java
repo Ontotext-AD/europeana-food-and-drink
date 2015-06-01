@@ -22,7 +22,7 @@ public class markIrrelevantFromCSV {
         String line;
         String cvsDelim = ",";
         List<String> cats = new LinkedList<String>();
-        BufferedReader br = new BufferedReader(new FileReader("/home/atagarev/test/efd/Level4-judgements.csv"));
+        BufferedReader br = new BufferedReader(new FileReader("/home/atagarev/test/efd/judgementsTop250Cats.csv"));
         br.readLine(); // Discard first line.
         while ((line = br.readLine()) != null) {
             String[] tokens = line.split(cvsDelim);

@@ -14,7 +14,7 @@ public class EFDCategoryTest {
 
     @Test
     public void test() {
-        EFDCategory cat = new EFDCategory(new URIImpl(EFDTaxonomy.DBCAT + "Turkish_cuisine"));
+        EFDCategory cat = new EFDCategory(new URIImpl(EFDTaxonomy.DBCAT + "Armenian_cuisine"));
         System.out.println("Pref label: " + cat.getPrefLabel());
         System.out.println("Tree level: " + cat.getTreeLevel());
         System.out.print("Parents: ");
@@ -35,13 +35,13 @@ public class EFDCategoryTest {
         System.out.println("Descended categories: " + cat.getDescCategoryCount());
         System.out.println("Descended articles: " + cat.getDescArticleCount());
         
-        URI topic = new URIImpl(EFDTaxonomy.DBCAT + "SomethingTotallyUnrelatedToBeer");
+        cat  = new EFDCategory(new URIImpl(EFDTaxonomy.DBCAT + "SomethingTotallyUnrelatedToEFD"));
         boolean irrelevant = cat.isIrrelevant();
         assertTrue("Category is marked as irrelevant from the start!", !irrelevant);
         System.out.println("Category correctly idetified as relevant.");
         
         try {
-            cat.markAsIrrelevant(topic);
+            cat.markAsIrrelevant(new URIImpl(EFDTaxonomy.EFD_ANNOTATOR_AUTOMATED));
         } catch (RepositoryException e) {
             System.err.println("Failed to mark topic as irrelevant.");
             e.printStackTrace();
@@ -51,7 +51,7 @@ public class EFDCategoryTest {
         assertTrue("Category is marked as relevant when it shouldn't be!", irrelevant);
         System.out.println("Category succesfully marked as irrelevant.");
         
-        cat.markAsRelevant(topic);
+        cat.markAsRelevant(new URIImpl(EFDTaxonomy.EFD_ANNOTATOR_AUTOMATED));
         irrelevant = cat.isIrrelevant();
         assertTrue("Category is marked as irrelevant when it shouldn't be", !irrelevant);
         System.out.println("Irrelevant marking has been successfully removed.");

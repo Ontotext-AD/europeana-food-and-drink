@@ -14,7 +14,7 @@ public class EFDCategoryTest {
 
     @Test
     public void test() {
-        EFDCategory cat = new EFDCategory(new URIImpl(EFDTaxonomy.DBCAT + "Armenian_cuisine"));
+        EFDCategory cat = new EFDCategory(new URIImpl(EFDTaxonomy.DBCAT + "Turkish_cuisine"));
         System.out.println("Pref label: " + cat.getPrefLabel());
         System.out.println("Tree level: " + cat.getTreeLevel());
         System.out.print("Parents: ");

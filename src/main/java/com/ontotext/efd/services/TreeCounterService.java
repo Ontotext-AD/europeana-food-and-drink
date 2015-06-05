@@ -25,10 +25,17 @@ public class TreeCounterService {
     private URI localArtCntPred;
     private URI descArtCntPred;
     private URI descCatCntPred;
+    private URI localEvdCntPred;
+    private URI evdScore1Pred;
+    private URI evdScore2Pred;
     
     private boolean calcCategoryLevel;
     private boolean countDescArticles;
     private boolean countDescCategories;
+    private boolean propagateEvidence;
+    
+    private static final double decay1 = 0.8;
+    private static final double decay2 = 0.7;
     
     private int nextId;
     private Map<URI, Integer> uriToCatIdMap;
@@ -42,11 +49,15 @@ public class TreeCounterService {
         this.localArtCntPred = factory.createURI(EFDTaxonomy.EFD_LOC_ART_CNT);
         this.descArtCntPred = descArtCntPred;
         this.descCatCntPred = descCatCntPred;
+        this.localEvdCntPred = factory.createURI(EFDTaxonomy.EFD_LOC_EVD_CNT);
+        this.evdScore1Pred = factory.createURI(EFDTaxonomy.EFD_EVD_PROP_1);
+        this.evdScore2Pred = factory.createURI(EFDTaxonomy.EFD_EVD_PROP_2);
         
         // TODO: Allow these variables to be set by the user.
         this.calcCategoryLevel = true;
         this.countDescArticles = true;
         this.countDescCategories = true;
+        this.propagateEvidence = true;
     }
     
     public void calculateTreeStats(URI root) throws RepositoryException {
@@ -59,7 +70,9 @@ public class TreeCounterService {
             calculateLevels(root);
         if (countDescArticles)
             loadLocalArticleCounts();
-        if (countDescArticles || countDescCategories)
+        if (propagateEvidence)
+            loadLocalEvidenceCounts();
+        if (countDescArticles || countDescCategories || propagateEvidence)
             calculateDescendants();
     }
     
@@ -150,6 +163,20 @@ public class TreeCounterService {
         }
     }
     
+    
+    private void loadLocalEvidenceCounts() {
+        List<URIIntPair> r = repoConn.readIntStatementsWithPredicate(localEvdCntPred);
+        for (URIIntPair p : r) {
+            URI catUri = p.getSubject();
+            int count = p.getObject();
+            Integer catId = uriToCatIdMap.get(catUri);
+            if (catId != null) {
+                TreeCountingCat cat = idToCatMap.get(catId);
+                cat.setLocalEvidenceCount(count);
+            }
+        }
+    }
+    
     /**
      * Function that performs bottom up counting of both the number of
      * descended categories (unique descended categories by id but
@@ -162,6 +189,8 @@ public class TreeCounterService {
     private void calculateDescendants() throws RepositoryException {
         repoConn.removeStatementsWithPredicate(descArtCntPred);
         repoConn.removeStatementsWithPredicate(descCatCntPred);
+        repoConn.removeStatementsWithPredicate(evdScore1Pred);
+        repoConn.removeStatementsWithPredicate(evdScore2Pred);
         
         Queue<Integer> queue = new LinkedList<Integer>();
         
@@ -180,9 +209,13 @@ public class TreeCounterService {
             TreeCountingCat leaf = idToCatMap.get(leafId);            
             double contrib = leaf.getArticleCount() / leaf.getParents().size();
             int descCount = leaf.getDescendantCount();
+            double localS1 = 1.0 - Math.pow(Math.E, -leaf.getLocalEvidenceCount());
+            double inherS1 = leaf.getEvidenceScore1();
+            double s1 = (localS1 > inherS1) ? localS1 : inherS1;
+            double s2 = leaf.getLocalEvidenceCount() + leaf.getEvidenceScore2();
             
             // Mark category as processed with all parents and add
-            // and parents with no unprocessed children to the queue.
+            // parents with no unprocessed children to the queue.
             for (Integer parId : leaf.getParents()) {
                 TreeCountingCat par = idToCatMap.get(parId);
                 par.removeChild(leafId);
@@ -194,6 +227,21 @@ public class TreeCounterService {
                 // Perform descended article counting (resource intensive).
                 if (countDescCategories)
                     par.addDescendants(leaf.getDescendants());
+                
+                // Perform evidence propagation.
+                if (propagateEvidence) {
+                    // Evidence propagation with first approach.
+                    double ps1 = par.getEvidenceScore1();
+                    if (ps1 < s1*decay1)
+                        par.setEvidenceScore1(s1*decay1);
+                    
+                    // Evidence propagation with second approach
+                    double ps2 = par.getEvidenceScore2();
+                    if (par.getTreeLevel() < leaf.getTreeLevel())
+                        par.setEvidenceScore2(ps2 + s2);
+                    else if (par.getTreeLevel() == leaf.getTreeLevel())
+                        par.setEvidenceScore2(ps2 + decay2*s2);
+                }
 
                 if (!par.hasUnprocessedChildren())
                     queue.add(parId);
@@ -203,6 +251,10 @@ public class TreeCounterService {
             if (countDescCategories) {
                 repoConn.queueAddStatement(leaf.getUri(), descCatCntPred, descCount);
                 leaf.purgeDescendants(); // Saves memory space.
+            }
+            if (propagateEvidence) {
+                repoConn.queueAddStatement(leaf.getUri(), evdScore1Pred, s1);
+                repoConn.queueAddStatement(leaf.getUri(), evdScore2Pred, s2);
             }
         }
         repoConn.flushWriteQueue();

@@ -37,4 +37,7 @@ public interface EFDTaxonomy {
     String EFD_DESC_ART_CNT = EFD + "descArticleCount";
     String EFD_DESC_CNT = EFD + "descendantCount";
     String EFD_CHILD = EFD + "child";
+    String EFD_LOC_EVD_CNT = EFD + "localEvidenceCount";
+    String EFD_EVD_PROP_1 = EFD + "evidenceScore1";
+    String EFD_EVD_PROP_2 = EFD + "evidenceScore2";
 }

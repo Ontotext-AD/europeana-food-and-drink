@@ -18,6 +18,10 @@ public class TreeCountingCat {
     private List<Integer> children;
     private Set<Integer> descendants;
     
+    private int evidenceCount;
+    private double evidenceScore1;
+    private double evidenceScore2;
+    
     boolean processedForTreeLevel;
 
     public TreeCountingCat(int id, URI uri) {
@@ -25,6 +29,9 @@ public class TreeCountingCat {
         this.uri = uri;
         this.treeLevel = -1;
         this.articleCount = 0;
+        this.evidenceCount = 0;
+        this.evidenceScore1 = 0;
+        this.evidenceScore2 = 0;
         this.parents = new LinkedList<Integer>();
         this.children = new LinkedList<Integer>();
         this.descendants = new HashSet<Integer>();
@@ -85,6 +92,33 @@ public class TreeCountingCat {
     
     public double getArticleCount() {
         return articleCount;
+    }
+    
+    /*
+     * These functions deal with evidence scores and propagation.
+     */
+    public void setLocalEvidenceCount(int evidenceCount) {
+        this.evidenceCount = evidenceCount;
+    }
+    
+    public int getLocalEvidenceCount() {
+        return evidenceCount;
+    }
+    
+    public void setEvidenceScore1(double score) {
+        this.evidenceScore1 = score;
+    }
+    
+    public double getEvidenceScore1() {
+        return evidenceScore1;
+    }
+    
+    public void setEvidenceScore2(double score) {
+        this.evidenceScore2 = score;
+    }
+    
+    public double getEvidenceScore2() {
+        return evidenceScore2;
     }
     
     /*

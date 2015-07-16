@@ -51,7 +51,20 @@ public class EFDCategoryController {
 
 	@RequestMapping(value = "/remove", method = RequestMethod.GET, params = "category")
 	@ResponseBody public ResponseEntity<String> removeNode(@RequestParam("category") String category, HttpServletResponse response) {
-		EFDCategory efdCategory = new EFDCategory(new URIImpl(category));
+		String cat[] = category.split(",");
+		String recreateCat = "";
+		if (cat.length > 1) {
+			String uri[] =  cat[0].split("/");
+			uri[uri.length - 1] = "Category:" + uri[uri.length - 1].replaceAll(" ", "_");
+			for(String part : uri) {
+				if (part.equals("http:")) recreateCat +=  part;
+				else recreateCat += "/" +  part;
+			}
+		}
+		else {
+			recreateCat = cat[0].replaceAll(" ", "_");
+		}
+		EFDCategory efdCategory = new EFDCategory(new URIImpl(recreateCat));
 
 		try {
 			efdCategory.markAsIrrelevant(new URIImpl(EFDTaxonomy.EFD_ANNOTATOR_MANUAL));

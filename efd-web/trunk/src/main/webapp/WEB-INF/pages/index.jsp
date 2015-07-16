@@ -5,7 +5,7 @@
 	<%--<c:set var="contextPath" value="${pageContext.request.contextPath}"/>--%>
 
 
-	<TITLE> ZTREE DEMO - addNodes / editName / removeNode / removeChildNodes</TITLE>
+	<TITLE>Europeana Food and Drink Category Tool</TITLE>
 	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
 	<link rel="stylesheet" href="resources/css/demo.css" type="text/css">
 	<link rel="stylesheet" href="resources/css/zTreeStyle/zTreeStyle.css" type="text/css">
@@ -191,7 +191,7 @@
 					var ch = current.find('a').children();
 
 					console.log(ch.text());
-					if(ch.text().search('Category') == 0) {
+					if(ch.text().search('articles:') > 0) {
 						var icon = ch[0];
 						$(icon).attr('class', 'button ico_close');
 					}
@@ -208,40 +208,60 @@
 			if (parentNodeId == null) {
 				arr[arrCount++] = {id: obj.treeLevel + 1, pId: obj.treeLevel, name: obj.prefLabel + " , articles:" + obj.descArticleCount };
 				$.each(children, function(i, val){
-					arr[arrCount++] = {id: counter++, pId: obj.treeLevel + 1, name: val.uri.localName + ", articles:" + val.artCount , click: "newNodes(this)"};
+					arr[arrCount++] = {id: counter++, pId: obj.treeLevel + 1, name: processCategoryTitle(val.uri.localName) + ", articles:" + val.artCount , click: "newNodes(this)"};
 				})
 				$.each(localArticles, function(i, val){
-					arr[arrCount++] = {id: counter++, pId: obj.treeLevel + 1, name: val.localName};
+					arr[arrCount++] = {id: counter++, pId: obj.treeLevel + 1, name: removeUnderscores(val.localName)};
 				})
 
 			}
 			else {
 				var children = obj.children;
 				$.each(children, function(i, val){
-					arr[arrCount++] = {id: counter++, pId: parentNodeId, name: val.uri.localName + ", articles:" + val.artCount , click: "newNodes(this)"};
+					arr[arrCount++] = {id: counter++, pId: parentNodeId, name: processCategoryTitle(val.uri.localName) + ", articles:" + val.artCount , click: "newNodes(this)"};
 				})
 				$.each(localArticles, function(i, val){
-					arr[arrCount++] = {id: counter++, pId: parentNodeId, name: val.localName};
+					arr[arrCount++] = {id: counter++, pId: parentNodeId, name: removeUnderscores(val.localName)};
 				})
 			}
 
 			return arr;
 		};
 
+		function processCategoryTitle(obj) {
+			var newTitle = obj.split(':')[1];
+			return newTitle.replace(/_/g, ' ');
+		//	return newTitle;
+		}
+
+		function revertCategoryTitle(obj) {
+			var newTitle = obj.split(',');
+			var category = newTitle[0];
+			return category.replace(/ /g, '_') + ', ' + newTitle[1];
+		}
+
+		function removeUnderscores(obj) {
+			return  obj.replace(/_/g, ' ');
+		}
+
 var nodeID;
 		function newNodes(objId) {
 			nodeID = objId.id;
-			var title = objId.title;
+			var title = revertCategoryTitle(objId.title);
+
+
 			var treeObj = $.fn.zTree.getZTreeObj("treeDemo");
 			var selectedNode = treeObj.getNodeByTId($(objId).parent().attr('id'));
 			if(selectedNode.isParent != undefined && !selectedNode.isParent) {
 				$.ajax({
-					url: "/tree/jdummy?category=http://dbpedia.org/resource/" + title
+					url: "/tree/jdummy?category=http://dbpedia.org/resource/Category:" + title
 				}).done(function (data) {
 					zNod = createDummy(data, selectedNode.id );
 					zNod = treeObj.addNodes(treeObj.getSelectedNodes()[0], zNod, false)
 					attack();
 				});
+			} else {
+				treeObj.expandNode(selectedNode, true, true, true)
 			};
 		};
 
@@ -250,45 +270,12 @@ var nodeID;
 </HEAD>
 
 <BODY>
-<%--<h1>Edit Nodes - zTree methods</h1>--%>
-<%--<h6>[ File Path: exedit/edit_fun.html ]</h6>--%>
+
 <div class="content_wrap">
 	<div class="zTreeDemoBackground left">
 		<ul id="treeDemo" class="ztree"></ul>
 	</div>
-<%--	<div class="right">
-		<ul class="info">
-			<li class="title"><h2>1, Explanation of 'addNodes / editName / removeNode / removeChildNodes' method</h2>
-				<ul class="list">
-					<li>Use 'addNodes / editName / removeNode / removeChildNodes' method can also be achieved copy / move nodes.</li>
-					<li>Method 'cancelEditName' is effective, only when edit the node name. Please use it when necessary, this demo doesn't show how to use the method.</li>
-					<li class="highlight_red">Use setting.data.keep.parent / leaf attribute, you can lock the parent node and leaf node.</li>
-					<li><p>Try to edit node:<br/>
-						&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="callbackTrigger" checked /> Whether trigger the callback when execution removeNode() method.<br/>
-						&nbsp;&nbsp;&nbsp;&nbsp;[ <a id="addParent" href="#" title="add parent node" onclick="return false;">add parent node</a> ]
-						&nbsp;&nbsp;&nbsp;&nbsp;[ <a id="addLeaf" href="#" title="add leaf node" onclick="return false;">add leaf node</a> ]
-						&nbsp;&nbsp;&nbsp;&nbsp;[ <a id="edit" href="#" title="edit name" onclick="return false;">edit name</a> ]<br/>
-						&nbsp;&nbsp;&nbsp;&nbsp;[ <a id="remove" href="#" title="remove node" onclick="return false;">remove node</a> ]
-						&nbsp;&nbsp;&nbsp;&nbsp;[ <a id="clearChildren" href="#" title="make child nodes to empty" onclick="return false;">make child nodes to empty</a> ]<br/>
-						remove log:<br/>
-						<ul id="log" class="log"></ul></p>
-					</li>
-					<li class="highlight_red">How to use 'zTreeObj.addNodes / cancelEditName / editName / removeNode / removeChildNodes' method,  please see the API documentation.</li>
-				</ul>
-			</li>
-			<li class="title"><h2>2, Explanation of setting</h2>
-				<ul class="list">
-					<li>Same as 'Basic Edit Nodes'</li>
-					<li class="highlight_red">Lock the parent / leaf node status, need to set setting.data.keep.parent / leaf attribute, see the API documentation for more related contents</li>
-				</ul>
-			</li>
-			<li class="title"><h2>3, Explanation of treeNode</h2>
-				<ul class="list">
-					<li>Same as 'Basic Edit Nodes'</li>
-				</ul>
-			</li>
-		</ul>
-	</div>--%>
+
 </div>
 </BODY>
 </HTML>

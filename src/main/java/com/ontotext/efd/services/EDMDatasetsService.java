@@ -50,9 +50,9 @@ public class EDMDatasetsService {
         return repository;
     }
 
-    public List<Map<String, List<Value>>> getAllEDMObjects () {
+    public Map<String, Map<String, List<Value>>> getAllEDMObjects () {
         RepositoryConnection connection = null;
-        List<Map<String, List<Value>>> EDM = new ArrayList<>();
+        Map<String, Map<String, List<Value>>> EDM = new HashMap<>();
 
         try {
             connection = getRepositoryConnection().getConnection();
@@ -62,7 +62,7 @@ public class EDMDatasetsService {
             while (result.hasNext()){
                 BindingSet bindings = result.next();
                 String object = bindings.getBinding("s").getValue().stringValue();
-                EDM.add(getEDMObjectDetails(object));
+                EDM.put(object, getEDMObjectDetails(object));
             }
 
         } catch (RepositoryException e) {
@@ -82,9 +82,9 @@ public class EDMDatasetsService {
         return EDM;
     }
 
-    public List<Map<String, List<Value>>> getHornimanByProvider(String provider) {
+    public Map<String, Map<String, List<Value>>> getHornimanByProvider(String provider) {
         RepositoryConnection connection = null;
-        List<Map<String, List<Value>>> EDM = new ArrayList<>();
+        Map<String, Map<String, List<Value>>> EDM = new HashMap<>();
 
         try {
             connection = getRepositoryConnection().getConnection();
@@ -94,7 +94,7 @@ public class EDMDatasetsService {
             while (result.hasNext()){
                 BindingSet bindings = result.next();
                 String object = bindings.getBinding("s").getValue().stringValue();
-                EDM.add(getEDMObjectDetails(object));
+                EDM.put(object, getEDMObjectDetails(object));
             }
 
         } catch (RepositoryException e) {

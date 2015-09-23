@@ -2,60 +2,49 @@ package com.ontotext.efd.services;
 
 import com.ontotext.efd.EDMConstants;
 import org.openrdf.model.*;
+import org.openrdf.model.Value;
 import org.openrdf.query.*;
-import org.openrdf.repository.Repository;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
-import org.openrdf.repository.http.HTTPRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.*;
 
 /**
  * Created by boyan on 15-7-13.
  */
+@Service
 public class EDMDatasetsService {
 
-    private  String detailsTemplate = "prefix edm: <http://www.europeana.eu/schemas/edm/>\n" +
-            "construct {\n" +
-            "   ?s ?p ?o.\n" +
-            "   ?s ?x ?y.\n" +
-            "   ?a ?b ?s.\n" +
-            "   ?a ?x1 ?y1.\n" +
-            "\n" +
-            "} where {\n" +
-            "  bind(<$OBJ> as ?s)\n" +
-            "  {?s ?p edm:ProvidedCHO; ?x ?y.} union \n" +
-            "  {?a edm:aggregatedCHO ?s; ?x1 ?y1}\n" +
-            "\n" +
-            "} limit 100";
+    @org.springframework.beans.factory.annotation.Value("${edm.details.template}")
+    private  String detailsTemplate;
 
-    private String providedCHO = "SELECT * {?s rdf:type <http://www.europeana.eu/schemas/edm/ProvidedCHO>}";
+    @org.springframework.beans.factory.annotation.Value("${edm.providedCHO}")
+    private String providedCHO;
 
+    @org.springframework.beans.factory.annotation.Value("${cho.by.dataprovider}")
+    private String byDataProvider;
 
-    private String byDataProvider = "prefix edm: <http://www.europeana.eu/schemas/edm/>\n" +
-            "SELECT ?s {\n" +
-            "    ?s rdf:type <http://www.europeana.eu/schemas/edm/ProvidedCHO>.\n" +
-            "    ?aggregatedCHO  edm:aggregatedCHO ?s.\n" +
-            "    ?aggregatedCHO  edm:dataProvider \"$PROVIDER\"@en.\n" +
-            "    \n" +
-            "} ";
+    @Autowired
+    RepositoryConnectionService connectionService;
 
-    private Repository getRepositoryConnection(){
-        Repository repository = new HTTPRepository("http://192.168.130.19:8087/openrdf-sesame/", "test-insert");
-        try {
-            repository.initialize();
-        } catch (RepositoryException e) {
-            e.printStackTrace();
-        }
-        return repository;
-    }
+//    private Repository getRepositoryConnection(){
+//        Repository repository = new HTTPRepository("http://192.168.130.19:8087/openrdf-sesame/", "DBpedia-efd");
+//        try {
+//            repository.initialize();
+//        } catch (RepositoryException e) {
+//            e.printStackTrace();
+//        }
+//        return repository;
+//    }
 
     public Map<String, Map<String, List<Value>>> getAllEDMObjects () {
         RepositoryConnection connection = null;
         Map<String, Map<String, List<Value>>> EDM = new HashMap<>();
 
         try {
-            connection = getRepositoryConnection().getConnection();
+            connection = connectionService.getRepository().getConnection();
             TupleQuery tupleQuery = connection.prepareTupleQuery(QueryLanguage.SPARQL, providedCHO);
             TupleQueryResult result = tupleQuery.evaluate();
 
@@ -87,7 +76,7 @@ public class EDMDatasetsService {
         Map<String, Map<String, List<Value>>> EDM = new HashMap<>();
 
         try {
-            connection = getRepositoryConnection().getConnection();
+            connection = connectionService.getRepository().getConnection();
             TupleQuery tupleQuery = connection.prepareTupleQuery(QueryLanguage.SPARQL, byDataProvider.replace("$PROVIDER", provider));
             TupleQueryResult result = tupleQuery.evaluate();
 
@@ -113,7 +102,7 @@ public class EDMDatasetsService {
         Map<String, List<Value>> edmObj = new HashMap<>();
         RepositoryConnection connection = null;
         try {
-            connection = getRepositoryConnection().getConnection();
+            connection = connectionService.getRepository().getConnection();
             tupleQuery = connection.prepareGraphQuery(QueryLanguage.SPARQL, detailsTemplate.replace("$OBJ", edm));
             GraphQueryResult result = tupleQuery.evaluate();
             constructEDM(result, edmObj);

@@ -7,12 +7,12 @@
 
 	<TITLE>Europeana Food and Drink Category Tool</TITLE>
 	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
-	<link rel="stylesheet" href="resources/css/demo.css" type="text/css">
-	<link rel="stylesheet" href="resources/css/zTreeStyle/zTreeStyle.css" type="text/css">
-	<script type="text/javascript" src="resources/js/jquery-1.11.3.min.js"></script>
-	<script type="text/javascript" src="resources/js/jquery.ztree.core-3.5.js"></script>
-	<script type="text/javascript" src="resources/js/jquery.ztree.excheck-3.5.js"></script>
-	<script type="text/javascript" src="resources/js/jquery.ztree.exedit-3.5.js"></script>
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/demo.css" type="text/css">
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/zTreeStyle/zTreeStyle.css" type="text/css">
+	<script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/jquery-1.11.3.min.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/jquery.ztree.core-3.5.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/jquery.ztree.excheck-3.5.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/jquery.ztree.exedit-3.5.js"></script>
 	<SCRIPT type="text/javascript">
 		<!--
 		var setting = {

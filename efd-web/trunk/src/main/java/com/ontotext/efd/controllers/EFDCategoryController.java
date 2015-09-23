@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 
 @Controller
-@RequestMapping("/")
+@RequestMapping("/tree")
 public class EFDCategoryController {
 
 	@Autowired
@@ -28,7 +28,7 @@ public class EFDCategoryController {
 	public String printWelcome(ModelMap model, @RequestParam("category") String category) {
 
 		model.addAttribute("category", category);
-		return "index";
+		return "index_tree";
 	}
 
 	@RequestMapping(value = "/jdummy", method = RequestMethod.GET, params = "category")

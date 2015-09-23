@@ -30,6 +30,8 @@
 
     <bean class="com.ontotext.efd.controllers.SearchController" name="searchController" />
 
+    <bean class="com.ontotext.efd.controllers.IndexPageController" name="indexPageController" />
+
     <bean class="com.ontotext.efd.services.SearchQueryService" name="queryService" />
 
     <bean class="com.ontotext.efd.services.EDMDatasetsService" name="datasetsService" />

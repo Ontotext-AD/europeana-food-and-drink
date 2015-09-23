@@ -190,7 +190,7 @@
 					var current = $(this);
 					var ch = current.find('a').children();
 
-					console.log(ch.text());
+//					console.log(ch.text());
 					if(ch.text().search('articles:') > 0) {
 						var icon = ch[0];
 						$(icon).attr('class', 'button ico_close');

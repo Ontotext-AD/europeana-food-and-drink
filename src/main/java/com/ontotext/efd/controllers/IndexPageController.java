@@ -11,6 +11,6 @@ public class IndexPageController {
 
     @RequestMapping("/")
     public String getIndex() {
-        return "index";
+        return "index.html";
     }
 }

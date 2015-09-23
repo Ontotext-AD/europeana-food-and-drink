@@ -38,11 +38,11 @@ public class EFDRepositoryConnection {
     private String sesameServer = "http://192.168.130.19:8087/openrdf-sesame/";
 
     //@org.springframework.beans.factory.annotation.Value("${repository.id}")
-    private String repositoryID = "DBpedia-efd-inf";
+    private String repositoryID = "efd";
     
     private Model queuedWrites;
     private int WRITE_QUEUE_THRESHOLD = 5000;
-    
+
     public EFDRepositoryConnection() {
         super();
         queuedWrites = new LinkedHashModel();

@@ -11,7 +11,6 @@ public class IndexPageController {
 
     @RequestMapping("/")
     public String getIndex() {
-        System.out.println("fffffffffffffffffffffff");
         return "index";
     }
 }

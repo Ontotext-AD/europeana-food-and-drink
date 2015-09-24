@@ -12,7 +12,7 @@ public class EDMDatasetsServiceTest {
     public static void main(String args[]) {
         EDMDatasetsService service = new EDMDatasetsService();
 //        service.getAllEDMObjects();
-        List<Map<String, List<Value>>> edm = service.getHornimanByProvider("Wolverhampton Arts and Museums");
+    //    List<Map<String, List<Value>>> edm = service.getHornimanByProvider("Wolverhampton Arts and Museums");
         System.out.println("stop");
     }
 }

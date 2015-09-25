@@ -4,7 +4,8 @@ require.config({
         'angularJS': '../../../webjars/angularjs/1.4.4/angular.min',
         'angularRoute': '../../../webjars/angularjs/1.4.4/angular-route.min',
         'toastr': '../../../webjars/angular-toastr/1.5.0/angular-toastr',
-        'ui-bootstrap-tpls': '../../../webjars/angular-ui-bootstrap/0.13.3/ui-bootstrap-tpls.min'
+        'ui-bootstrap-tpls': '../../../webjars/angular-ui-bootstrap/0.13.3/ui-bootstrap-tpls.min',
+        'ui-bootstrap': '../../../webjars/angular-ui-bootstrap/0.13.3/ui-bootstrap-tpls'
     },
 
     // angular does not support AMD out of the box, put it in a shim
@@ -23,6 +24,10 @@ require.config({
         'ui-bootstrap-tpls': {
             deps: ['angularJS'],
             exports: 'angular'
+        },
+        'ui-bootstrap': {
+            deps: ['angularJS', 'ui-bootstrap-tpls'],
+            exports: 'angular'
         }
     }
 });
@@ -32,8 +37,8 @@ define([
         'controllers',
         'angularRoute',
         'ui-bootstrap-tpls',
-        'toastr',
-        '../../../webjars/angular-ui-bootstrap/0.13.3/ui-bootstrap.min'
+        'ui-bootstrap',
+        'toastr'
     ],
     function() {
         (function(angular){
@@ -57,17 +62,16 @@ define([
                 });
 
                 $routeProvider.when('/', {
-                    templateUrl : 'resources/pages/home.html',
+                    templateUrl : 'resources/templates/home.html',
                     controller : 'SearchCtrl'
-                }).when('/searching', {
-                    templateUrl : 'resources/pages/results.html',
+                }).when('/search', {
+                    templateUrl : 'resources/templates/results.html',
                     controller : 'ResultCtrl'
-                }).when('/record/:resourceId', {
-                    templateUrl : 'resources/pages/resource.html',
+                }).when('/resource/:resourceId', {
+                    templateUrl : 'resources/templates/resource.html',
                     controller : 'ResourceCtrl'
                 }).otherwise({
-                    templateUrl : 'resources/pages/home.html',
-                    controller : 'SearchCtrl'
+                    redirectTo: '/'
                 });
 
                 $locationProvider.html5Mode(true);

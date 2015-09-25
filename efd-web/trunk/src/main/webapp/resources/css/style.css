@@ -9,6 +9,17 @@
     display: table-cell;
     vertical-align: middle;
 }
+html, body, .container {
+    height: 100%;
+}
+
+body {
+    background: #FBFBFB;
+}
+
+.container {
+    background: #FFFFFF;
+}
 
 #home-search {
     width: 100%;

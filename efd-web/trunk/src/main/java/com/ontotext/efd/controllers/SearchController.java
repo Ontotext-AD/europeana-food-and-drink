@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletRequest;
  * Created by boyan on 15-9-18.
  */
 @Controller
-@RequestMapping("/search")
+@RequestMapping("/rest/search")
 public class SearchController {
 
     @Value("${search.query}")

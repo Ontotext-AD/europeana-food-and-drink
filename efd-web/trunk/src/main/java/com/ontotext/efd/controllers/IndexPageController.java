@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 public class IndexPageController {
 
-    @RequestMapping(value = {"/", "/search", "/resource/**"})
+    @RequestMapping(value = {"/", "/search", "/resource/**", "/contact-us", "/about-us"})
     public String getIndex() {
         return "index.html";
     }

@@ -35,6 +35,7 @@ require.config({
 define([
         'angularJS',
         'controllers',
+        'directives',
         'angularRoute',
         'ui-bootstrap-tpls',
         'ui-bootstrap',
@@ -46,6 +47,7 @@ define([
             var efd = angular.module('efdApp', [
                 'ngRoute',
                 'efdApp.controllers',
+                'efdApp.directives',
                 'ui.bootstrap',
                 'toastr'
             ]);
@@ -70,6 +72,10 @@ define([
                 }).when('/resource/:resourceId', {
                     templateUrl : 'resources/templates/resource.html',
                     controller : 'ResourceCtrl'
+                }).when('/contact-us', {
+                    templateUrl : 'resources/templates/contact-us.html'
+                }).when('/about-us', {
+                    templateUrl : 'resources/templates/about-us.html'
                 }).otherwise({
                     redirectTo: '/'
                 });

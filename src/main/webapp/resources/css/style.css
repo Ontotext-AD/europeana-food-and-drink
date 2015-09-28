@@ -9,6 +9,12 @@
     display: table-cell;
     vertical-align: middle;
 }
+.relative {
+    position: relative;
+}
+.absolute {
+    position: absolute;
+}
 html, body, .container {
     height: 100%;
 }
@@ -22,10 +28,29 @@ body {
 }
 
 #home-search {
-    width: 100%;
-    height: 100px;
-    position: absolute;
-    top: 50%;
-    left: 0;
-    margin-top: -100px;
+    margin-top: 300px;
+}
+#search-query-form div.form-group {
+    padding: 5px 10px;
+    background: #e3e3e3;
+}
+#search-query-form div.btn-group {
+    padding: 5px 10px;
+}
+#search-query {
+    padding: 7px;
+    top: 5px;
+    right: 10px;
+}
+#search-query .fa {
+    color: #e3e3e3;
+    -webkit-transition: all 1s;
+    transition: all 1s;
+}
+#search-query:hover .fa {
+    color: #000;
+}
+#searched-string {
+    padding-right: 30px;
+    float: none !important;
 }

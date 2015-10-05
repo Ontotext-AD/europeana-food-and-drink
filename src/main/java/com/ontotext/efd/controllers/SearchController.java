@@ -1,20 +1,25 @@
 package com.ontotext.efd.controllers;
 
+import com.ontotext.efd.model.FTSSearchResults;
+import com.ontotext.efd.model.SearchModel;
 import com.ontotext.efd.services.SearchQueryService;
+import org.openrdf.query.TupleQueryResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * Created by boyan on 15-9-18.
  */
 @Controller
-@RequestMapping("/rest/search")
+@RequestMapping("/rest")
 public class SearchController {
 
     @Value("${search.query}")
@@ -23,13 +28,18 @@ public class SearchController {
     @Autowired
     SearchQueryService searchQueryService;
 
-    @RequestMapping(method = RequestMethod.GET)
-    public void search(HttpServletRequest request, @RequestParam("query") String query, @RequestParam(value = "rows", required = false, defaultValue = "10") String rows) {
-        System.out.println(rows);
-        System.out.println(searchQuery);
-        searchQueryService.sayHi();
+    @RequestMapping(value = "/search", method = RequestMethod.GET)
+    @ResponseBody
+    public SearchModel search(HttpServletRequest request, @RequestParam("query") String query, @RequestParam(value = "rows", required = false, defaultValue = "10") String rows) {
 
+        return searchQueryService.ftsSearch(query);
+    }
 
+    @RequestMapping(value = "/autocomplete", method = RequestMethod.GET)
+    @ResponseBody
+    public List<FTSSearchResults> autocomplete(HttpServletRequest request, @RequestParam("query") String query){
+
+        return  searchQueryService.autocomplete(query);
     }
 
     public void facetSearch(HttpServletRequest request,

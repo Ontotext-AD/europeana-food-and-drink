@@ -37,17 +37,21 @@ public class SearchQueryService {
 
     public SearchModel ftsSearch(String queryString) {
         TupleQueryResult tupleQueryResult = null;
-        List<FTSSearchResults> searchResults = null;
+//        List<FTSSearchResults> searchResults = null;
+        Map<String, FTSSearchResults> searchResults = null;
         String query = prepareSearchQuery(queryString, searchQuery, null);
         if (query != null && !query.isEmpty()) {
 
             try {
-                searchResults = new ArrayList<>();
+//                searchResults = new ArrayList<>();
+                searchResults = new HashMap<>();
                 tupleQueryResult = evaluateQuery(query);
                 while (tupleQueryResult.hasNext()) {
                     String resource = "";
                     String title = "";
                     String description = "";
+                    String picture = "";
+                    String date = "";
                     BindingSet bindingSet = tupleQueryResult.next();
 
                     if (bindingSet.getValue("entity") != null) {
@@ -59,8 +63,20 @@ public class SearchQueryService {
                     if (bindingSet.getValue("description") != null) {
                         description = bindingSet.getValue("description").stringValue();
                     }
+                    if (bindingSet.getValue("picture") != null) {
+                        picture = bindingSet.getValue("picture").stringValue();
+                    }
+                    if (bindingSet.getValue("date") != null) {
+                        date = bindingSet.getValue("date").stringValue();
+                    }
 
-                    searchResults.add(new FTSSearchResults(resource, title, description));
+                    if (searchResults.containsKey(resource)) {
+                        searchResults.get(resource).addDescription(description);  //TODO add all fields which are multiple value
+                    } else {
+                        searchResults.put(resource, new FTSSearchResults(title, description, picture, date));
+                    }
+
+//                    searchResults.add(new FTSSearchResults(resource, title, description, picture));
                 }
 
             }  catch (QueryEvaluationException e) {

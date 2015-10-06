@@ -32,19 +32,18 @@
 
     <bean class="com.ontotext.efd.controllers.IndexPageController" name="indexPageController" />
 
+    <!--<bean class="com.ontotext.efd.controllers.ResourceController" name="resourceController" />-->
+
     <bean class="com.ontotext.efd.services.SearchQueryService" name="queryService" />
+
+    <bean class="com.ontotext.efd.services.ResourceQueryService" name="resourceService" />
 
     <bean class="com.ontotext.efd.services.EDMDatasetsService" name="datasetsService" />
 
     <bean class="com.ontotext.efd.services.RepositoryConnectionService" name="repositoryConnectionService" />
 
 
-    <!--<bean class="com.ontotext.efd.util.TreeBuilder" name="treeBuilder" />-->
-
-
     <context:property-placeholder  location="WEB-INF/properties/config.properties"/>
-
-    <!--<util:properties id="properties" location="file:/home/boyan/.efd/tree.properties"/>-->
 
 
 </beans>

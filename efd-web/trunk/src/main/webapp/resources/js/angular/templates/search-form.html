@@ -1,9 +1,13 @@
 <!--Search form template -->
 <div class="form-group col-sm-9 col-md-10 relative">
-    <input type="text" class="form-control col-xs-12" id="searched-string" required>
-    <div id="search-query" class="absolute"><i class="fa fa-search fa-lg"></i></div>
+    <input type="text" class="form-control col-xs-12" id="searched-string" required required ng-model="searchQuery" name="searchQuery" minlength="3">
+    <button type="submit" id="search-query" class="absolute" ng-click="search()" ng-disabled="searchForm.$invalid"><i class="fa fa-search fa-lg"></i></button>
+    <div ng-messages="searchForm.searchQuery.$error" role="alert" style="color:darkred; bottom: -20px;" class="absolute" ng-show="searchForm.$submitted || searchForm.searchQuery.$touched">
+        <div ng-message="required">Please fill some query</div>
+        <div ng-message="minlength">Your field is too short</div>
+    </div>
 </div>
-<div class="btn-group col-sm-3 col-md-2" dropdown keyboard-nav>
+<div class="btn-group col-xs-12 col-sm-3 col-md-2" dropdown keyboard-nav>
     <button id="simple-btn-keyboard-nav" type="button" class="btn btn-primary col-xs-12" dropdown-toggle>
         Search in <span class="caret"></span>
     </button>

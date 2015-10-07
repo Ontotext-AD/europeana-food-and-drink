@@ -1,8 +1,10 @@
 require.config({
     // alias libraries paths
     paths: {
-        'angularJS': '../../../webjars/angularjs/1.4.4/angular.min',
+        'angular': '../../../webjars/angularjs/1.4.4/angular.min',
         'angularRoute': '../../../webjars/angularjs/1.4.4/angular-route.min',
+        'angularMessages': '../../../webjars/angularjs/1.4.4/angular-messages.min',
+        'angularLocalStorage': '../../../webjars/angular-local-storage/0.2.1/angular-local-storage.min',
         'toastr': '../../../webjars/angular-toastr/1.5.0/angular-toastr',
         'ui-bootstrap-tpls': '../../../webjars/angular-ui-bootstrap/0.13.3/ui-bootstrap-tpls.min',
         'ui-bootstrap': '../../../webjars/angular-ui-bootstrap/0.13.3/ui-bootstrap-tpls'
@@ -10,33 +12,43 @@ require.config({
 
     // angular does not support AMD out of the box, put it in a shim
     shim: {
-        'angularJS': {
+        'angular': {
             exports: 'angular'
         },
         'angularRoute': {
-            deps: ['angularJS'],
+            deps: ['angular'],
+            exports: 'angular'
+        },
+        'angularMessages': {
+            deps: ['angular'],
+            exports: 'angular'
+        },
+        'angularLocalStorage': {
+            deps: ['angular'],
             exports: 'angular'
         },
         'toastr': {
-            deps: ['angularJS'],
+            deps: ['angular'],
             exports: 'angular'
         },
         'ui-bootstrap-tpls': {
-            deps: ['angularJS'],
+            deps: ['angular'],
             exports: 'angular'
         },
         'ui-bootstrap': {
-            deps: ['angularJS', 'ui-bootstrap-tpls'],
+            deps: ['angular', 'ui-bootstrap-tpls'],
             exports: 'angular'
         }
     }
 });
 
 define([
-        'angularJS',
+        'angular',
         'controllers',
         'directives',
         'angularRoute',
+        'angularMessages',
+        'angularLocalStorage',
         'ui-bootstrap-tpls',
         'ui-bootstrap',
         'toastr'
@@ -46,10 +58,12 @@ define([
 
             var efd = angular.module('efdApp', [
                 'ngRoute',
+                'ngMessages',
                 'efdApp.controllers',
                 'efdApp.directives',
                 'ui.bootstrap',
-                'toastr'
+                'toastr',
+                'LocalStorageModule'
             ]);
 
             efd.config([

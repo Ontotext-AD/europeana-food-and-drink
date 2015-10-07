@@ -2,7 +2,7 @@
  * Created by Rostislav on 28-Sep-15.
  */
 
-define(['angularJS'], function(){
+define(['angular'], function(){
     var efdDirectives = angular.module('efdApp.directives', []);
 
     efdDirectives.directive('searchForm', function () {

@@ -1,1 +1,50 @@
-<h1>{{test}}</h1>
+<script type="text/ng-template" id="accordion-template.html">
+    <div class="panel {{panelClass || 'panel-default'}}">
+        <div class="panel-heading" style="padding: 0;">
+            <h4 class="panel-title pointer" ng-click="toggleOpen()" style="padding: 10px 15px;">
+                <span href tabindex="0" class="accordion-toggle" accordion-transclude="heading"><span
+                        ng-class="{'text-muted': isDisabled}">{{heading}}</span></span>
+                <i class="pull-right fa" ng-class="{'fa-chevron-down': isOpen, 'fa-chevron-right': !isOpen}"></i>
+            </h4>
+        </div>
+        <div class="panel-collapse collapse" collapse="!isOpen">
+            <div class="panel-body" ng-transclude style="padding: 0;"></div>
+        </div>
+    </div>
+</script>
+<div class="row">
+    <div class="hidden-xs hidden-sm col-md-2" style="margin: 20px 0;">
+        <img src="/resources/images/efd.png" class="img-responsive"/>
+    </div>
+    <div class="col-xs-12 col-md-10">
+        <h1>Europeana Food & Drink</h1>
+        <p>Some ... probably text</p>
+        <form search-form id="search-query-form" name="searchForm"></form>
+    </div>
+</div>
+<div class="row">
+    <div class="col-xs-6 col-sm-3">
+        <div class="panel panel-default">
+            <div class="panel-heading">Selected filters</div>
+            <div class="panel-body">
+                <span>Panel content</span>
+            </div>
+        </div>
+        <accordion close-others="false">
+            <accordion-group ng-repeat="filter in filtersCategories | filter: hasFacets" template-url="accordion-template.html" heading="{{filter.title}}">
+                <ul class="list-group" style="margin:0">
+                    <li class="list-group-item" ng-repeat="filterElement in filter.data" style="padding:0; -webkit-border-radius: 0;-moz-border-radius: 0;border-radius: 0;">
+                        <div class="checkbox pointer" style="padding: 0; margin: 0;">
+                            <label style="width: 100%; padding: 10px 20px 10px 40px">
+                                <input type="checkbox" ng-model="filterElement.checked">
+                                {{filterElement.facetName}}
+                                <span class="badge">{{filterElement.facetValue}}</span>
+                            </label>
+                        </div>
+                    </li>
+                </ul>
+            </accordion-group>
+        </accordion>
+    </div>
+    <div class="col-xs-6 col-sm-9">Results</div>
+</div>

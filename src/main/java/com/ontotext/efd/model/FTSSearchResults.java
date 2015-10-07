@@ -16,8 +16,8 @@ public class FTSSearchResults {
     private String date;
 
 
-    public FTSSearchResults(String title, String description, String picture, String date) {
-//        this.resource = resource;
+    public FTSSearchResults(String resource, String title, String description, String picture, String date) {
+        this.resource = resource;
         this.title = title;
         this.description.add(description);
         this.picture = picture;

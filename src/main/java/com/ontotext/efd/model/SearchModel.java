@@ -8,19 +8,19 @@ import java.util.Map;
  */
 public class SearchModel {
 
-    private Map<String, FTSSearchResults> searchResultses;
+    private List<FTSSearchResults> searchResultses;
     private Map<String, List<FacetModel>> facets;
 
-    public SearchModel(Map<String, FTSSearchResults> searchResultses, Map<String, List<FacetModel>> facets) {
+    public SearchModel(List<FTSSearchResults> searchResultses, Map<String, List<FacetModel>> facets) {
         this.searchResultses = searchResultses;
         this.facets = facets;
     }
 
-    public Map<String, FTSSearchResults> getSearchResultses() {
+    public List<FTSSearchResults> getSearchResultses() {
         return searchResultses;
     }
 
-    public void setSearchResultses(Map<String, FTSSearchResults> searchResultses) {
+    public void setSearchResultses(List<FTSSearchResults> searchResultses) {
         this.searchResultses = searchResultses;
     }
 

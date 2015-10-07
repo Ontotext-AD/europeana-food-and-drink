@@ -36,7 +36,7 @@
         <accordion close-others="false">
             <accordion-group ng-repeat="filter in filtersCategories" is-disabled="filter.isDisabled" template-url="accordion-template.html" heading="{{filter.title}}">
                 <ul class="list-group" style="margin:0">
-                    <li class="list-group-item" ng-repeat="filterElement in filter.data" style="padding:0; -webkit-border-radius: 0;-moz-border-radius: 0;border-radius: 0;">
+                    <li class="list-group-item" ng-repeat="filterElement in filter.data | orderBy:'facetName'" style="padding:0; -webkit-border-radius: 0;-moz-border-radius: 0;border-radius: 0;">
                         <div class="checkbox pointer" style="padding: 0; margin: 0;">
                             <label style="width: 100%; padding: 10px 20px 10px 40px">
                                 <input type="checkbox" ng-model="filterElement.checked">

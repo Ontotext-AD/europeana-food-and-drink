@@ -35,11 +35,11 @@ public class SearchQueryService {
     @Value("${facets.query}")
     private String facetsQuery;
 
-    public SearchModel ftsSearch(String queryString) {
+    public SearchModel ftsSearch(String queryString, Integer offset, Integer limit) {
         TupleQueryResult tupleQueryResult = null;
 //        List<FTSSearchResults> searchResults = null;
         Map<String, FTSSearchResults> searchResults = null;
-        String query = prepareSearchQuery(queryString, searchQuery, null);
+        String query = prepareSearchQuery(queryString, searchQuery, offset, limit);
         if (query != null && !query.isEmpty()) {
 
             try {
@@ -91,7 +91,7 @@ public class SearchQueryService {
     public List<FTSSearchResults> autocomplete(String queryString) {
         TupleQueryResult tupleQueryResult = null;
         List<FTSSearchResults> searchResults = null;
-        String query = prepareSearchQuery(queryString, searchQuery, 10);
+        String query = prepareSearchQuery(queryString, searchQuery, null, 10);
 
         if (query != null && !query.isEmpty()) {
             try {
@@ -122,7 +122,7 @@ public class SearchQueryService {
 
     private Map<String, List<FacetModel>> searchFacets(String queryString){
         TupleQueryResult tupleQueryResult = null;
-        String query = prepareSearchQuery(queryString, facetsQuery, null);
+        String query = prepareSearchQuery(queryString, facetsQuery, null, null);
         Map<String, List<FacetModel>> map = new HashMap<>();
         if (query != null && !query.isEmpty()) {
             try {
@@ -177,11 +177,14 @@ public class SearchQueryService {
         return tupleQueryResult;
     }
 
-    private String prepareSearchQuery(String queryString, String q, Integer limit) {
+    private String prepareSearchQuery(String queryString, String q, Integer offset, Integer limit) {
         String query = "";
         if (q != null && !queryString.isEmpty()) {
             queryString = StringUtils.join(queryString.split("[\\s]"), "* AND ");
             query = q.replace("{q}", queryString);
+            if (offset != null) query = query.replace("{offset}", "OFFSET" + offset);
+            else query = query.replace("{offset}", "");
+
             if (limit != null) query = query.replace("{limit}", "LIMIT" + limit);
             else query = query.replace("{limit}", "");
 

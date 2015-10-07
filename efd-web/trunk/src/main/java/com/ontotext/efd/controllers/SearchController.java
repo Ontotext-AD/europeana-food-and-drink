@@ -40,6 +40,13 @@ public class SearchController {
         return searchQueryService.ftsSearch(query);
     }
 
+    @RequestMapping(value = "/search/count", method = RequestMethod.GET)
+    @ResponseBody
+    public Integer searchCount(HttpServletRequest request, @RequestParam("query") String query) {
+
+        return searchQueryService.ftsSearch(query).getSearchResultses().size();
+    }
+
     @RequestMapping(value = "/autocomplete", method = RequestMethod.GET)
     @ResponseBody
     public List<FTSSearchResults> autocomplete(HttpServletRequest request, @RequestParam("query") String query){
@@ -64,5 +71,8 @@ public class SearchController {
 
         return resourceQueryService.getResource(resource);
     }
+
+
+
 
 }

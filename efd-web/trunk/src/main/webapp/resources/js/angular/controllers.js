@@ -22,7 +22,7 @@ define(['angular'], function(){
 
             $scope.test = 'SearchCtrl';
             $scope.search = function(){
-                $location.path('/search').search({query: $scope.searchQuery});
+                $location.path('/search').search({query: $scope.searchQuery, rows: 24});
             }
         }
     ]);
@@ -52,7 +52,16 @@ define(['angular'], function(){
             $scope.params = $routeParams;
             $scope.test = 'ResultCtrl';
             $scope.search = function(){
-                $http.get('/rest/search?query=' + $scope.searchQuery).
+                var searchData = $location.search(),
+                    searchString = '';
+                for(index in searchData) {
+                    if (searchString != '') {
+                        searchString += '&';
+                    }
+                    searchString += index + '=' + searchData[index];
+                }
+                searchString = encodeURI(searchString);
+                $http.get('/rest/search?' + searchString).
                     then(function(response) {
                         $scope.status = response.status;
                         $scope.data = response.data;

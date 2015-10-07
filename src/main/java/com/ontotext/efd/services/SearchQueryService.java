@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
 /**
@@ -32,7 +33,7 @@ public class SearchQueryService {
     @Value("${facets.query}")
     private String facetsQuery;
 
-    public SearchModel ftsSearch(String queryString, Integer offset, Integer limit) {
+    public SearchModel ftsSearch(String queryString, Integer offset, Integer limit, HttpServletRequest request) {
         TupleQueryResult tupleQueryResult = null;
 //        List<FTSSearchResults> searchResults = null;
         Map<String, FTSSearchResults> searchResults = null;
@@ -185,6 +186,24 @@ public class SearchQueryService {
             else query = query.replace("{limit}", "");
 
             return query;
+        }
+        return null;
+    }
+
+    private String decorateFilters(HttpServletRequest request, String query) {
+        Map<String, String[]> filterParams = request.getParameterMap();
+        for (Map.Entry<String, String[]> entry : filterParams.entrySet()) {
+            switch (entry.getKey()) {
+                case "type" :
+
+            }
+        }
+
+        return null;
+    }
+
+    private String addTypeFilter(String query, String types[]) {
+        if (types != null && types.length > 0) {
         }
         return null;
     }

@@ -37,18 +37,17 @@ public class SearchController {
     @ResponseBody
     public SearchModel search(HttpServletRequest request,
                               @RequestParam("query") String query,
-                              @RequestParam(value = "rows", required = false, defaultValue = "10") String rows,
                               @RequestParam(value = "offset", required = false, defaultValue = "0") Integer offset,
                               @RequestParam(value = "limit", required = false) Integer limit) {
 
-        return searchQueryService.ftsSearch(query, offset, limit);
+        return searchQueryService.ftsSearch(query, offset, limit, request);
     }
 
     @RequestMapping(value = "/search/count", method = RequestMethod.GET)
     @ResponseBody
     public Integer searchCount(HttpServletRequest request, @RequestParam("query") String query) {
 
-        return searchQueryService.ftsSearch(query, null, null).getSearchResultses().size();
+        return searchQueryService.ftsSearch(query, null, null, request).getSearchResultses().size();
     }
 
     @RequestMapping(value = "/autocomplete", method = RequestMethod.GET)

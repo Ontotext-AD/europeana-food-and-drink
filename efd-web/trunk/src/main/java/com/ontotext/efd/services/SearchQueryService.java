@@ -1,6 +1,7 @@
 package com.ontotext.efd.services;
 
 import com.ontotext.efd.model.FTSSearchResults;
+import com.ontotext.efd.model.FacetFilterModel;
 import com.ontotext.efd.model.FacetModel;
 import com.ontotext.efd.model.SearchModel;
 import org.apache.commons.lang3.StringUtils;
@@ -35,13 +36,14 @@ public class SearchQueryService {
 
     public SearchModel ftsSearch(String queryString, Integer offset, Integer limit, HttpServletRequest request) {
         TupleQueryResult tupleQueryResult = null;
-//        List<FTSSearchResults> searchResults = null;
-        Map<String, FTSSearchResults> searchResults = null;
-        String query = prepareSearchQuery(queryString, searchQuery, offset, limit);
+        List<FTSSearchResults> searchResults = null;
+//        Map<String, FTSSearchResults> searchResults = null;
+        String query = decorateFilters(request, searchQuery);
+        query = prepareSearchQuery(queryString, query, offset, limit);
         if (query != null && !query.isEmpty()) {
 
             try {
-                searchResults = new HashMap<>();
+                searchResults = new ArrayList<>();
                 tupleQueryResult = evaluateQuery(query);
                 while (tupleQueryResult.hasNext()) {
                     String resource = "";
@@ -67,13 +69,13 @@ public class SearchQueryService {
                         date = bindingSet.getValue("date").stringValue();
                     }
 
-                    if (searchResults.containsKey(resource)) {
-                        searchResults.get(resource).addDescription(description);  //TODO add all fields which are multiple value
-                    } else {
-                        searchResults.put(resource, new FTSSearchResults(title, description, picture, date));
-                    }
+//                    if (searchResults.containsKey(resource)) {
+//                        searchResults.get(resource).addDescription(description);  //TODO add all fields which are multiple value
+//                    } else {
+//                        searchResults.put(resource, new FTSSearchResults(title, description, picture, date));
+//                    }
 
-//                    searchResults.add(new FTSSearchResults(resource, title, description, picture));
+                    searchResults.add(new FTSSearchResults(resource, title, description, picture, date));
                 }
 
             }  catch (QueryEvaluationException e) {
@@ -179,11 +181,9 @@ public class SearchQueryService {
         if (q != null && !queryString.isEmpty()) {
             queryString = StringUtils.join(queryString.split("[\\s]"), "* AND ");
             query = q.replace("{q}", queryString);
-            if (offset != null) query = query.replace("{offset}", "OFFSET" + offset);
-            else query = query.replace("{offset}", "");
+            if (offset != null) query +=  " OFFSET " + offset;
 
-            if (limit != null) query = query.replace("{limit}", "LIMIT" + limit);
-            else query = query.replace("{limit}", "");
+            if (limit != null) query +=  " LIMIT " + limit;
 
             return query;
         }
@@ -192,19 +192,45 @@ public class SearchQueryService {
 
     private String decorateFilters(HttpServletRequest request, String query) {
         Map<String, String[]> filterParams = request.getParameterMap();
+        FacetFilterModel filterModel = new FacetFilterModel();
         for (Map.Entry<String, String[]> entry : filterParams.entrySet()) {
             switch (entry.getKey()) {
                 case "type" :
-
+                    filterModel.setMediaTypeFilter(entry.getValue()[0].split(","));
+                    break;
+                case "provider" :
+                    filterModel.setProviderFilter(entry.getValue());
+                    break;
+                case "dataProvider" :
+                    filterModel.setDataProviderFilter(entry.getValue());
+                    break;
+                case "language" :
+                    filterModel.setLanguageFilter(entry.getValue());
+                    break;
+                case "article" :
+                    filterModel.setArticleFilter(entry.getValue());
+                    break;
             }
         }
 
-        return null;
+        String q = addTypeFilter(query, filterModel.getMediaTypeFilter());
+
+        return q;
     }
 
     private String addTypeFilter(String query, String types[]) {
+        String q = query;
+        String filter =  "optional {?entity edm:aggregatedCHO/edm:type ?type}";
+
         if (types != null && types.length > 0) {
+            for(String type : types) {
+                filter += "\n  filter(?type = \"" + type + "\").";
+            }
+            q = q.replace("{mediaType}", filter);
+            q += "?type";
+        } else {
+            q = q.replace("{mediaType}", "");
         }
-        return null;
+        return q;
     }
 }

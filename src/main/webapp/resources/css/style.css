@@ -1,6 +1,9 @@
 .pointer {
     cursor: pointer;
 }
+.not-allowed {
+    cursor: not-allowed;
+}
 .table {
     display: table;
 }
@@ -54,8 +57,4 @@ body {
 #searched-string {
     padding-right: 30px;
     float: none !important;
-}
-
-.panel[is-disabled="true"] .panel-title.pointer {
-    cursor: not-allowed;
 }

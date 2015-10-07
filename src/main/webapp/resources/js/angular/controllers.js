@@ -38,13 +38,13 @@ define(['angular'], function(){
             console.log($scope.searchData);
 
             $scope.filtersCategories = [
-                {title: 'By media type', searchString: '', data: []},
-                {title: 'By language of description', searchString: 'language', data: []},
-                {title: 'By providing country', searchString: '', data: []},
-                {title: 'Can I use it?', searchString: '', data: []},
-                {title: 'By copyright', searchString: '', data: []},
-                {title: 'By provider', searchString: 'provider', data: []},
-                {title: 'By data provider', searchString: 'dataProvider', data: []}
+                {title: 'By media type', searchString: '', data: [], isDisabled: false},
+                {title: 'By language of description', searchString: 'language', data: [], isDisabled: false},
+                {title: 'By providing country', searchString: '', data: [], isDisabled: false},
+                {title: 'Can I use it?', searchString: '', data: [], isDisabled: false},
+                {title: 'By copyright', searchString: '', data: [], isDisabled: false},
+                {title: 'By provider', searchString: 'provider', data: [], isDisabled: false},
+                {title: 'By data provider', searchString: 'dataProvider', data: [], isDisabled: false}
             ]
             $scope.hasFacets = function(filter){
                 return filter.data.length > 0;
@@ -59,8 +59,10 @@ define(['angular'], function(){
                         for(var i = 0; i < $scope.filtersCategories.length; i++){
                             if ($scope.data.facets[$scope.filtersCategories[i].searchString]){
                                 $scope.filtersCategories[i].data = $scope.data.facets[$scope.filtersCategories[i].searchString];
+                                $scope.filtersCategories[i].isDisabled = false;
                             } else {
                                 $scope.filtersCategories[i].data = [];
+                                $scope.filtersCategories[i].isDisabled = true;
                             }
                         }
                         console.log($scope.filtersCategories);

@@ -1,7 +1,6 @@
 .pointer {
     cursor: pointer;
 }
-
 .table {
     display: table;
 }
@@ -41,6 +40,8 @@ body {
     padding: 7px;
     top: 5px;
     right: 10px;
+    border: 0;
+    background: none;
 }
 #search-query .fa {
     color: #e3e3e3;
@@ -53,4 +54,8 @@ body {
 #searched-string {
     padding-right: 30px;
     float: none !important;
+}
+
+.panel[is-disabled="true"] .panel-title.pointer {
+    cursor: not-allowed;
 }

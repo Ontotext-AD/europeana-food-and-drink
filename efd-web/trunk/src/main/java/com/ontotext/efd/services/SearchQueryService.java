@@ -51,6 +51,7 @@ public class SearchQueryService {
                     String description = "";
                     String picture = "";
                     String date = "";
+                    String mediaType = "";
                     BindingSet bindingSet = tupleQueryResult.next();
 
                     if (bindingSet.getValue("entity") != null) {
@@ -68,6 +69,9 @@ public class SearchQueryService {
                     if (bindingSet.getValue("date") != null) {
                         date = bindingSet.getValue("date").stringValue();
                     }
+                    if (bindingSet.getValue("mediaType") != null) {
+                        mediaType = bindingSet.getValue("mediaType").stringValue();
+                    }
 
 //                    if (searchResults.containsKey(resource)) {
 //                        searchResults.get(resource).addDescription(description);  //TODO add all fields which are multiple value
@@ -75,7 +79,7 @@ public class SearchQueryService {
 //                        searchResults.put(resource, new FTSSearchResults(title, description, picture, date));
 //                    }
 
-                    searchResults.add(new FTSSearchResults(resource, title, description, picture, date));
+                    searchResults.add(new FTSSearchResults(resource, title, description, picture, date, mediaType));
                 }
 
             }  catch (QueryEvaluationException e) {

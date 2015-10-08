@@ -222,6 +222,9 @@ public class SearchQueryService {
 
         String q = addTypeFilter(query, filterModel.getMediaTypeFilter());
         q = addProviderFilter(q, filterModel.getProviderFilter());
+        q = addDataProviderFilter(q, filterModel.getDataProviderFilter());
+        q = addLanguageFilter(q, filterModel.getLanguageFilter());
+        q = addCountryFilter(q, filterModel.getCountryFilter());
 
         return q;
     }
@@ -251,9 +254,65 @@ public class SearchQueryService {
                 filter += "\n  filter(?type = \"" + provider + "\").";
             }
             q = q.replace("{provider}", filter);
+            q = q.replace("{provider_h}", "?provider");
             q += " ?provider";
         } else {
             q = q.replace("{provider}", "");
+            q = q.replace("{provider_h}", "");
+        }
+        return q;
+    }
+
+    private String addDataProviderFilter(String query, String dataProviders[]) {
+        String q = query;
+        String filter =  "optional {?entity edm:dataProvider ?dataProvider}";
+
+        if (dataProviders != null && dataProviders.length > 0) {
+            for(String dataProvider : dataProviders) {
+                filter += "\n  filter(?type = \"" + dataProvider + "\").";
+            }
+            q = q.replace("{dataProvider}", filter);
+            q = q.replace("{dataProvider_h}", "?dataProvider");
+            q += " ?dataProvider";
+        } else {
+            q = q.replace("{dataProvider}", "");
+            q = q.replace("{dataProvider_h}", "");
+        }
+        return q;
+    }
+
+    private String addLanguageFilter(String query, String languages[]) {
+        String q = query;
+        String filter =  "optional {?entity edm:aggregatedCHO/dc:language ?language}";
+
+        if (languages != null && languages.length > 0) {
+            for(String language : languages) {
+                filter += "\n  filter(?type = \"" + language + "\").";
+            }
+            q = q.replace("{language}", filter);
+            q = q.replace("{language_h}", "?language");
+            q += " ?language";
+        } else {
+            q = q.replace("{language}", "");
+            q = q.replace("{language_h}", "");
+        }
+        return q;
+    }
+
+    private String addCountryFilter(String query, String countries[]) {
+        String q = query;
+        String filter =  "optional {?entity edm:country ?providingCountry}";
+
+        if (countries != null && countries.length > 0) {
+            for(String country : countries) {
+                filter += "\n  filter(?type = \"" + country + "\").";
+            }
+            q = q.replace("{providingCountry}", filter);
+            q = q.replace("{providingCountry_h}", "?providingCountry");
+            q += " ?providingCountry";
+        } else {
+            q = q.replace("{providingCountry}", "");
+            q = q.replace("{providingCountry_h}", "");
         }
         return q;
     }

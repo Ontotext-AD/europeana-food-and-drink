@@ -49,5 +49,22 @@
             </accordion-group>
         </accordion>
     </div>
-    <div class="col-xs-6 col-sm-9">Results</div>
+    <div class="col-xs-6 col-sm-9">
+        <div class="row">
+            <div class="col-xs-4">
+                <div class="btn-group pull-left" dropdown keyboard-nav>
+                    <button id="simple-btn-keyboard-nav" type="button" class="btn btn-primary col-xs-12" dropdown-toggle>
+                        {{limit}} <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="simple-btn-keyboard-nav">
+                        <li role="menuitem"><a href="#" ng-click="changeLimit(12)">12</a></li>
+                        <li role="menuitem"><a href="#" ng-click="changeLimit(24)">24</a></li>
+                        <li role="menuitem"><a href="#" ng-click="changeLimit(48)">48</a></li>
+                        <li role="menuitem"><a href="#" ng-click="changeLimit(96)">96</a></li>
+                        <!--TODO <li role="menuitem"><a href="#" ng-click="changeLimit()">All</a></li>-->
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

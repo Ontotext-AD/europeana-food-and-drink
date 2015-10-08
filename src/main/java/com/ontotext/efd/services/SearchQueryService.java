@@ -214,10 +214,14 @@ public class SearchQueryService {
                 case "article" :
                     filterModel.setArticleFilter(entry.getValue());
                     break;
+                case "country" :
+                    filterModel.setCountryFilter(entry.getValue());
+                    break;
             }
         }
 
         String q = addTypeFilter(query, filterModel.getMediaTypeFilter());
+        q = addProviderFilter(q, filterModel.getProviderFilter());
 
         return q;
     }
@@ -234,6 +238,22 @@ public class SearchQueryService {
             q += "?type";
         } else {
             q = q.replace("{mediaType}", "");
+        }
+        return q;
+    }
+
+    private String addProviderFilter(String query, String providers[]) {
+        String q = query;
+        String filter =  "optional {?entity edm:provider ?provider}";
+
+        if (providers != null && providers.length > 0) {
+            for(String provider : providers) {
+                filter += "\n  filter(?type = \"" + provider + "\").";
+            }
+            q = q.replace("{provider}", filter);
+            q += " ?provider";
+        } else {
+            q = q.replace("{provider}", "");
         }
         return q;
     }

@@ -10,6 +10,15 @@ public class FacetFilterModel {
     private String dataProviderFilter[];
     private String languageFilter[];
     private String articleFilter[];
+    private String countryFilter[];
+
+    public String[] getCountryFilter() {
+        return countryFilter;
+    }
+
+    public void setCountryFilter(String[] countryFilter) {
+        this.countryFilter = countryFilter;
+    }
 
     public String[] getMediaTypeFilter() {
         return mediaTypeFilter;

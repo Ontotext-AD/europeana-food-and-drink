@@ -12,5 +12,11 @@ define(['angular'], function(){
         };
     });
 
+    efdDirectives.directive('ontoLoader', function () {
+        return {
+            template: function (elem, attr) {return '<object width="' + attr.size + '" height="' + attr.size + '" data="resources/images/ot-loader.svg">Loading...</object>'}
+        };
+    });
+
     return efdDirectives;
 })

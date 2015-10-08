@@ -11,22 +11,32 @@ public class FTSSearchResults {
 
     private String resource;
     private String title;
-    private List<String> description = new ArrayList<>();
+    private String description;
     private String picture;
     private String date;
+    private String mediaType;
 
 
-    public FTSSearchResults(String resource, String title, String description, String picture, String date) {
+    public FTSSearchResults(String resource, String title, String description, String picture, String date, String mediaType) {
         this.resource = resource;
         this.title = title;
-        this.description.add(description);
+        this.description = description;
         this.picture = picture;
         this.date = date;
+        this.mediaType = mediaType;
     }
 
     public FTSSearchResults(String resource, String title) {
 //        this.resource = resource;
         this.title = title;
+    }
+
+    public String getMediaType() {
+        return mediaType;
+    }
+
+    public void setMediaType(String mediaType) {
+        this.mediaType = mediaType;
     }
 
     public String getDate() {
@@ -61,12 +71,12 @@ public class FTSSearchResults {
         this.title = title;
     }
 
-    public List<String> getDescription() {
+    public String getDescription() {
         return description;
     }
 
     public void addDescription(String description) {
-        this.description.add(description);
+        this.description = description;
     }
 
 }

@@ -11,17 +11,17 @@ public class SearchModel {
     private List<FTSSearchResults> searchResults;
     private Map<String, List<FacetModel>> facets;
 
-    public SearchModel(List<FTSSearchResults> searchResultses, Map<String, List<FacetModel>> facets) {
-        this.searchResults = searchResultses;
+    public SearchModel(List<FTSSearchResults> searchResults, Map<String, List<FacetModel>> facets) {
+        this.searchResults = searchResults;
         this.facets = facets;
     }
 
-    public List<FTSSearchResults> getSearchResultses() {
+    public List<FTSSearchResults> getSearchResults() {
         return searchResults;
     }
 
-    public void setSearchResultses(List<FTSSearchResults> searchResultses) {
-        this.searchResults= searchResultses;
+    public void setSearchResults(List<FTSSearchResults> searchResults) {
+        this.searchResults= searchResults;
     }
 
     public Map<String, List<FacetModel>> getFacets() {

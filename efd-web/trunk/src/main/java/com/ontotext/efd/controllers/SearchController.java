@@ -47,7 +47,7 @@ public class SearchController {
     @ResponseBody
     public Integer searchCount(HttpServletRequest request, @RequestParam("query") String query) {
 
-        return searchQueryService.ftsSearch(query, null, null, request).getSearchResultses().size();
+        return searchQueryService.ftsSearch(query, null, null, request).getSearchResults().size();
     }
 
     @RequestMapping(value = "/autocomplete", method = RequestMethod.GET)

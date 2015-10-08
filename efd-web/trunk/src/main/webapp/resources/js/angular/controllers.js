@@ -13,16 +13,14 @@ define(['angular'], function(){
         $scope.test = 'MainCtrl';
     }]);
 
-    efdControllers.controller('SearchCtrl',[
+    efdControllers.controller('HomeCtrl',[
         "$scope",
-        "$rootScope",
-        '$http',
         '$location',
-        function($scope, $rootScope, $http, $location) {
+        function($scope, $location) {
 
             $scope.test = 'SearchCtrl';
             $scope.search = function(){
-                $location.path('/search').search({query: $scope.searchQuery, rows: 24});
+                $location.path('/search').search({query: $scope.searchQuery, limit: 24});
             }
         }
     ]);
@@ -36,7 +34,13 @@ define(['angular'], function(){
         function($scope, $routeParams, $http, $location, localStorageService) {
             $scope.searchData = $location.search();
             console.log($scope.searchData);
-
+            $scope.limit = $scope.searchData.limit ? $scope.searchData.limit : 24;
+            $scope.changeLimit = function(limit){
+                $scope.limit = limit;
+                $scope.searchData.limit = limit
+                $location.search($scope.searchData);
+                $scope.search();
+            }
             $scope.filtersCategories = [
                 {title: 'By media type', searchString: '', data: [], isDisabled: false},
                 {title: 'By language of description', searchString: 'language', data: [], isDisabled: false},

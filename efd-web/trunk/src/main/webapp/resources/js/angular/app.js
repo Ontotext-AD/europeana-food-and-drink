@@ -79,7 +79,7 @@ define([
 
                 $routeProvider.when('/', {
                     templateUrl : 'resources/templates/home.html',
-                    controller : 'SearchCtrl'
+                    controller : 'HomeCtrl'
                 }).when('/search', {
                     templateUrl : 'resources/templates/results.html',
                     controller : 'ResultCtrl'

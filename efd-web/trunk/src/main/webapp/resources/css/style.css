@@ -58,3 +58,13 @@ body {
     padding-right: 30px;
     float: none !important;
 }
+[ng-cloak] + .show-ng-cloak {
+    display: block !important;
+}
+.ot-loader object {
+    display: block;
+    margin: 0 auto;
+}
+.ot-main-loader object {
+    margin: 200px auto;
+}

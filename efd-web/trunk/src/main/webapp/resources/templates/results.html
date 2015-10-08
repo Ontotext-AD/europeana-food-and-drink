@@ -25,20 +25,28 @@
         <form search-form id="search-query-form" name="searchForm"></form>
     </div>
 </div>
-<div class="row">
+<div class="row" style="background: #fff; margin-bottom: 40px;">
     <div class="col-xs-6 col-sm-3">
         <div class="panel panel-default">
             <div class="panel-heading">Selected filters</div>
             <div class="panel-body">
-                <span>Panel content</span>
+                <span ng-if="activeFilters.length == 0">No active filters</span>
+                <ul class="list-group" >
+                    <fake ng-repeat="filter in filtersCategories">
+                        <li class="list-group-item" ng-repeat="filter in activeFilters" ng-click="removeFilter()">
+                            {{filter.facetName}}
+                            <i class="fa fa-times"></i>
+                        </li>
+                    </fake>
+                </ul>
             </div>
         </div>
-        <accordion close-others="false">
+        <accordion id="filters" close-others="false">
             <accordion-group ng-repeat="filter in filtersCategories" is-disabled="filter.isDisabled" template-url="accordion-template.html" heading="{{filter.title}}">
                 <ul class="list-group" style="margin:0">
                     <li class="list-group-item" ng-repeat="filterElement in filter.data | orderBy:'facetName'" style="padding:0; -webkit-border-radius: 0;-moz-border-radius: 0;border-radius: 0;">
                         <div class="checkbox pointer" style="padding: 0; margin: 0;">
-                            <label style="width: 100%; padding: 10px 20px 10px 40px">
+                            <label style="width: 100%; padding: 10px 20px 10px 40px" ng-click="addFilter(filter.id, filterElement.id)">
                                 <input type="checkbox" ng-model="filterElement.checked">
                                 {{filterElement.facetName}}
                                 <span class="badge">{{filterElement.facetValue}}</span>
@@ -49,14 +57,15 @@
             </accordion-group>
         </accordion>
     </div>
-    <div class="col-xs-6 col-sm-9">
-        <div class="row">
+    <div ng-show="loader" class="ot-loader ot-main-loader" onto-loader  size="50"></div>
+    <div ng-hide="loader" class="col-xs-6 col-sm-9">
+        <div class="row" ng-if="data">
             <div class="col-xs-4">
                 <div class="btn-group pull-left" dropdown keyboard-nav>
                     <button id="simple-btn-keyboard-nav" type="button" class="btn btn-primary col-xs-12" dropdown-toggle>
-                        {{limit}} <span class="caret"></span>
+                        Results per page: {{limit}} <span class="caret"></span>
                     </button>
-                    <ul class="dropdown-menu" role="menu" aria-labelledby="simple-btn-keyboard-nav">
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="simple-btn-keyboard-nav" style="max-width:100px;">
                         <li role="menuitem"><a href="#" ng-click="changeLimit(12)">12</a></li>
                         <li role="menuitem"><a href="#" ng-click="changeLimit(24)">24</a></li>
                         <li role="menuitem"><a href="#" ng-click="changeLimit(48)">48</a></li>
@@ -65,6 +74,31 @@
                     </ul>
                 </div>
             </div>
+            <div class="col-xs-4 text-center" ng-hide="countLoader">
+                Results {{offset + 1}} - {{offset + limit > count ? count : offset + limit}} of {{count}}
+            </div>
+            <div class="col-xs-4 text-right" ng-show="limit < count && !countLoader">
+                Page
+                <input type="number" ng-model="page" min="1" max="{{totalPages}}" ng-mode="page" ng-change="changePage()">
+                of {{totalPages}}
+            </div>
+            <div class="col-xs-8 ot-loader" onto-loader  size="20" ng-if="countLoader"></div>
+        </div>
+        <div id="results-holder" class="row" ng-if="data">
+            <div class="col-sm-6 col-md-4" ng-repeat="result in data.searchResults">
+                <div class="thumbnail">
+                    <img class="img-thumbnail img-responsive" ng-if="!result.picture" alt="{{result.title}}" src = 'http://www.ourbanc.com/wp-content/plugins/business-directory-plugin/images/default.png'/>
+                    <img class="img-thumbnail img-responsive" ng-if="result.picture" ng-src="{{result.picture}}" alt="{{result.title}}" onError="this.src = 'http://www.ourbanc.com/wp-content/plugins/business-directory-plugin/images/default.png';"/>
+                    <div class="caption">
+                        <h3>{{result.title}}</h3>
+                        <p>{{result.description}}</p>
+                        <p><a href="#" class="btn btn-primary" role="button">Button</a> <a href="#" class="btn btn-default" role="button">Button</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div ng-if="!data">
+            <h3>Please use search field</h3>
         </div>
     </div>
 </div>

@@ -68,3 +68,26 @@ body {
 .ot-main-loader object {
     margin: 200px auto;
 }
+
+#results-holder .thumbnail {
+    height: 25em;
+}
+#results-holder .image-holder {
+    width: 100%;
+    height: 14em;
+    text-align: center;
+}
+#results-holder .image-holder span {
+    line-height: 13em;
+    text-align: center;
+}
+#results-holder img {
+    max-height: 100%;
+    max-width: 100%;
+    vertical-align: middle;
+    display: inline-block;
+}
+#results-holder .caption {
+    height: 10em;
+    overflow: hidden;
+}

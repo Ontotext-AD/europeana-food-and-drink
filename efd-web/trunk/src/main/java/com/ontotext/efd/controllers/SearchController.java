@@ -70,7 +70,6 @@ public class SearchController {
     @RequestMapping(value = "/resource", method = RequestMethod.GET)
     @ResponseBody
     public Map<String, List<String>> getResource(@RequestParam("uri") String resource) {
-        System.out.println("Fuck you");
 
         return resourceQueryService.getResource(resource);
     }

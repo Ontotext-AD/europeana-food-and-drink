@@ -32,12 +32,10 @@
             <div class="panel-body">
                 <span ng-if="activeFilters.length == 0">No active filters</span>
                 <ul class="list-group" >
-                    <fake ng-repeat="filter in filtersCategories">
-                        <li class="list-group-item" ng-repeat="filter in activeFilters" ng-click="removeFilter()">
-                            {{filter.facetName}}
-                            <i class="fa fa-times"></i>
-                        </li>
-                    </fake>
+                    <li class="list-group-item" ng-repeat="filter in activeFilters" ng-click="removeFilter(filter.categoryName, filter.facetName)">
+                        {{filter.facetName}}
+                        <i class="fa fa-times"></i>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -46,8 +44,8 @@
                 <ul class="list-group" style="margin:0">
                     <li class="list-group-item" ng-repeat="filterElement in filter.data | orderBy:'facetName'" style="padding:0; -webkit-border-radius: 0;-moz-border-radius: 0;border-radius: 0;">
                         <div class="checkbox pointer" style="padding: 0; margin: 0;">
-                            <label style="width: 100%; padding: 10px 20px 10px 40px" ng-click="addFilter(filter.id, filterElement.id)">
-                                <input type="checkbox" ng-model="filterElement.checked">
+                            <label style="width: 100%; padding: 10px 20px 10px 40px">
+                                <input type="checkbox" ng-model="filterElement.checked"  ng-change="addRemoveFilter(filter.id, filterElement.id)">
                                 {{filterElement.facetName}}
                                 <span class="badge">{{filterElement.facetValue}}</span>
                             </label>
@@ -79,21 +77,24 @@
             </div>
             <div class="col-xs-4 text-right" ng-show="limit < count && !countLoader">
                 Page
-                <input type="number" ng-model="page" min="1" max="{{totalPages}}" ng-mode="page" ng-change="changePage()">
+                <input type="number" ng-model="results.page" min="1" max="{{totalPages}}" ng-mode="page" ng-change="changePage()">
                 of {{totalPages}}
             </div>
             <div class="col-xs-8 ot-loader" onto-loader  size="20" ng-if="countLoader"></div>
         </div>
         <div id="results-holder" class="row" ng-if="data">
-            <div class="col-sm-6 col-md-4" ng-repeat="result in data.searchResults">
+            <div class="col-sm-6 col-md-4 pointer" ng-repeat="result in data.searchResults" ng-click="loadResource(result.resource)">
                 <div class="thumbnail">
-                    <img class="img-thumbnail img-responsive" ng-if="!result.picture" alt="{{result.title}}" src = 'http://www.ourbanc.com/wp-content/plugins/business-directory-plugin/images/default.png'/>
-                    <img class="img-thumbnail img-responsive" ng-if="result.picture" ng-src="{{result.picture}}" alt="{{result.title}}" onError="this.src = 'http://www.ourbanc.com/wp-content/plugins/business-directory-plugin/images/default.png';"/>
+                    <div class="image-holder img-thumbnail ">
+                        <span>
+                            <img class="img-responsive" ng-if="!result.picture" alt="{{result.title}}" src = 'http://www.ourbanc.com/wp-content/plugins/business-directory-plugin/images/default.png'/>
+                            <img class="img-responsive" ng-if="result.picture" ng-src="{{result.picture}}" alt="{{result.title}}" onError="this.src = 'http://www.ourbanc.com/wp-content/plugins/business-directory-plugin/images/default.png';"/>
+                        </span>
+                    </div>
                     <div class="caption">
                         <h3>{{result.title}}</h3>
                         <p>{{result.description}}</p>
-                        <p><a href="#" class="btn btn-primary" role="button">Button</a> <a href="#" class="btn btn-default" role="button">Button</a></p>
-                    </div>
+                   </div>
                 </div>
             </div>
         </div>

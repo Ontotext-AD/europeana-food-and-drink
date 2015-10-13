@@ -133,6 +133,7 @@ define(['angular'], function(){
                         $scope.data = response.data || "Request failed";
                         $scope.status = response.status;
                         $scope.loader = false;
+                        toastr.error('Request failed', '');
                     });
             }
 
@@ -236,10 +237,39 @@ define(['angular'], function(){
         }
     ]);
 
-    efdControllers.controller('ResourceCtrl', ["$scope", '$routeParams', function($scope, $routeParams) {
+    efdControllers.controller('ResourceCtrl',
+        ["$scope",
+        '$routeParams',
+        '$http',
+        '$location',
+        '$timeout',
+        'toastr',
+        function($scope, $routeParams, $http, $location, $timeout, toastr) {
 
         $scope.params = $routeParams;
-        $scope.test = 'ResourceCtrl';
+        $scope.searchData = $location.search();
+
+        $scope.getResource = function(){
+            $http.get('/rest/resource?uri=' + $scope.params.resourceId).
+                then(function(response) {
+                    console.log(response.data);
+                }, function(response){
+                    console.log(response);
+                    toastr.error('Resource not found', '');
+                    var t = $timeout(function(){
+                        $location.path('/search').search($scope.searchData);
+                    }, 2000);
+                    $scope.$on("$destroy", function(event) {
+                        $timeout.cancel(t);
+                    });
+                })
+        }
+
+        $scope.toSearchResults = function(){
+            $location.path('/search').search($scope.searchData);
+        }
+
+        $scope.getResource();
     }]);
 
     return efdControllers;

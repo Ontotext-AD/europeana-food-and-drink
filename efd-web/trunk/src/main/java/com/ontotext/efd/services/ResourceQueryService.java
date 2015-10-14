@@ -28,6 +28,12 @@ public class ResourceQueryService {
     @Value("${resource.cho.query}")
     private String choQuery;
 
+    private static Map<String, String> resourceMap;
+
+    {
+        resourceMap = initResourceMap();
+    }
+
     public Map<String, List<String>> getResource(String resource) {
 
         Map<String, List<String>> resourceMap = new HashMap<>();
@@ -37,7 +43,7 @@ public class ResourceQueryService {
         return resourceMap;
     }
 
-    private void getTriples(Map<String, List<String>> resourceMap, String resource, String query) {
+    private void getTriples(Map<String, List<String>> resourceMapLocal, String resource, String query) {
         TupleQueryResult tupleQueryResult = null;
         String aggregationQ = preprocessQuery(resource, query);
         if (aggregationQ != null && !aggregationQ.isEmpty()) {
@@ -49,18 +55,20 @@ public class ResourceQueryService {
 
                     BindingSet bindings = tupleQueryResult.next();
                     if (bindings.getValue("p") != null) {
-                        predicate = bindings.getValue("p").stringValue().split(":")[1];
+                        predicate = bindings.getValue("p").stringValue();
                     }
                     if (bindings.getValue("o") != null) {
                         object = bindings.getValue("o").stringValue();
                     }
 
-                    if (resourceMap.containsKey(predicate)) {
-                        resourceMap.get(predicate).add(object);
+                    String key = resourceMap.get(predicate);
+                    if (key == null) continue;
+                    if (resourceMapLocal.containsKey(key)) {
+                        resourceMapLocal.get(key).add(object);
                     } else {
                         List<String> list = new ArrayList<>();
                         list.add(object);
-                        resourceMap.put(predicate, list);
+                        resourceMapLocal.put(key, list);
                     }
                 }
             } catch (QueryEvaluationException e) {
@@ -92,5 +100,31 @@ public class ResourceQueryService {
             e.printStackTrace();
         }
         return tupleQueryResult;
+    }
+
+    private Map<String,String> initResourceMap() {
+        Map<String, String> resourceMap = new HashMap<>();
+        resourceMap.put("http://purl.org/dc/elements/1.1/contributor", "Contributor");
+        resourceMap.put("http://purl.org/dc/elements/1.1/description", "Description");
+        resourceMap.put("http://purl.org/dc/elements/1.1/identifier", "Identifier");
+        resourceMap.put("http://purl.org/dc/elements/1.1/language", "Language");
+        resourceMap.put("http://purl.org/dc/elements/1.1/rights", "Rights");
+        resourceMap.put("http://purl.org/dc/elements/1.1/subject", "Subject");
+        resourceMap.put("http://purl.org/dc/elements/1.1/title", "Title");
+        resourceMap.put("http://purl.org/dc/elements/1.1/type", "Type");
+        resourceMap.put("http://purl.org/dc/terms/isPartOf", "Part of");
+        resourceMap.put("http://purl.org/dc/terms/medium", "Medium");
+        resourceMap.put("http://purl.org/dc/terms/spatial", "Spatial");
+        resourceMap.put("http://purl.org/dc/terms/subject", "Subject");
+        resourceMap.put("http://www.europeana.eu/schemas/edm/dataProvider", "Data Provider");
+        resourceMap.put("http://www.europeana.eu/schemas/edm/hasView", "Has View");
+        resourceMap.put("http://www.europeana.eu/schemas/edm/isShownAt", "Is shown at");
+        resourceMap.put("http://www.europeana.eu/schemas/edm/provider", "Provider");
+        resourceMap.put("http://www.europeana.eu/schemas/edm/rights", "EDM Rights");
+        resourceMap.put("http://www.europeana.eu/schemas/edm/object", "Object");
+        resourceMap.put("http://www.europeana.eu/schemas/edm/isShownBy", "Is shown by");
+
+
+        return resourceMap;
     }
 }

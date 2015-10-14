@@ -38,7 +38,7 @@ public class SearchController {
     @RequestMapping(value = "/search", method = RequestMethod.GET)
     @ResponseBody
     public SearchModel search(HttpServletRequest request,
-                              @RequestParam("query") String query,
+                              @RequestParam(value = "query", required = false, defaultValue = "") String query,
                               @RequestParam(value = "offset", required = false, defaultValue = "0") Integer offset,
                               @RequestParam(value = "limit", required = false) Integer limit) {
 

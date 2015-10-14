@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
+import java.util.logging.Logger;
 
 /**
  * Created by boyan on 15-9-18.
@@ -33,6 +34,8 @@ public class SearchQueryService {
 
     @Value("${facets.query}")
     private String facetsQuery;
+
+    private Logger logger = Logger.getLogger(String.valueOf(SearchQueryService.class));
 
     public SearchModel ftsSearch(String queryString, Integer offset, Integer limit, HttpServletRequest request) {
         TupleQueryResult tupleQueryResult = null;
@@ -83,7 +86,7 @@ public class SearchQueryService {
                 }
 
             }  catch (QueryEvaluationException e) {
-                e.printStackTrace();
+                logger.info("No CHO results in the query!");
             }
         }
 
@@ -184,10 +187,15 @@ public class SearchQueryService {
         String query = "";
         if (q != null && !queryString.isEmpty()) {
             queryString = StringUtils.join(queryString.split("[\\s]"), "* AND ");
-            query = q.replace("{q}", queryString);
+            query = q.replace("{q}", ":query \"title:" + queryString + "\" ;");
             if (offset != null) query +=  " OFFSET " + offset;
 
             if (limit != null) query +=  " LIMIT " + limit;
+
+            return query;
+        }
+        else if (q != null && queryString.isEmpty()) {
+            query = q.replace("{q}", "");
 
             return query;
         }

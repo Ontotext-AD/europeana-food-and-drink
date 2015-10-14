@@ -196,6 +196,9 @@ public class SearchQueryService {
         }
         else if (q != null && queryString.isEmpty()) {
             query = q.replace("{q}", "");
+            if (offset != null) query +=  " OFFSET " + offset;
+
+            if (limit != null) query +=  " LIMIT " + limit;
 
             return query;
         }

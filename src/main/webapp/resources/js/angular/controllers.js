@@ -17,11 +17,7 @@ define(['angular'], function(){
         "$scope",
         '$location',
         function($scope, $location) {
-
-            $scope.test = 'SearchCtrl';
-            $scope.search = function(){
-                $location.path('/search').search({query: $scope.searchQuery, limit: 24});
-            }
+            $location.path('/search').search({query: '', limit: 24});
         }
     ]);
 
@@ -88,6 +84,19 @@ define(['angular'], function(){
                     })
             }
 
+            $scope.setCheckState = function(data){
+                if ($scope.activeFilters.length > 0) {
+                    for(var i = 0; i < data.length; i++) {
+                        for (var j = 0; j < $scope.activeFilters.length; j++) {
+                            if (data[i].facetName == $scope.activeFilters[j].facetName){
+                                data[i].checked = true;
+                                return;
+                            }
+                        }
+                    }
+                }
+            }
+
             $scope.search = function(newSearch){
                 $scope.countLoader = true;
                 $scope.loader = true;
@@ -121,6 +130,7 @@ define(['angular'], function(){
                                 for (var j = 0; j < $scope.filtersCategories[i].data.length; j++) {
                                     $scope.filtersCategories[i].data[j].id = j;
                                 }
+                                $scope.setCheckState($scope.filtersCategories[i].data);
                                 $scope.filtersCategories[i].isDisabled = false;
                             } else {
                                 $scope.filtersCategories[i].data = [];
@@ -130,9 +140,10 @@ define(['angular'], function(){
                         $scope.loader = false;
                         $scope.getCount(searchString);
                     }, function(response) {
-                        $scope.data = response.data || "Request failed";
+                        $scope.data = "";
                         $scope.status = response.status;
                         $scope.loader = false;
+                        $scope.countLoader = false;
                         toastr.error('Request failed', '');
                     });
             }
@@ -228,12 +239,8 @@ define(['angular'], function(){
                 $location.path('/resource/'+ encodeURIComponent(resource)).search($scope.searchData);
             }
 
-            if($scope.searchData.query) {
-                $scope.searchQuery = $scope.searchData.query;
-                $scope.search();
-            } else {
-                $scope.loader = false;
-            }
+            $scope.searchQuery = $scope.searchData.query;
+            $scope.search();
         }
     ]);
 
@@ -248,6 +255,7 @@ define(['angular'], function(){
 
         $scope.params = $routeParams;
         $scope.searchData = $location.search();
+        $scope.searchQuery = $scope.searchData.query;
 
         $scope.getResource = function(){
             $http.get('/rest/resource?uri=' + $scope.params.resourceId).
@@ -267,6 +275,10 @@ define(['angular'], function(){
 
         $scope.toSearchResults = function(){
             $location.path('/search').search($scope.searchData);
+        }
+
+        $scope.search = function(){
+            $location.path('/search').search({query: $scope.searchQuery, limit: 24});
         }
 
         $scope.getResource();

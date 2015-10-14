@@ -28,13 +28,19 @@ body {
 .container {
     background: #FFFFFF;
 }
-
+.one-edge-shadow {
+    margin-bottom: 20px;
+    -webkit-box-shadow: 0 8px 6px -6px grey;
+    -moz-box-shadow: 0 8px 6px -6px grey;
+    box-shadow: 0 8px 6px -6px grey;
+}
 #home-search {
     margin-top: 300px;
 }
 #search-query-form div.form-group {
     padding: 5px 10px;
     background: #e3e3e3;
+    margin-bottom: 24px;
 }
 #search-query-form div.btn-group {
     padding: 5px 10px;

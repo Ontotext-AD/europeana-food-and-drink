@@ -5,7 +5,7 @@ require.config({
         'angularRoute': '../../../webjars/angularjs/1.4.4/angular-route.min',
         'angularMessages': '../../../webjars/angularjs/1.4.4/angular-messages.min',
         'angularLocalStorage': '../../../webjars/angular-local-storage/0.2.1/angular-local-storage.min',
-        'toastr': '../../../webjars/angular-toastr/1.5.0/angular-toastr',
+        'toastr': '../../../webjars/angular-toastr/1.5.0/angular-toastr.tpls',
         'ui-bootstrap-tpls': '../../../webjars/angular-ui-bootstrap/0.13.3/ui-bootstrap-tpls.min',
         'ui-bootstrap': '../../../webjars/angular-ui-bootstrap/0.13.3/ui-bootstrap-tpls'
     },

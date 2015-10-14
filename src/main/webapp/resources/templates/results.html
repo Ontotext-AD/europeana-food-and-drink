@@ -15,7 +15,7 @@
     </div>
 </script>
 <!--End fiter accordion template-->
-<div class="row">
+<div class="row one-edge-shadow">
     <div class="hidden-xs hidden-sm col-md-2" style="margin: 20px 0;">
         <img src="/resources/images/efd.png" class="img-responsive"/>
     </div>
@@ -32,7 +32,7 @@
             <div class="panel-body">
                 <span ng-if="activeFilters.length == 0">No active filters</span>
                 <ul class="list-group" >
-                    <li class="list-group-item" ng-repeat="filter in activeFilters" ng-click="removeFilter(filter.categoryName, filter.facetName)">
+                    <li class="list-group-item pointer" ng-repeat="filter in activeFilters" ng-click="removeFilter(filter.categoryName, filter.facetName)">
                         {{filter.facetName}}
                         <i class="fa fa-times"></i>
                     </li>
@@ -99,7 +99,7 @@
             </div>
         </div>
         <div ng-if="!data">
-            <h3>Please use search field</h3>
+            <h3 class="text-center bg-warning text-danger" style="padding: 15px;">Request failed! Please try different search.</h3>
         </div>
     </div>
 </div>

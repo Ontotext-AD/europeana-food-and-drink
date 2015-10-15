@@ -280,7 +280,7 @@ public class SearchQueryService {
 
         if (dataProviders != null && dataProviders.length > 0) {
             for(String dataProvider : dataProviders) {
-                filter += "\n  filter(?type = \"" + dataProvider + "\").";
+                filter += "\n  filter(?dataProvider = \"" + dataProvider + "\").";
             }
             q = q.replace("{dataProvider}", filter);
             q = q.replace("{dataProvider_h}", "?dataProvider");

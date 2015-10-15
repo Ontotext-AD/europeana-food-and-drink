@@ -214,19 +214,19 @@ public class SearchQueryService {
                     filterModel.setMediaTypeFilter(entry.getValue()[0].split(","));
                     break;
                 case "provider" :
-                    filterModel.setProviderFilter(entry.getValue());
+                    filterModel.setProviderFilter(entry.getValue()[0].split(","));
                     break;
                 case "dataProvider" :
-                    filterModel.setDataProviderFilter(entry.getValue());
+                    filterModel.setDataProviderFilter(entry.getValue()[0].split(","));
                     break;
                 case "language" :
-                    filterModel.setLanguageFilter(entry.getValue());
+                    filterModel.setLanguageFilter(entry.getValue()[0].split(","));
                     break;
                 case "article" :
-                    filterModel.setArticleFilter(entry.getValue());
+                    filterModel.setArticleFilter(entry.getValue()[0].split(","));
                     break;
                 case "country" :
-                    filterModel.setCountryFilter(entry.getValue());
+                    filterModel.setCountryFilter(entry.getValue()[0].split(","));
                     break;
             }
         }
@@ -261,9 +261,12 @@ public class SearchQueryService {
         String filter =  "optional {?entity edm:provider ?provider}";
 
         if (providers != null && providers.length > 0) {
-            for(String provider : providers) {
-                filter += "\n  filter(?type = \"" + provider + "\").";
+            filter += "\n  filter(";
+            for(int i = 0; i < providers.length; i++){
+                filter += "?provider = \"" + providers[i] + "\"";
+                if (i < providers.length - 1) filter += " || ";
             }
+            filter += ").";
             q = q.replace("{provider}", filter);
             q = q.replace("{provider_h}", "?provider");
             q += " ?provider";
@@ -279,9 +282,12 @@ public class SearchQueryService {
         String filter =  "optional {?entity edm:dataProvider ?dataProvider}";
 
         if (dataProviders != null && dataProviders.length > 0) {
-            for(String dataProvider : dataProviders) {
-                filter += "\n  filter(?dataProvider = \"" + dataProvider + "\").";
+            filter += "\n  filter(";
+            for(int i = 0; i < dataProviders.length; i++){
+                filter += "?dataProvider = \"" + dataProviders[i] + "\"";
+                if (i < dataProviders.length - 1) filter += " || ";
             }
+            filter += ").";
             q = q.replace("{dataProvider}", filter);
             q = q.replace("{dataProvider_h}", "?dataProvider");
             q += " ?dataProvider";
@@ -297,9 +303,12 @@ public class SearchQueryService {
         String filter =  "optional {?entity edm:aggregatedCHO/dc:language ?language}";
 
         if (languages != null && languages.length > 0) {
-            for(String language : languages) {
-                filter += "\n  filter(?type = \"" + language + "\").";
+            filter += "\n  filter(";
+            for(int i = 0; i < languages.length; i++){
+                filter += "?language = \"" + languages[i] + "\"";
+                if (i < languages.length - 1) filter += " || ";
             }
+            filter += ").";
             q = q.replace("{language}", filter);
             q = q.replace("{language_h}", "?language");
             q += " ?language";
@@ -315,9 +324,12 @@ public class SearchQueryService {
         String filter =  "optional {?entity edm:country ?providingCountry}";
 
         if (countries != null && countries.length > 0) {
-            for(String country : countries) {
-                filter += "\n  filter(?type = \"" + country + "\").";
+            filter += "\n  filter(";
+            for(int i = 0; i < countries.length; i++){
+                filter += "?providingCountry = \"" + countries[i] + "\"";
+                if (i < countries.length - 1) filter += " || ";
             }
+            filter += ").";
             q = q.replace("{providingCountry}", filter);
             q = q.replace("{providingCountry_h}", "?providingCountry");
             q += " ?providingCountry";

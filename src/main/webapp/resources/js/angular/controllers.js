@@ -253,14 +253,18 @@ define(['angular'], function(){
         'toastr',
         function($scope, $routeParams, $http, $location, $timeout, toastr) {
 
+        $scope.loader = true;
         $scope.params = $routeParams;
         $scope.searchData = $location.search();
         $scope.searchQuery = $scope.searchData.query;
+        $scope.resource = {};
 
         $scope.getResource = function(){
             $http.get('/rest/resource?uri=' + $scope.params.resourceId).
                 then(function(response) {
                     console.log(response.data);
+                    $scope.resource = response.data;
+                    $scope.loader = false;
                 }, function(response){
                     console.log(response);
                     toastr.error('Resource not found', '');

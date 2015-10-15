@@ -104,25 +104,25 @@ public class ResourceQueryService {
 
     private Map<String,String> initResourceMap() {
         Map<String, String> resourceMap = new HashMap<>();
-        resourceMap.put("http://purl.org/dc/elements/1.1/contributor", "Contributor");
-        resourceMap.put("http://purl.org/dc/elements/1.1/description", "Description");
-        resourceMap.put("http://purl.org/dc/elements/1.1/identifier", "Identifier");
-        resourceMap.put("http://purl.org/dc/elements/1.1/language", "Language");
-        resourceMap.put("http://purl.org/dc/elements/1.1/rights", "Rights");
-        resourceMap.put("http://purl.org/dc/elements/1.1/subject", "Subject");
-        resourceMap.put("http://purl.org/dc/elements/1.1/title", "Title");
-        resourceMap.put("http://purl.org/dc/elements/1.1/type", "Type");
-        resourceMap.put("http://purl.org/dc/terms/isPartOf", "Part of");
-        resourceMap.put("http://purl.org/dc/terms/medium", "Medium");
-        resourceMap.put("http://purl.org/dc/terms/spatial", "Spatial");
-        resourceMap.put("http://purl.org/dc/terms/subject", "Subject");
-        resourceMap.put("http://www.europeana.eu/schemas/edm/dataProvider", "Data Provider");
-        resourceMap.put("http://www.europeana.eu/schemas/edm/hasView", "Has View");
-        resourceMap.put("http://www.europeana.eu/schemas/edm/isShownAt", "Is shown at");
-        resourceMap.put("http://www.europeana.eu/schemas/edm/provider", "Provider");
-        resourceMap.put("http://www.europeana.eu/schemas/edm/rights", "EDM Rights");
-        resourceMap.put("http://www.europeana.eu/schemas/edm/object", "Object");
-        resourceMap.put("http://www.europeana.eu/schemas/edm/isShownBy", "Is shown by");
+        resourceMap.put("http://purl.org/dc/elements/1.1/contributor", "contributor");
+        resourceMap.put("http://purl.org/dc/elements/1.1/description", "description");
+        resourceMap.put("http://purl.org/dc/elements/1.1/identifier", "identifier");
+        resourceMap.put("http://purl.org/dc/elements/1.1/language", "language");
+        resourceMap.put("http://purl.org/dc/elements/1.1/rights", "rights");
+        resourceMap.put("http://purl.org/dc/elements/1.1/subject", "subject");
+        resourceMap.put("http://purl.org/dc/elements/1.1/title", "title");
+        resourceMap.put("http://purl.org/dc/elements/1.1/type", "type");
+        resourceMap.put("http://purl.org/dc/terms/isPartOf", "isPartOf");
+        resourceMap.put("http://purl.org/dc/terms/medium", "medium");
+        resourceMap.put("http://purl.org/dc/terms/spatial", "spatial");
+        resourceMap.put("http://purl.org/dc/terms/subject", "termsSubject");
+        resourceMap.put("http://www.europeana.eu/schemas/edm/dataProvider", "dataProvider");
+        resourceMap.put("http://www.europeana.eu/schemas/edm/hasView", "hasView");
+        resourceMap.put("http://www.europeana.eu/schemas/edm/isShownAt", "externalLink");
+        resourceMap.put("http://www.europeana.eu/schemas/edm/provider", "provider");
+        resourceMap.put("http://www.europeana.eu/schemas/edm/rights", "EDMRights");
+        resourceMap.put("http://www.europeana.eu/schemas/edm/object", "object");
+        resourceMap.put("http://www.europeana.eu/schemas/edm/isShownBy", "isShownBy");
 
 
         return resourceMap;

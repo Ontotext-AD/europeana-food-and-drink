@@ -9,3 +9,132 @@
         <button class="btn  btn-info" ng-click="toSearchResults()">Return to search results</button>
     </div>
 </div>
+<div ng-show="loader" class="ot-loader ot-main-loader" onto-loader  size="50"></div>
+<div ng-hide="loader" class="row" style="margin-bottom: 40px; background: #fff;">
+    <div class="col-sm-4 col-md-3 panel panel-default">
+        <carousel interval="4000" no-wrap="true" class="col-xs-12 text-center" disable-animation="true">
+            <slide ng-repeat="src in resource.hasView" ng-active="{{$first?'true':'false'}}" class="col-xs-12">
+                <img ng-src="{{src}}" style="margin:auto;" />
+            </slide>
+        </carousel>
+    </div>
+    <div class="col-sm-8 col-md-9">
+        <h1 ng-repeat="title in resource.title" class="text-center">{{title}}</h1>
+        <div>
+            <h3>Description:</h3>
+            <ol>
+                <li ng-repeat="description in resource.description">{{description}}</li>
+            </ol>
+        </div>
+    </div>
+    <div>
+        <h3>Contributor</h3>
+        <div ng-repeat="contributor in resource.contributor">
+            <div>{{contributor}}</div>
+        </div>
+    </div>
+    <div>
+        <h3>Identifier</h3>
+        <div ng-repeat="identifier in resource.identifier">
+            <div>{{identifier}}</div>
+        </div>
+    </div>
+    <div>
+        <h3>Language</h3>
+        <div ng-repeat="language in resource.language">
+            <div>{{language}}</div>
+        </div>
+    </div>
+    <div>
+        <h3>Rights</h3>
+        <div ng-repeat="copyright in resource.rights">
+            <div>{{copyright}}</div>
+        </div>
+    </div>
+    <div>
+        <h3>Subject</h3>
+        <div ng-repeat="subject in resource.subject">
+            <div>{{subject}}</div>
+        </div>
+    </div>
+    <div>
+        <h3>Title</h3>
+        <div ng-repeat="title in resource.title">
+            <div>{{title}}</div>
+        </div>
+    </div>
+    <div>
+        <h3>Type</h3>
+        <div ng-repeat="type in resource.type">
+            <div>{{type}}</div>
+        </div>
+    </div>
+    <div>
+        <h3>Part of</h3>
+        <div ng-repeat="isPartOf in resource.isPartOf">
+            <div>{{isPartOf}}</div>
+        </div>
+    </div>
+    <div>
+        <h3>Medium</h3>
+        <div ng-repeat="medium in resource.medium">
+            <div>{{medium}}</div>
+        </div>
+    </div>
+    <div>
+        <h3>Spatial</h3>
+        <div ng-repeat="spatial in resource.spatial">
+            <div>{{spatial}}</div>
+        </div>
+    </div>
+    <div>
+        <h3>Terms subject</h3>
+        <div ng-repeat="termsSubject in resource.termsSubject">
+            <div>{{termsSubject}}</div>
+        </div>
+    </div>
+    <div>
+        <h3>Data Provider</h3>
+        <div ng-repeat="dataProvider in resource.dataProvider">
+            <div>{{dataProvider}}</div>
+        </div>
+    </div>
+    <div>
+        <h3>Has View</h3>
+        <div ng-repeat="hasView in resource.hasView">
+            <div>{{hasView}}</div>
+        </div>
+    </div>
+    <div>
+        <h3>Is shown at:</h3>
+        <div ng-repeat="isShownAt in resource.isShownAt">
+            <div>{{isShownAt}}</div>
+        </div>
+    </div>
+    <div>
+        <h3>Provider</h3>
+        <div ng-repeat="provider in resource.provider">
+            <div>{{provider}}</div>
+        </div>
+    </div>
+    <div>
+        <h3>EDM Rights</h3>
+        <div ng-repeat="EDMRights in resource.EDMRights">
+            <div>{{EDMRights}}</div>
+        </div>
+    </div>
+    <div>
+        <h3>Object</h3>
+        <div ng-repeat="object in resource.object">
+            <div>{{object}}</div>
+        </div>
+    </div>
+    <div>
+        <h3>Is shown by</h3>
+        <div ng-repeat="isShownBy in resource.isShownBy">
+            <div>{{isShownBy}}</div>
+        </div>
+    </div>
+
+
+</div>

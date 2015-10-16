@@ -17,7 +17,7 @@ define(['angular'], function(){
         "$scope",
         '$location',
         function($scope, $location) {
-            $location.path('/search').search({query: '', limit: 24});
+            $location.path('/app/search').search({query: '', limit: 24});
         }
     ]);
 
@@ -71,7 +71,7 @@ define(['angular'], function(){
             $scope.test = 'ResultCtrl';
 
             $scope.getCount = function(searchString){
-                $http.get('/rest/search/count?' + searchString).
+                $http.get('/app/rest/search/count?' + searchString).
                     then(function(response) {
                         $scope.count = response.data;
                         $scope.totalPages = Math.ceil($scope.count/$scope.limit);
@@ -122,7 +122,7 @@ define(['angular'], function(){
                     searchString += index + '=' + $scope.searchData[index];
                 }
                 searchString = encodeURI(searchString);
-                $http.get('/rest/search?' + searchString).
+                $http.get('/app/rest/search?' + searchString).
                     then(function(response) {
                         $scope.status = response.status;
                         $scope.data = response.data;
@@ -240,7 +240,7 @@ define(['angular'], function(){
             }
 
             $scope.loadResource = function(resource){
-                $location.path('/resource/'+ encodeURIComponent(resource)).search($scope.searchData);
+                $location.path('/app/resource/'+ encodeURIComponent(resource)).search($scope.searchData);
             }
 
             $scope.searchQuery = $scope.searchData.query;
@@ -264,7 +264,7 @@ define(['angular'], function(){
         $scope.resource = {};
 
         $scope.getResource = function(){
-            $http.get('/rest/resource?uri=' + $scope.params.resourceId).
+            $http.get('/app/rest/resource?uri=' + $scope.params.resourceId).
                 then(function(response) {
                     console.log(response.data);
                     $scope.resource = response.data;
@@ -273,7 +273,7 @@ define(['angular'], function(){
                     console.log(response);
                     toastr.error('Resource not found', '');
                     var t = $timeout(function(){
-                        $location.path('/search').search($scope.searchData);
+                        $location.path('/app/search').search($scope.searchData);
                     }, 2000);
                     $scope.$on("$destroy", function(event) {
                         $timeout.cancel(t);
@@ -282,11 +282,11 @@ define(['angular'], function(){
         }
 
         $scope.toSearchResults = function(){
-            $location.path('/search').search($scope.searchData);
+            $location.path('/app/search').search($scope.searchData);
         }
 
         $scope.search = function(){
-            $location.path('/search').search({query: $scope.searchQuery, limit: 24});
+            $location.path('/app/search').search({query: $scope.searchQuery, limit: 24});
         }
 
         $scope.getResource();

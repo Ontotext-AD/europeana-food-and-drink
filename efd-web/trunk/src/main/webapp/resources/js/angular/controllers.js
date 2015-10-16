@@ -50,11 +50,8 @@ define(['angular'], function(){
             $scope.filtersCategories = [
                 {id: 0, title: 'By media type', searchString: 'mediaType', data: [], isDisabled: true},
                 {id: 1, title: 'By language of description', searchString: 'language', data: [], isDisabled: true},
-                {id: 2, title: 'By providing country', searchString: '', data: [], isDisabled: true},
-                {id: 3, title: 'Can I use it?', searchString: '', data: [], isDisabled: true},
-                {id: 4, title: 'By copyright', searchString: '', data: [], isDisabled: true},
-                {id: 5, title: 'By provider', searchString: 'provider', data: [], isDisabled: true},
-                {id: 6, title: 'By data provider', searchString: 'dataProvider', data: [], isDisabled: true}
+                {id: 2, title: 'By providing country', searchString: 'providingCountry', data: [], isDisabled: true},
+                {id: 3, title: 'By data provider', searchString: 'dataProvider', data: [], isDisabled: true}
             ]
 
             $scope.hasFacets = function(filter){

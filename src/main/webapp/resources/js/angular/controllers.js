@@ -90,7 +90,6 @@ define(['angular'], function(){
                         for (var j = 0; j < $scope.activeFilters.length; j++) {
                             if (data[i].facetName == $scope.activeFilters[j].facetName){
                                 data[i].checked = true;
-                                return;
                             }
                         }
                     }

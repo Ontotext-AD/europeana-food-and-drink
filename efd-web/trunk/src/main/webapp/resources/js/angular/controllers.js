@@ -85,15 +85,18 @@ define(['angular'], function(){
             }
 
             $scope.setCheckState = function(data){
+                var answer = false;
                 if ($scope.activeFilters.length > 0) {
                     for(var i = 0; i < data.length; i++) {
                         for (var j = 0; j < $scope.activeFilters.length; j++) {
                             if (data[i].facetName == $scope.activeFilters[j].facetName){
                                 data[i].checked = true;
+                                answer = true;
                             }
                         }
                     }
                 }
+                return answer;
             }
 
             $scope.search = function(newSearch){
@@ -129,7 +132,9 @@ define(['angular'], function(){
                                 for (var j = 0; j < $scope.filtersCategories[i].data.length; j++) {
                                     $scope.filtersCategories[i].data[j].id = j;
                                 }
-                                $scope.setCheckState($scope.filtersCategories[i].data);
+                                if ($scope.setCheckState($scope.filtersCategories[i].data)) {
+                                    $scope.filtersCategories[i].open = true;
+                                }
                                 $scope.filtersCategories[i].isDisabled = false;
                             } else {
                                 $scope.filtersCategories[i].data = [];

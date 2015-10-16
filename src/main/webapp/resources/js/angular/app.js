@@ -77,21 +77,21 @@ define([
                     positionClass: 'toast-bottom-right'
                 });
 
-                $routeProvider.when('/', {
-                    templateUrl : 'resources/templates/home.html',
+                $routeProvider.when('/app', {
+                    templateUrl : 'app/resources/templates/home.html',
                     controller : 'HomeCtrl'
-                }).when('/search', {
-                    templateUrl : 'resources/templates/results.html',
+                }).when('/app/search', {
+                    templateUrl : 'app/resources/templates/results.html',
                     controller : 'ResultCtrl'
-                }).when('/resource/:resourceId', {
-                    templateUrl : 'resources/templates/resource.html',
+                }).when('/app/resource/:resourceId', {
+                    templateUrl : 'app/resources/templates/resource.html',
                     controller : 'ResourceCtrl'
-                }).when('/contact-us', {
-                    templateUrl : 'resources/templates/contact-us.html'
-                }).when('/about-us', {
-                    templateUrl : 'resources/templates/about-us.html'
+                }).when('/app/contact-us', {
+                    templateUrl : 'app/resources/templates/contact-us.html'
+                }).when('/app/about-us', {
+                    templateUrl : 'app/resources/templates/about-us.html'
                 }).otherwise({
-                    redirectTo: '/'
+                    redirectTo: '/app'
                 });
 
                 $locationProvider.html5Mode(true);

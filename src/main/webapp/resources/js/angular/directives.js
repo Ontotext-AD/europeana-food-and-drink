@@ -8,13 +8,13 @@ define(['angular'], function(){
     efdDirectives.directive('searchForm', function () {
         return {
             restrict: 'A',
-            templateUrl: 'resources/js/angular/templates/search-form.html'
+            templateUrl: 'app/resources/js/angular/templates/search-form.html'
         };
     });
 
     efdDirectives.directive('ontoLoader', function () {
         return {
-            template: function (elem, attr) {return '<object width="' + attr.size + '" height="' + attr.size + '" data="resources/images/ot-loader.svg">Loading...</object>'}
+            template: function (elem, attr) {return '<object width="' + attr.size + '" height="' + attr.size + '" data="app/resources/images/ot-loader.svg">Loading...</object>'}
         };
     });
 

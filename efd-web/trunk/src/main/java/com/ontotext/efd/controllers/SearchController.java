@@ -1,7 +1,9 @@
 package com.ontotext.efd.controllers;
 
 import com.ontotext.efd.model.FTSSearchResults;
+import com.ontotext.efd.model.FacetModel;
 import com.ontotext.efd.model.SearchModel;
+import com.ontotext.efd.services.CategoryFacetSearchService;
 import com.ontotext.efd.services.ResourceQueryService;
 import com.ontotext.efd.services.SearchQueryService;
 import org.openrdf.query.TupleQueryResult;
@@ -34,6 +36,9 @@ public class SearchController {
 
     @Autowired
     ResourceQueryService resourceQueryService;
+
+    @Autowired
+    CategoryFacetSearchService facetSearchService;
 
     @RequestMapping(value = "/search", method = RequestMethod.GET)
     @ResponseBody
@@ -81,6 +86,12 @@ public class SearchController {
     }
 
 
+    @RequestMapping(value = "/categoryFacet", method = RequestMethod.GET)
+    @ResponseBody
+    public List<FacetModel> getCategoryFacet(HttpServletRequest servletRequest) {
+
+        return facetSearchService.getCategoryFacets();
+    }
 
 
 }

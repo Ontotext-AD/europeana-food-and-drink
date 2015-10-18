@@ -47,7 +47,7 @@ public class SearchQueryService {
 
             try {
                 searchResults = new ArrayList<>();
-                tupleQueryResult = evaluateQuery(query);
+                tupleQueryResult = connectionService.evaluateQuery(query);
                 while (tupleQueryResult.hasNext()) {
                     String resource = "";
                     String title = "";
@@ -102,7 +102,7 @@ public class SearchQueryService {
         if (query != null && !query.isEmpty()) {
             try {
                 searchResults = new ArrayList<>();
-                tupleQueryResult = evaluateQuery(query);
+                tupleQueryResult = connectionService.evaluateQuery(query);
                 while (tupleQueryResult.hasNext()) {
                     String resource = "";
                     String title = "";
@@ -132,7 +132,7 @@ public class SearchQueryService {
         Map<String, List<FacetModel>> map = new HashMap<>();
         if (query != null && !query.isEmpty()) {
             try {
-                tupleQueryResult = evaluateQuery(query);
+                tupleQueryResult = connectionService.evaluateQuery(query);
                 while (tupleQueryResult.hasNext()) {
                     String facetName = "";
                     String facetValue = "";
@@ -165,23 +165,7 @@ public class SearchQueryService {
         return map;
     }
 
-    private TupleQueryResult evaluateQuery(String query) {
-        Repository repository = connectionService.getRepository();;
-        RepositoryConnection repositoryConnection = null;
-        TupleQueryResult tupleQueryResult = null;
-        try {
-            repositoryConnection = repository.getConnection();
-            TupleQuery tupleQuery = repositoryConnection.prepareTupleQuery(QueryLanguage.SPARQL, query);
-            tupleQueryResult = tupleQuery.evaluate();
-        } catch (RepositoryException e) {
-            e.printStackTrace();
-        } catch (QueryEvaluationException e) {
-            e.printStackTrace();
-        } catch (MalformedQueryException e) {
-            e.printStackTrace();
-        }
-        return tupleQueryResult;
-    }
+
 
     private String prepareSearchQuery(String queryString, String q, Integer offset, Integer limit) {
         String query = "";

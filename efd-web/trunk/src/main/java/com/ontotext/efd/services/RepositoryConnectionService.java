@@ -1,6 +1,8 @@
 package com.ontotext.efd.services;
 
+import org.openrdf.query.*;
 import org.openrdf.repository.Repository;
+import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.http.HTTPRepository;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,5 +29,23 @@ public class RepositoryConnectionService {
             e.printStackTrace();
         }
         return repository;
+    }
+
+    public TupleQueryResult evaluateQuery(String query) {
+        Repository repository = getRepository();
+        RepositoryConnection repositoryConnection = null;
+        TupleQueryResult tupleQueryResult = null;
+        try {
+            repositoryConnection = repository.getConnection();
+            TupleQuery tupleQuery = repositoryConnection.prepareTupleQuery(QueryLanguage.SPARQL, query);
+            tupleQueryResult = tupleQuery.evaluate();
+        } catch (RepositoryException e) {
+            e.printStackTrace();
+        } catch (QueryEvaluationException e) {
+            e.printStackTrace();
+        } catch (MalformedQueryException e) {
+            e.printStackTrace();
+        }
+        return tupleQueryResult;
     }
 }

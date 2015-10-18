@@ -36,6 +36,8 @@
 
     <bean class="com.ontotext.efd.services.SearchQueryService" name="queryService" />
 
+    <bean class="com.ontotext.efd.services.CategoryFacetSearchService" name="facetSearchService" />
+
     <bean class="com.ontotext.efd.services.ResourceQueryService" name="resourceService" />
 
     <bean class="com.ontotext.efd.services.EDMDatasetsService" name="datasetsService" />

@@ -95,12 +95,16 @@ public class SearchController {
 
     @RequestMapping(value = "/categoryFacet", method = RequestMethod.GET)
     @ResponseBody
-    public HierarchyFacet getCategoryFacet(HttpServletRequest servletRequest) {
+    public HierarchyFacet getCategoryFacet(HttpServletRequest servletRequest,
+                                           @RequestParam(value = "category", required = false, defaultValue = "Food_and_drink") String category,
+                                           @RequestParam(value = "article", required = false) String article) {
 
         HierarchyFacet hierarchyFacet = new HierarchyFacet();
+        String categoryQuery = facetSearchService.preprocessCategoryQuery(categoryFacetQuery, category);
+        hierarchyFacet.setCategoryFacet(facetSearchService.getCategoryArticleFacets(categoryQuery));
 
-        hierarchyFacet.setCategoryFacet(facetSearchService.getCategoryArticleFacets(categoryFacetQuery));
-        hierarchyFacet.setArticleModel(facetSearchService.getCategoryArticleFacets(articleFacetQuery));
+        String articleQuery = facetSearchService.preprocessArticleQuery(articleFacetQuery, category);
+        hierarchyFacet.setArticleModel(facetSearchService.getCategoryArticleFacets(articleQuery));
 
         return hierarchyFacet;
     }

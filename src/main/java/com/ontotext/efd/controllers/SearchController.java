@@ -97,13 +97,14 @@ public class SearchController {
     @ResponseBody
     public HierarchyFacet getCategoryFacet(HttpServletRequest servletRequest,
                                            @RequestParam(value = "category", required = false, defaultValue = "Food_and_drink") String category,
-                                           @RequestParam(value = "article", required = false) String article) {
+                                           @RequestParam(value = "article", required = false) String article,
+                                           @RequestParam(value = "query", required = false) String query) {
 
         HierarchyFacet hierarchyFacet = new HierarchyFacet();
-        String categoryQuery = facetSearchService.preprocessCategoryQuery(categoryFacetQuery, category);
+        String categoryQuery = facetSearchService.preprocessCategoryQuery(categoryFacetQuery, category, query);
         hierarchyFacet.setCategoryFacet(facetSearchService.getCategoryArticleFacets(categoryQuery));
 
-        String articleQuery = facetSearchService.preprocessArticleQuery(articleFacetQuery, category);
+        String articleQuery = facetSearchService.preprocessArticleQuery(articleFacetQuery, category, query);
         hierarchyFacet.setArticleModel(facetSearchService.getCategoryArticleFacets(articleQuery));
 
         return hierarchyFacet;

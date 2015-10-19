@@ -194,7 +194,7 @@ public class SearchQueryService {
         FacetFilterModel filterModel = new FacetFilterModel();
         for (Map.Entry<String, String[]> entry : filterParams.entrySet()) {
             switch (entry.getKey()) {
-                case "type" :
+                case "mediaType" :
                     filterModel.setMediaTypeFilter(entry.getValue()[0].split(","));
                     break;
                 case "provider" :
@@ -230,7 +230,7 @@ public class SearchQueryService {
 
         if (types != null && types.length > 0) {
             for(String type : types) {
-                filter += "\n  filter(?type = \"" + type + "\").";
+                filter += "\n  filter(?type = \"" + type.toUpperCase() + "\").";
             }
             q = q.replace("{mediaType}", filter);
             q += "?type";

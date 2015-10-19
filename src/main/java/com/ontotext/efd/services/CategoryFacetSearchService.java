@@ -65,7 +65,26 @@ public class CategoryFacetSearchService {
         return category;
     }
 
-//    public String restoreCategoryURI(String category) {
-//        category =
-//    }
+    public String preprocessCategoryQuery(String query, String category){
+        String q = "";
+        category = category.replace(" ", "_");
+        if (query != null && !query.isEmpty())
+            if (category.equals("Food_and_drink")) {
+                q = query.replace("{categoryFilter}", "optional{?sub efd:treeLevel ?level}.\n" +
+                                                      "filter(xsd:integer(?level) = 1).");
+            }
+            else {
+                q = query.replace("{categoryFilter}", "optional{?sub efd:child ?cat}\n" +
+                                      " filter(?cat =  <http://dbpedia.org/resource/Category:" + category +">).");
+            }
+        return q;
+    }
+
+    public String preprocessArticleQuery(String query, String category) {
+        String artQuery = "";
+        if (query != null && !query.isEmpty()) {
+            artQuery = query.replace("{category}", category);
+        }
+        return artQuery;
+    }
 }

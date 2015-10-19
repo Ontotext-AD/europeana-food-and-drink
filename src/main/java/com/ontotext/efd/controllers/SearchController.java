@@ -95,9 +95,7 @@ public class SearchController {
 
     @RequestMapping(value = "/categoryFacet", method = RequestMethod.GET)
     @ResponseBody
-    public HierarchyFacet getCategoryFacet(HttpServletRequest servletRequest,
-                                           @RequestParam(value = "category", required = false, defaultValue = "Food_and_drink") String category,
-                                           @RequestParam(value = "article", required = false) String article,
+    public HierarchyFacet getCategoryFacet(@RequestParam(value = "category", required = false, defaultValue = "Food_and_drink") String category,
                                            @RequestParam(value = "query", required = false) String query) {
 
         HierarchyFacet hierarchyFacet = new HierarchyFacet();

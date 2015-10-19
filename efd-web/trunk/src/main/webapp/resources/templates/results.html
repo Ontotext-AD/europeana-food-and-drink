@@ -17,7 +17,7 @@
 <!--End fiter accordion template-->
 <div class="row one-edge-shadow">
     <div class="hidden-xs hidden-sm col-md-2" style="margin: 20px 0;">
-        <a href="/"><img src="/resources/images/efd.png" class="img-responsive"/></a>
+        <a href="/"><img src="/app/resources/images/efd.png" class="img-responsive"/></a>
     </div>
     <div class="col-xs-12 col-md-10">
         <h1>Europeana Food & Drink</h1>
@@ -39,6 +39,23 @@
                 </ul>
             </div>
         </div>
+        <accordion id="categories" close-others="true">
+            <accordion-group ng-repeat="filter in filtersCategories" template-url="accordion-template.html" heading="{{filter.title}}">
+                <ul class="list-group" style="margin:0">
+                    <li class="list-group-item" ng-repeat="filterElement in filter.data | orderBy:'facetName'" style="padding:0; -webkit-border-radius: 0;-moz-border-radius: 0;border-radius: 0;">
+                        <div class="checkbox pointer" style="padding: 0; margin: 0;">
+                            <label style="width: 100%; padding: 10px 20px 10px 40px">
+                                <accordion id="categories" close-others="true">
+                                    <accordion-group ng-repeat="filter in filtersCategories" template-url="accordion-template.html" heading="{{filter.title}}">
+                                        $index
+                                    </accordion-group>
+                                </accordion>
+                            </label>
+                        </div>
+                    </li>
+                </ul>
+            </accordion-group>
+        </accordion>
         <accordion id="filters" close-others="false">
             <accordion-group ng-repeat="filter in filtersCategories" is-disabled="filter.isDisabled" is-open="filter.open" template-url="accordion-template.html" heading="{{filter.title}}">
                 <ul class="list-group" style="margin:0">

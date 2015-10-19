@@ -11,6 +11,15 @@ public class FacetFilterModel {
     private String languageFilter[];
     private String articleFilter[];
     private String countryFilter[];
+    private String categoryFacetFilter[];
+
+    public String[] getCategoryFacetFilter() {
+        return categoryFacetFilter;
+    }
+
+    public void setCategoryFacetFilter(String[] categoryFacetFilter) {
+        this.categoryFacetFilter = categoryFacetFilter;
+    }
 
     public String[] getCountryFilter() {
         return countryFilter;

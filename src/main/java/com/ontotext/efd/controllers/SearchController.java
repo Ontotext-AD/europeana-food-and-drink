@@ -2,6 +2,7 @@ package com.ontotext.efd.controllers;
 
 import com.ontotext.efd.model.FTSSearchResults;
 import com.ontotext.efd.model.FacetModel;
+import com.ontotext.efd.model.HierarchyFacet;
 import com.ontotext.efd.model.SearchModel;
 import com.ontotext.efd.services.CategoryFacetSearchService;
 import com.ontotext.efd.services.ResourceQueryService;
@@ -30,6 +31,12 @@ public class SearchController {
 
     @Value("${search.query}")
     private String searchQuery;
+
+    @Value("${facets.category}")
+    private String categoryFacetQuery;
+
+    @Value("${facet.article}")
+    private String articleFacetQuery;
 
     @Autowired
     SearchQueryService searchQueryService;
@@ -88,9 +95,14 @@ public class SearchController {
 
     @RequestMapping(value = "/categoryFacet", method = RequestMethod.GET)
     @ResponseBody
-    public List<FacetModel> getCategoryFacet(HttpServletRequest servletRequest) {
+    public HierarchyFacet getCategoryFacet(HttpServletRequest servletRequest) {
 
-        return facetSearchService.getCategoryFacets();
+        HierarchyFacet hierarchyFacet = new HierarchyFacet();
+
+        hierarchyFacet.setCategoryFacet(facetSearchService.getCategoryArticleFacets(categoryFacetQuery));
+        hierarchyFacet.setArticleModel(facetSearchService.getCategoryArticleFacets(articleFacetQuery));
+
+        return hierarchyFacet;
     }
 
 

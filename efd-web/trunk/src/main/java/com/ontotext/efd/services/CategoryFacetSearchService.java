@@ -22,25 +22,22 @@ public class CategoryFacetSearchService {
     @Autowired
     private RepositoryConnectionService connectionService;
 
-    @Value("${facets.category}")
-    private String categoryFacetQuery;
-
     private Logger logger = Logger.getLogger(String.valueOf(CategoryFacetSearchService.class));
 
-    public List<FacetModel> getCategoryFacets(){
+    public List<FacetModel> getCategoryArticleFacets(String query){
         TupleQueryResult tupleQueryResult = null;
         List<FacetModel> categoryFacet = null;
 
-        if (categoryFacetQuery != null && !categoryFacetQuery.isEmpty()) {
-            tupleQueryResult = connectionService.evaluateQuery(categoryFacetQuery);
+        if (query != null && !query.isEmpty()) {
+            tupleQueryResult = connectionService.evaluateQuery(query);
             categoryFacet = new ArrayList<>();
             try {
                 while (tupleQueryResult.hasNext()) {
                     String category = "";
                     String count = "";
                     BindingSet bindings = tupleQueryResult.next();
-                    if (bindings.getValue("cat") != null) {
-                        category = bindings.getValue("cat").stringValue();
+                    if (bindings.getValue("sub") != null) {
+                        category = bindings.getValue("sub").stringValue();
                     }
                     if (bindings.getValue("count") != null) {
                         count = bindings.getValue("count").stringValue();

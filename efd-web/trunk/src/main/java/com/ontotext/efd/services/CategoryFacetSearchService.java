@@ -38,6 +38,7 @@ public class CategoryFacetSearchService {
                     BindingSet bindings = tupleQueryResult.next();
                     if (bindings.getValue("sub") != null) {
                         category = bindings.getValue("sub").stringValue();
+                        category = processArticleCategoryName(category);
                     }
                     if (bindings.getValue("count") != null) {
                         count = bindings.getValue("count").stringValue();
@@ -52,4 +53,19 @@ public class CategoryFacetSearchService {
 
         return categoryFacet;
     }
+
+    private String processArticleCategoryName(String category) {
+        String delimiter = "";
+        if (category.contains("Category")) delimiter = ":";
+        else delimiter = "/";
+        String cat[] = category.split(delimiter);
+        category = cat[cat.length - 1];
+        category = category.replaceAll("_", " ");
+
+        return category;
+    }
+
+//    public String restoreCategoryURI(String category) {
+//        category =
+//    }
 }

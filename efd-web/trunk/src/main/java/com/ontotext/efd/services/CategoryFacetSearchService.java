@@ -65,7 +65,7 @@ public class CategoryFacetSearchService {
         return category;
     }
 
-    public String preprocessCategoryQuery(String query, String category){
+    public String preprocessCategoryQuery(String query, String category, String queryString){
         String q = "";
         category = category.replace(" ", "_");
         if (query != null && !query.isEmpty())
@@ -77,13 +77,26 @@ public class CategoryFacetSearchService {
                 q = query.replace("{categoryFilter}", "optional{?sub efd:child ?cat}\n" +
                                       " filter(?cat =  <http://dbpedia.org/resource/Category:" + category +">).");
             }
+            if (queryString != null && !queryString.isEmpty()) {
+                q = q.replace("{query}", "title:" + queryString);
+            }
+            else {
+                q = q.replace("{query}", "*:*");
+            }
         return q;
     }
 
-    public String preprocessArticleQuery(String query, String category) {
+    public String preprocessArticleQuery(String query, String category, String queryString) {
         String artQuery = "";
         if (query != null && !query.isEmpty()) {
             artQuery = query.replace("{category}", category);
+
+            if (queryString != null && !queryString.isEmpty()) {
+                artQuery = artQuery.replace("{query}", "title:" + queryString);
+            }
+            else {
+                artQuery = artQuery.replace("{query}", "*:*");
+            }
         }
         return artQuery;
     }

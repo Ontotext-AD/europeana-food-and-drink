@@ -172,17 +172,33 @@ public class SearchQueryService {
         if (q != null && !queryString.isEmpty()) {
             queryString = StringUtils.join(queryString.split("[\\s]"), "* AND ");
             query = q.replace("{q}", ":query \"title:" + queryString + "\" ;");
-            if (offset != null) query +=  " OFFSET " + offset;
 
-            if (limit != null) query +=  " LIMIT " + limit;
+            if (offset != null) {
+               query =  query.replace("{OFFSET}", " OFFSET " + offset);
+            } else {
+                query = query.replace("{OFFSET}", "");
+            }
+            if (limit != null) {
+               query =  query.replace("{LIMIT}", " LIMIT " + limit);
+            } else {
+                query =  query.replace("{LIMIT}", "");
+            }
 
             return query;
         }
         else if (q != null && queryString.isEmpty()) {
             query = q.replace("{q}", "");
-            if (offset != null) query +=  " OFFSET " + offset;
 
-            if (limit != null) query +=  " LIMIT " + limit;
+            if (offset != null) {
+                query =  query.replace("{OFFSET}", " OFFSET " + offset);
+            } else {
+                query = query.replace("{OFFSET}", "");
+            }
+            if (limit != null) {
+                query =  query.replace("{LIMIT}", " LIMIT " + limit);
+            } else {
+                query =  query.replace("{LIMIT}", "");
+            }
 
             return query;
         }
@@ -212,6 +228,9 @@ public class SearchQueryService {
                 case "country" :
                     filterModel.setCountryFilter(entry.getValue()[0].split(","));
                     break;
+                case "categoryFacet" :
+                    filterModel.setCategoryFacetFilter(entry.getValue()[0].split(","));
+                    break;
             }
         }
 
@@ -220,6 +239,8 @@ public class SearchQueryService {
         q = addDataProviderFilter(q, filterModel.getDataProviderFilter());
         q = addLanguageFilter(q, filterModel.getLanguageFilter());
         q = addCountryFilter(q, filterModel.getCountryFilter());
+        q = addCategoryFacetFilter(q, filterModel.getCategoryFacetFilter());
+        q = addCategoryFacetFilter(q, filterModel.getCategoryFacetFilter());
 
         return q;
     }
@@ -323,4 +344,27 @@ public class SearchQueryService {
         }
         return q;
     }
+
+    private String addCategoryFacetFilter(String query, String category[]) {
+        String q = query;
+        String filter = "filter exists {\n" +
+                "      ?cho dct:subject ?art. \n" +
+                "      ?art efd:subject ?cat.\n" +
+                "      ?cat efd:ancestor ?ancestor.\n" +
+                "    }";
+        if (category != null && category.length > 0) {
+            filter +=  "      filter(?ancestor in (\n";
+            for (int i = 0; i < category.length; i++){
+                q = q.replace("{categoryFacet}", filter);
+                filter += " dbc:" + category[i].replaceAll(" ", "_");
+                if (i < category.length - 1) filter += ", ";
+            }
+            q += ")).";
+        }
+        else {
+            q = q.replace("{categoryFacet}", "");
+            }
+        return q;
+    }
+
 }

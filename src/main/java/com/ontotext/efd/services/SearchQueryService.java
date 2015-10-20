@@ -56,7 +56,7 @@ public class SearchQueryService {
             try {
                 searchResults = new ArrayList<>();
                 tupleQueryResult = connectionService.evaluateQuery(query);
-                while (tupleQueryResult.hasNext()) {
+                while (tupleQueryResult != null && tupleQueryResult.hasNext()) {
                     String resource = "";
                     String title = "";
                     String description = "";

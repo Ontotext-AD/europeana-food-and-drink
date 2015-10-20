@@ -37,7 +37,15 @@ public class SearchQueryService {
 
     private Logger logger = Logger.getLogger(String.valueOf(SearchQueryService.class));
 
+    private final String categoryArticleFilterExist = "filter exists {\n" +
+            "      ?cho dct:subject ?art. \n" +
+            "      ?art efd:subject ?cat.\n" +
+            "      ?cat efd:ancestor ?ancestor.\n" +
+            "      {articleFacet}\n";
+    private boolean categoryArticleFilterIsSet = false;
+
     public SearchModel ftsSearch(String queryString, Integer offset, Integer limit, HttpServletRequest request) {
+        categoryArticleFilterIsSet = false;
         TupleQueryResult tupleQueryResult = null;
         List<FTSSearchResults> searchResults = null;
 //        Map<String, FTSSearchResults> searchResults = null;
@@ -231,6 +239,7 @@ public class SearchQueryService {
                 case "categoryFacet" :
                     filterModel.setCategoryFacetFilter(entry.getValue()[0].split(","));
                     break;
+
             }
         }
 
@@ -240,14 +249,14 @@ public class SearchQueryService {
         q = addLanguageFilter(q, filterModel.getLanguageFilter());
         q = addCountryFilter(q, filterModel.getCountryFilter());
         q = addCategoryFacetFilter(q, filterModel.getCategoryFacetFilter());
-        q = addCategoryFacetFilter(q, filterModel.getCategoryFacetFilter());
+        q = addArticleFacetFilter(q, filterModel.getArticleFilter());
 
         return q;
     }
 
     private String addTypeFilter(String query, String types[]) {
         String q = query;
-        String filter =  "optional {?entity edm:aggregatedCHO/edm:type ?type}";
+        String filter =  "optional {?cho edm:type ?type}";
 
         if (types != null && types.length > 0) {
             for(String type : types) {
@@ -305,7 +314,7 @@ public class SearchQueryService {
 
     private String addLanguageFilter(String query, String languages[]) {
         String q = query;
-        String filter =  "optional {?entity edm:aggregatedCHO/dc:language ?language}";
+        String filter =  "optional {?cho dc:language ?language}";
 
         if (languages != null && languages.length > 0) {
             filter += "\n  filter(";
@@ -347,19 +356,21 @@ public class SearchQueryService {
 
     private String addCategoryFacetFilter(String query, String category[]) {
         String q = query;
-        String filter = "filter exists {\n" +
-                "      ?cho dct:subject ?art. \n" +
-                "      ?art efd:subject ?cat.\n" +
-                "      ?cat efd:ancestor ?ancestor.\n" +
-                "    }";
+        String filter = "";
+        if (categoryArticleFilterIsSet == false) {
+            filter = categoryArticleFilterExist;
+            categoryArticleFilterIsSet = true;
+        }
+
         if (category != null && category.length > 0) {
-            filter +=  "      filter(?ancestor in (\n";
+            filter +=  " filter(?ancestor in (";
             for (int i = 0; i < category.length; i++){
-                q = q.replace("{categoryFacet}", filter);
                 filter += " dbc:" + category[i].replaceAll(" ", "_");
                 if (i < category.length - 1) filter += ", ";
             }
-            q += ")).";
+            filter += ")).\n}";
+            q = q.replace("{categoryFacet}", filter);
+
         }
         else {
             q = q.replace("{categoryFacet}", "");
@@ -367,4 +378,29 @@ public class SearchQueryService {
         return q;
     }
 
+    private String addArticleFacetFilter(String query, String articles[]) {
+        String q = query;
+        String filter = "";
+        if (categoryArticleFilterIsSet == false) {
+            filter = categoryArticleFilterExist;
+            q = q.replace("categoryFacet", filter);
+            filter = "";
+            categoryArticleFilterIsSet = true;
+        }
+
+        if (articles != null && articles.length > 0) {
+            filter += "filter(?art in (";
+            for (int i = 0; i < articles.length; i++) {
+                filter += " dbr:" + articles[i].replaceAll(" ", "_");
+                if (i < articles.length - 1) filter += ", ";
+            }
+            filter += ")).";
+            q = q.replace("{articleFacet}", filter);
+
+        }
+        else {
+            q = q.replace("{articleFacet}", "");
+        }
+        return q;
+    }
 }

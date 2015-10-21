@@ -116,5 +116,5 @@ div[collection='category.subElements'] {
     overflow: hidden;
 }
 .open-subcategories > div[collection='category.subElements'] {
-    max-height: 2000px;
+    max-height: 10000px;
 }

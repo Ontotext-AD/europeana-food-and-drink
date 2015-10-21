@@ -236,7 +236,7 @@ public class SearchQueryService {
                 case "country" :
                     filterModel.setCountryFilter(entry.getValue()[0].split(","));
                     break;
-                case "categoryFacet" :
+                case "category" :
                     filterModel.setCategoryFacetFilter(entry.getValue()[0].split(","));
                     break;
 

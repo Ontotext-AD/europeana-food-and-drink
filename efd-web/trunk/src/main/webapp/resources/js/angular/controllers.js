@@ -259,8 +259,8 @@ define(['angular'], function(){
 
             //Set active categories to array for use in Active filters panel
             $scope.setActiveCategories = function(){
-                if ($scope.searchData.categoryFacet){
-                    var categories = $scope.searchData.categoryFacet.split(',');
+                if ($scope.searchData.category){
+                    var categories = $scope.searchData.category.split(',');
                     for (var i = 0; i < categories.length; i++) {
                         $scope.activeCategories.push(categories[i]);
                     }
@@ -357,17 +357,17 @@ define(['angular'], function(){
             //Click on Category to add it to search filters
             $scope.addCategory = function(category){
                 var category = category.split(' ').join('_');
-                if ($scope.searchData.categoryFacet) {
-                    var categories = $scope.searchData.categoryFacet.split(',');
+                if ($scope.searchData.category) {
+                    var categories = $scope.searchData.category.split(',');
                     for (var i = 0; i < categories.length; i++) {
                         if (categories[i] == category) {
                             return;
                         }
                     }
                     categories.push(category);
-                    $scope.searchData.categoryFacet = categories.join(',');
+                    $scope.searchData.category = categories.join(',');
                 } else {
-                    $scope.searchData.categoryFacet = category;
+                    $scope.searchData.category = category;
                 }
                 $location.search($scope.searchData);
             }
@@ -375,15 +375,15 @@ define(['angular'], function(){
             //Remove category from search filters
             $scope.removeCategory = function(category){
                 var category = category.split(' ').join('_'),
-                    categories = $scope.searchData.categoryFacet.split(',');
+                    categories = $scope.searchData.category.split(',');
                 if (categories.length == 1) {
-                    delete $scope.searchData.categoryFacet;
+                    delete $scope.searchData.category;
                     $location.search($scope.searchData);
                 } else {
                     for (var i = 0; i < categories.length; i++) {
                         if (categories[i] == category) {
                             categories.splice(i,1);
-                            $scope.searchData.categoryFacet = categories.join(',');
+                            $scope.searchData.category = categories.join(',');
                             $location.search($scope.searchData);
                             return;
                         }

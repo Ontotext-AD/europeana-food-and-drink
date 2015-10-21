@@ -32,7 +32,7 @@ public class CategoryFacetSearchService {
             tupleQueryResult = connectionService.evaluateQuery(query);
             categoryFacet = new ArrayList<>();
             try {
-                while (tupleQueryResult.hasNext()) {
+                while (tupleQueryResult != null && tupleQueryResult.hasNext()) {
                     String category = "";
                     String count = "";
                     BindingSet bindings = tupleQueryResult.next();

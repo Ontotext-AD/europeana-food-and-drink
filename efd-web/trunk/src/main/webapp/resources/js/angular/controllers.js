@@ -259,8 +259,8 @@ define(['angular'], function(){
 
             //Set active categories to array for use in Active filters panel
             $scope.setActiveCategories = function(){
-                if ($scope.searchData.category){
-                    var categories = $scope.searchData.category.split(',');
+                if ($scope.searchData.categoryFacet){
+                    var categories = $scope.searchData.categoryFacet.split(',');
                     for (var i = 0; i < categories.length; i++) {
                         $scope.activeCategories.push(categories[i]);
                     }
@@ -357,17 +357,17 @@ define(['angular'], function(){
             //Click on Category to add it to search filters
             $scope.addCategory = function(category){
                 var category = category.split(' ').join('_');
-                if ($scope.searchData.category) {
-                    var categories = $scope.searchData.category.split(',');
+                if ($scope.searchData.categoryFacet) {
+                    var categories = $scope.searchData.categoryFacet.split(',');
                     for (var i = 0; i < categories.length; i++) {
                         if (categories[i] == category) {
                             return;
                         }
                     }
                     categories.push(category);
-                    $scope.searchData.category = categories.join(',');
+                    $scope.searchData.categoryFacet = categories.join(',');
                 } else {
-                    $scope.searchData.category = category;
+                    $scope.searchData.categoryFacet = category;
                 }
                 $location.search($scope.searchData);
             }
@@ -375,15 +375,15 @@ define(['angular'], function(){
             //Remove category from search filters
             $scope.removeCategory = function(category){
                 var category = category.split(' ').join('_'),
-                    categories = $scope.searchData.category.split(',');
+                    categories = $scope.searchData.categoryFacet.split(',');
                 if (categories.length == 1) {
-                    delete $scope.searchData.category;
+                    delete $scope.searchData.categoryFacet;
                     $location.search($scope.searchData);
                 } else {
                     for (var i = 0; i < categories.length; i++) {
                         if (categories[i] == category) {
                             categories.splice(i,1);
-                            $scope.searchData.category = categories.join(',');
+                            $scope.searchData.categoryFacet = categories.join(',');
                             $location.search($scope.searchData);
                             return;
                         }
@@ -392,7 +392,8 @@ define(['angular'], function(){
             }
 
             //Open/Close category // Show/Hide Subcategories and articles
-            $scope.openCategory = function(category, path){
+            $scope.openCategory = function(category, path, clickEvent){
+                clickEvent.stopImmediatePropagation();
                 var category  = category,
                     path = path,
                     categories = $scope.categories.categoryFacet;

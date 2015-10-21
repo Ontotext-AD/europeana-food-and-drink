@@ -48,70 +48,19 @@
                 </ul>
             </div>
         </div>
-        <div id="food-and-drink" class="panel panel-default">
-            <div class="panel-heading">Food and Drink</div>
-            <div class="panel-body">
 
-                <div ng-show="categoriesLoader" class="ot-loader" onto-loader  size="30"> </div>
+        <accordion id="food-and-drink">
+            <accordion-group is-open="true" template-url="accordion-template.html" heading="Food and Drink">
+                        <div ng-show="categoriesLoader" class="ot-loader" onto-loader  size="30"> </div>
 
-                <div ng-hide="categoriesLoader" style="padding-top: 15px;">
+                        <div ng-hide="categoriesLoader" style="padding-top: 15px;">
 
-                    <span ng-if="!categories">Categories are not loaded</span>
+                            <span ng-if="!categories">Categories are not loaded</span>
 
-                    <category-collection collection='categories'></category-collection>
-                </div>
-            </div>
-        </div>
-
-<!--
-        <div id="food-and-drink" class="panel panel-default">
-            <div class="panel-heading">Food and Drink</div>
-            <div class="panel-body">
-
-                <div ng-show="categoriesLoader" class="ot-loader" onto-loader  size="30"> </div>
-
-                <div ng-hide="categoriesLoader" style="padding-top: 15px;">
-
-                    <span ng-if="!categories">Categories are not loaded</span>
-
-                    <ul class="list-unstyled">
-                        <li ng-repeat="subcategory in categories.categoryFacet | orderBy:'facetName'" class=""
-                            style="min-height: 30px; padding: 0 0 0 10px; margin: 0;">
-
-                            <div ng-show="categoryLoader[subcategory.facetName]" class="ot-loader" onto-loader  size="10"> </div>
-                            <div ng-hide="categoryLoader[subcategory.facetName]" class="pull-left pointer" ng-click="openCategory()">
-                                <span ng-hide="subcategory.open" class="fa-stack">
-                                    <i class="fa fa-square-o fa-stack-2x"></i>
-                                    <i class="fa fa-plus fa-stack-1x"></i>
-                                </span>
-                                <span ng-show="subcategory.open" class="fa-stack">
-                                    <i class="fa fa-square-o fa-stack-2x"></i>
-                                    <i class="fa fa-minus fa-stack-1x"></i>
-                                </span>
-                            </div>
-                            <span class="pointer">
-                                {{subcategory.facetName}}
-                                <span class="badge">{{subcategory.facetValue}}</span>
-                            </span>
-                        </li>
-                    </ul>
-
-                    <ul class="list-unstyled">
-                        <li ng-repeat="article in categories.articleModel  | orderBy:'facetName'" class="pointer"
-                            ng-click="addSearchArticle(article.facetName)" style="min-height: 30px; padding: 0 0 0 16px; margin: 0;">
-                            <i class="fa fa-file-text-o fa-lg"></i>
-                            <span class="pointer">
-                                {{article.facetName}}
-                                <span class="badge">{{article.facetValue}}</span>
-                            </span>
-                        </li>
-                    </ul>
-
-
-                </div>
-            </div>
-        </div>
--->
+                            <category-collection collection='categories'></category-collection>
+                        </div>
+            </accordion-group>
+        </accordion>
 
         <accordion id="filters" close-others="false">
             <accordion-group ng-repeat="filter in filtersCategories" is-disabled="filter.isDisabled" is-open="filter.open" template-url="accordion-template.html" heading="{{filter.title}}">
@@ -166,14 +115,14 @@
                         </span>
                     </div>
                     <div class="caption">
-                        <h3>{{result.title}}</h3>
+                        <h3 ng-if="result.title">{{result.title}}</h3>
                         <p>{{result.description}}</p>
                    </div>
                 </div>
             </div>
         </div>
         <div ng-if="!data">
-            <h3 class="text-center bg-warning text-danger" style="padding: 15px;">Request failed! Please try different search.</h3>
+            <h3 class="text-center bg-warning text-danger" style="padding: 15px;">No results</h3>
         </div>
     </div>
 </div>

@@ -71,7 +71,7 @@ define(['angular'], function(){
                 $scope.addCategory = $scope.$parent.addCategory;
                 $scope.addSearchArticle = $scope.$parent.addSearchArticle;
             },
-            template: '<li class="" style="min-height: 30px; padding: 0 0 0 10px; margin: 0;" ng-class="category.open ? \'open-subcategories\' : \'\'">' +
+            template: '<li class="" style="min-height: 26px; padding: 0 0 0 10px; margin: 0;" ng-class="category.open ? \'open-subcategories\' : \'\'">' +
             '<div class="clearfix">' +
                 '<div class="pull-left pointer" ng-click="openCategory(category.facetName, path, $event)">' +
                     '<span ng-hide="category.open" class="fa-stack">' +

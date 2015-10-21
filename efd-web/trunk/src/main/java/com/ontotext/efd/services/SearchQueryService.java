@@ -99,7 +99,7 @@ public class SearchQueryService {
         }
 
         SearchModel searchModel = new SearchModel(searchResults, searchFacets(queryString));
-        return searchModel;
+        return null;
     }
 
     public List<FTSSearchResults> autocomplete(String queryString) {

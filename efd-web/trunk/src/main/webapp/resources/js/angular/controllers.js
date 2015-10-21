@@ -30,9 +30,7 @@ define(['angular'], function(){
         'localStorageService',
         'toastr',
         function($scope, $routeParams, $http, $location, $timeout, localStorageService ,toastr) {
-            $scope.loader = true;
-            $scope.countLoader = true;
-            $scope.categoriesLoader = true;
+
             $scope.searchData = $location.search();
             $scope.limit = $scope.searchData.limit ? parseInt($scope.searchData.limit) : 24;
             $scope.offset = $scope.searchData.offset ? parseInt($scope.searchData.offset) : 0;
@@ -42,10 +40,25 @@ define(['angular'], function(){
             $scope.activeArticles = [];
             $scope.activeCategories = [];
 
-            $scope.categoryLoader = {};
+            //Loaders
+            $scope.loader = true; //Main loader
+            $scope.countLoader = true; //Loader for results per page + Pagination
+            $scope.categoriesLoader = true; //Loader for Categories panel
+
+            //Categories obj
             $scope.categories = {};
+            //Temp obj used to store data about clicked category when wait for API response for subCategories
             $scope.tempGetCategoriesData = {};
 
+            //Facets obj template
+            $scope.filtersCategories = [
+                {id: 0, title: 'By media type', searchString: 'mediaType', data: [], isDisabled: true},
+                {id: 1, title: 'By language of description', searchString: 'language', data: [], isDisabled: true},
+                {id: 2, title: 'By providing country', searchString: 'providingCountry', data: [], isDisabled: true},
+                {id: 3, title: 'By data provider', searchString: 'dataProvider', data: [], isDisabled: true}
+            ]
+
+            //Change number of results on page
             $scope.changeLimit = function(limit){
                 $scope.limit = limit;
                 $scope.offset = 0;
@@ -55,31 +68,17 @@ define(['angular'], function(){
                 $scope.search();
             }
 
-            $scope.filtersCategories = [
-                {id: 0, title: 'By media type', searchString: 'mediaType', data: [], isDisabled: true},
-                {id: 1, title: 'By language of description', searchString: 'language', data: [], isDisabled: true},
-                {id: 2, title: 'By providing country', searchString: 'providingCountry', data: [], isDisabled: true},
-                {id: 3, title: 'By data provider', searchString: 'dataProvider', data: [], isDisabled: true}
-            ]
-
             $scope.hasFacets = function(filter){
                 return filter.data.length > 0;
             }
 
-
-/*            $scope.$watch('exportFilter', function(newValue, oldValue) {
-                $scope.filteredGraphs = filterFilter($scope.graphs, $scope.exportFilter);
-                $scope.changePageSize();
-            });*/
-
-            $scope.params = $routeParams;
-            $scope.test = 'ResultCtrl';
-
+            //If no attr get the first level categoies and articles, otherwise get subCategories of category
             $scope.getCategories = function(category, categories, index, path){
                 if (!category) {
+                    //First load
                     $scope.categoriesLoader = true;
                 } else {
-                    $scope.categoryLoader[category] = true;
+                    //Set temp data to use it after API response
                     $scope.tempGetCategoriesData = {
                         category: category,
                         categories: categories,
@@ -87,41 +86,46 @@ define(['angular'], function(){
                         path: angular.copy(path)
                     }
                 }
+                //Setup API url
                 var httpString = '/app/rest/categoryFacet';
                 if(category) {
                     var string = category.split(' ').join('_');
                     httpString += '?category=' + string;
                 }
+
                 $http.get(httpString).
                     then(function(response) {
                         if (!category) {
+                            //First load
                             $scope.categories = response.data;
                             $scope.categories.path = [];
                             $scope.categoriesLoader = false;
                         } else {
+                            //receive subCategories
                             var parentCategory = $scope.tempGetCategoriesData.categories[$scope.tempGetCategoriesData.index];
                             parentCategory.subElements = response.data;
                             var path = $scope.tempGetCategoriesData.path;
                             path.push($scope.tempGetCategoriesData.category)
                             parentCategory.subElements.path = path;
-                            $scope.categoryLoader[category] = false;
                         }
-                        console.log(response.data);
+                        //Add new data to sessionStorage
                         localStorageService.set('categories', $scope.categories);
                     }, function(){
                         toastr.error('No info about categories', '');
                         $scope.categoriesLoader = false;
-                        $scope.categoryLoader = {};
                     })
             }
 
             if (localStorageService.get('categories')) {
+                //Reload page
                 $scope.categories = localStorageService.get('categories');
                 $scope.categoriesLoader = false;
             } else {
+                //First load
                 $scope.getCategories();
             }
 
+            //Get data about number of results - also it's used for calculate number of pages
             $scope.getCount = function(searchString){
                 $http.get('/app/rest/search/count?' + searchString).
                     then(function(response) {
@@ -136,6 +140,7 @@ define(['angular'], function(){
                     })
             }
 
+            //Set state of Facets checkboxes based on facets used in page URL
             $scope.setCheckState = function(data){
                 var answer = false;
                 if ($scope.activeFilters.length > 0) {
@@ -151,9 +156,12 @@ define(['angular'], function(){
                 return answer;
             }
 
+            //Search results
             $scope.search = function(newSearch){
                 $scope.countLoader = true;
                 $scope.loader = true;
+
+                //On new search always go to first page
                 if (newSearch) {
                     $scope.activeFilters = [];
                     $scope.offset = 0;
@@ -162,10 +170,15 @@ define(['angular'], function(){
                     $scope.searchData.offset = $scope.offset;
                     $location.search($scope.searchData);
                 }
+
                 $scope.searchData = $location.search();
+
+                //Create arrays for use in "Active filters" panel
                 $scope.setActiveFilters();
                 $scope.setActiveArticles();
                 $scope.setActiveCategories();
+
+                //Create search URL
                 var searchString = '';
                 for(var index in $scope.searchData) {
                     if (searchString != '') {
@@ -179,12 +192,15 @@ define(['angular'], function(){
                         $scope.status = response.status;
                         $scope.data = response.data;
                         console.log($scope.data);
+
+                        //Fill facets template obj with current facets
                         for(var i = 0; i < $scope.filtersCategories.length; i++){
                             if ($scope.data.facets[$scope.filtersCategories[i].searchString]){
                                 $scope.filtersCategories[i].data = $scope.data.facets[$scope.filtersCategories[i].searchString];
                                 for (var j = 0; j < $scope.filtersCategories[i].data.length; j++) {
                                     $scope.filtersCategories[i].data[j].id = j;
                                 }
+                                //Set Facets' categories state (open/close) based on checked and unchecked facets
                                 if ($scope.setCheckState($scope.filtersCategories[i].data)) {
                                     $scope.filtersCategories[i].open = true;
                                 }
@@ -195,6 +211,8 @@ define(['angular'], function(){
                             }
                         }
                         $scope.loader = false;
+
+                        //Get number of all resultss
                         $scope.getCount(searchString);
                     }, function(response) {
                         $scope.data = "";
@@ -205,6 +223,7 @@ define(['angular'], function(){
                     });
             }
 
+            //Set active filters to array for use in Active filters panel
             $scope.setActiveFilters = function(){
                 for (index in $scope.searchData) {
                     var exist = false;
@@ -228,6 +247,7 @@ define(['angular'], function(){
                 }
             }
 
+            //Set active articles to array for use in Active filters panel
             $scope.setActiveArticles = function(){
                 if ($scope.searchData.article){
                     var articles = $scope.searchData.article.split(',');
@@ -237,6 +257,7 @@ define(['angular'], function(){
                 }
             }
 
+            //Set active categories to array for use in Active filters panel
             $scope.setActiveCategories = function(){
                 if ($scope.searchData.category){
                     var categories = $scope.searchData.category.split(',');
@@ -296,6 +317,7 @@ define(['angular'], function(){
                 });
             }
 
+            //Click on article to add it to search filters
             $scope.addSearchArticle = function(article){
                 var article = article.split(' ').join('_');
                 if ($scope.searchData.article) {
@@ -313,6 +335,7 @@ define(['angular'], function(){
                 $location.search($scope.searchData);
             }
 
+            //Remove article from search filters
             $scope.removeArticle = function(article){
                 var article = article.split(' ').join('_'),
                     articles = $scope.searchData.article.split(',');
@@ -331,6 +354,25 @@ define(['angular'], function(){
                 }
             }
 
+            //Click on Category to add it to search filters
+            $scope.addCategory = function(category){
+                var category = category.split(' ').join('_');
+                if ($scope.searchData.category) {
+                    var categories = $scope.searchData.category.split(',');
+                    for (var i = 0; i < categories.length; i++) {
+                        if (categories[i] == category) {
+                            return;
+                        }
+                    }
+                    categories.push(category);
+                    $scope.searchData.category = categories.join(',');
+                } else {
+                    $scope.searchData.category = category;
+                }
+                $location.search($scope.searchData);
+            }
+
+            //Remove category from search filters
             $scope.removeCategory = function(category){
                 var category = category.split(' ').join('_'),
                     categories = $scope.searchData.category.split(',');
@@ -349,10 +391,13 @@ define(['angular'], function(){
                 }
             }
 
+            //Open/Close category // Show/Hide Subcategories and articles
             $scope.openCategory = function(category, path){
                 var category  = category,
                     path = path,
                     categories = $scope.categories.categoryFacet;
+
+                //Get current level of categories
                 for (var i = 0; i < path.length; i++) {
                     for (var j = 0; j < categories.length; j++) {
                         if (path[i] == categories[j].facetName) {
@@ -361,16 +406,23 @@ define(['angular'], function(){
                         }
                     }
                 }
+
+
                 for (var i = 0; i < categories.length; i++) {
+                    //Find current category
                     if (category == categories[i].facetName){
                         if (categories[i].open) {
+                            //Close category
                             categories[i].open = false;
                             localStorageService.set('categories', $scope.categories);
                         } else {
+                            //Open category
                             if (categories[i].subElements) {
+                                //Subcategories are loaded from API before - only change open/close state
                                 categories[i].open = true;
                                 localStorageService.set('categories', $scope.categories);
                             } else {
+                                //Load subcategories from API
                                 var index = i;
                                 //TODO
                                 categories[i].open = true;
@@ -382,26 +434,12 @@ define(['angular'], function(){
                 }
             }
 
-            $scope.addCategory = function(category){
-                var category = category.split(' ').join('_');
-                if ($scope.searchData.category) {
-                    var categories = $scope.searchData.category.split(',');
-                    for (var i = 0; i < categories.length; i++) {
-                        if (categories[i] == category) {
-                            return;
-                        }
-                    }
-                    categories.push(category);
-                    $scope.searchData.category = categories.join(',');
-                } else {
-                    $scope.searchData.category = category;
-                }
-                $location.search($scope.searchData);
-            }
-
+            //Change result page
             var changePageTimeout;
             $scope.changePage = function(){
+                //Cancel previous timeout to wait for user to choose page
                 $timeout.cancel(changePageTimeout);
+                //Wait 2 seconds before change page (offset) in URL to give time to user to add more digits or click several times on page selector
                 changePageTimeout = $timeout(function(){
                     $scope.offset = $scope.limit * ($scope.results.page - 1);
                     $scope.searchData.offset = parseInt($scope.offset);
@@ -413,10 +451,12 @@ define(['angular'], function(){
                 });
             }
 
+            //Go to Resource page
             $scope.loadResource = function(resource){
                 $location.path('/app/resource/'+ encodeURIComponent(resource)).search($scope.searchData);
             }
 
+            //First load
             $scope.searchQuery = $scope.searchData.query;
             $scope.search();
         }

@@ -110,10 +110,6 @@ body {
     margin-top: 130px;
 }
 
-.category-name {
-    min-height: 28px;
-    display: inline-block;
-}
 div[collection='category.subElements'] {
     transition: all 1s;
     max-height: 0;

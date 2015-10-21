@@ -10,7 +10,7 @@
             </h4>
         </div>
         <div class="panel-collapse collapse" collapse="!isOpen">
-            <div class="panel-body" ng-transclude style="padding: 0;"></div>
+            <div class="panel-body" ng-transclude style="padding: 0; overflow-y: auto; max-height: 300px;"></div>
         </div>
     </div>
 </script>
@@ -26,12 +26,21 @@
     </div>
 </div>
 <div class="row  one-edge-shadow" style="background: #fff; margin-bottom: 40px;">
-    <div class="col-xs-6 col-sm-3">
+    <div class="col-xs-6 col-sm-4">
+
         <div class="panel panel-default">
             <div class="panel-heading">Selected filters</div>
             <div class="panel-body">
-                <span ng-if="activeFilters.length == 0">No active filters</span>
+                <span ng-if="activeFilters.length == 0 && activeArticles.length == 0 && activeCatefories == 0">No active filters</span>
                 <ul class="list-group" >
+                    <li class="list-group-item pointer" ng-repeat="article in activeArticles" ng-click="removeArticle(article)">
+                        <i>Article:</i> {{article}}
+                        <i class="fa fa-times"></i>
+                    </li>
+                    <li class="list-group-item pointer" ng-repeat="category in activeCategories" ng-click="removeCategory(category)">
+                        <i>Category:</i> {{category}}
+                        <i class="fa fa-times"></i>
+                    </li>
                     <li class="list-group-item pointer" ng-repeat="filter in activeFilters" ng-click="removeFilter(filter.categoryName, filter.facetName)">
                         {{filter.facetName}}
                         <i class="fa fa-times"></i>
@@ -39,23 +48,71 @@
                 </ul>
             </div>
         </div>
-        <accordion id="categories" close-others="true">
-            <accordion-group ng-repeat="filter in filtersCategories" template-url="accordion-template.html" heading="{{filter.title}}">
-                <ul class="list-group" style="margin:0">
-                    <li class="list-group-item" ng-repeat="filterElement in filter.data | orderBy:'facetName'" style="padding:0; -webkit-border-radius: 0;-moz-border-radius: 0;border-radius: 0;">
-                        <div class="checkbox pointer" style="padding: 0; margin: 0;">
-                            <label style="width: 100%; padding: 10px 20px 10px 40px">
-                                <accordion id="categories" close-others="true">
-                                    <accordion-group ng-repeat="filter in filtersCategories" template-url="accordion-template.html" heading="{{filter.title}}">
-                                        $index
-                                    </accordion-group>
-                                </accordion>
-                            </label>
-                        </div>
-                    </li>
-                </ul>
-            </accordion-group>
-        </accordion>
+        <div id="food-and-drink" class="panel panel-default">
+            <div class="panel-heading">Food and Drink</div>
+            <div class="panel-body">
+
+                <div ng-show="categoriesLoader" class="ot-loader" onto-loader  size="30"> </div>
+
+                <div ng-hide="categoriesLoader" style="padding-top: 15px;">
+
+                    <span ng-if="!categories">Categories are not loaded</span>
+
+                    <category-collection collection='categories'></category-collection>
+                </div>
+            </div>
+        </div>
+
+<!--
+        <div id="food-and-drink" class="panel panel-default">
+            <div class="panel-heading">Food and Drink</div>
+            <div class="panel-body">
+
+                <div ng-show="categoriesLoader" class="ot-loader" onto-loader  size="30"> </div>
+
+                <div ng-hide="categoriesLoader" style="padding-top: 15px;">
+
+                    <span ng-if="!categories">Categories are not loaded</span>
+
+                    <ul class="list-unstyled">
+                        <li ng-repeat="subcategory in categories.categoryFacet | orderBy:'facetName'" class=""
+                            style="min-height: 30px; padding: 0 0 0 10px; margin: 0;">
+
+                            <div ng-show="categoryLoader[subcategory.facetName]" class="ot-loader" onto-loader  size="10"> </div>
+                            <div ng-hide="categoryLoader[subcategory.facetName]" class="pull-left pointer" ng-click="openCategory()">
+                                <span ng-hide="subcategory.open" class="fa-stack">
+                                    <i class="fa fa-square-o fa-stack-2x"></i>
+                                    <i class="fa fa-plus fa-stack-1x"></i>
+                                </span>
+                                <span ng-show="subcategory.open" class="fa-stack">
+                                    <i class="fa fa-square-o fa-stack-2x"></i>
+                                    <i class="fa fa-minus fa-stack-1x"></i>
+                                </span>
+                            </div>
+                            <span class="pointer">
+                                {{subcategory.facetName}}
+                                <span class="badge">{{subcategory.facetValue}}</span>
+                            </span>
+                        </li>
+                    </ul>
+
+                    <ul class="list-unstyled">
+                        <li ng-repeat="article in categories.articleModel  | orderBy:'facetName'" class="pointer"
+                            ng-click="addSearchArticle(article.facetName)" style="min-height: 30px; padding: 0 0 0 16px; margin: 0;">
+                            <i class="fa fa-file-text-o fa-lg"></i>
+                            <span class="pointer">
+                                {{article.facetName}}
+                                <span class="badge">{{article.facetValue}}</span>
+                            </span>
+                        </li>
+                    </ul>
+
+
+                </div>
+            </div>
+        </div>
+-->
+
         <accordion id="filters" close-others="false">
             <accordion-group ng-repeat="filter in filtersCategories" is-disabled="filter.isDisabled" is-open="filter.open" template-url="accordion-template.html" heading="{{filter.title}}">
                 <ul class="list-group" style="margin:0">
@@ -73,7 +130,7 @@
         </accordion>
     </div>
     <div ng-show="loader" class="ot-loader ot-main-loader" onto-loader  size="50"></div>
-    <div ng-hide="loader" class="col-xs-6 col-sm-9 ">
+    <div ng-hide="loader" class="col-xs-6 col-sm-8 ">
         <div class="row" ng-if="data" style="padding-bottom: 20px;">
             <div class="col-xs-4">
                 <div class="btn-group pull-left" dropdown keyboard-nav>

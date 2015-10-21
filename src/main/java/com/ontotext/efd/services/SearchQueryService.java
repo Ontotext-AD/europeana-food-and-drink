@@ -102,6 +102,7 @@ public class SearchQueryService {
         }
 
         SearchModel searchModel = new SearchModel(searchResults, searchFacets(queryString));
+        if (searchModel.getFacets().size() == 0 && searchModel.getSearchResults().size() == 0) return null;
         return searchModel;
     }
 

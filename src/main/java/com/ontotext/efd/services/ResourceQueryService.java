@@ -40,6 +40,7 @@ public class ResourceQueryService {
         getTriples(resourceMap, resource, aggregationQuery);
         getTriples(resourceMap, resource, choQuery);
 
+        if (resourceMap.size() == 0) return null;
         return resourceMap;
     }
 

@@ -170,7 +170,7 @@ define(['angular'], function(){
                     $scope.offset = 0;
                     $scope.searchData.query = $scope.searchQuery;
                     $scope.searchData.limit = $scope.limit;
-                    $scope.searchData.offset = $scope.offset;
+                    $scope.searchData.offset = parseInt($scope.offset);
                     $location.search($scope.searchData);
                 }
 
@@ -446,9 +446,11 @@ define(['angular'], function(){
                 $timeout.cancel(changePageTimeout);
                 //Wait 2 seconds before change page (offset) in URL to give time to user to add more digits or click several times on page selector
                 changePageTimeout = $timeout(function(){
-                    $scope.offset = $scope.limit * ($scope.results.page - 1);
-                    $scope.searchData.offset = parseInt($scope.offset);
-                    $location.search($scope.searchData);
+                    if ($scope.results.page) {
+                        $scope.offset = $scope.limit * ($scope.results.page - 1);
+                        $scope.searchData.offset = parseInt($scope.offset);
+                        $location.search($scope.searchData);
+                    }
                 }, 2000);
 
                 $scope.$on("$destroy", function(event) {

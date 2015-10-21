@@ -111,6 +111,9 @@ define(['angular'], function(){
                         //Add new data to sessionStorage
                         localStorageService.set('categories', $scope.categories);
                     }, function(){
+                        if (category) {
+                            $scope.tempGetCategoriesData.categories[$scope.tempGetCategoriesData.index].open = false;
+                        }
                         toastr.error('No info about categories', '');
                         $scope.categoriesLoader = false;
                     })
@@ -192,22 +195,23 @@ define(['angular'], function(){
                         $scope.status = response.status;
                         $scope.data = response.data;
                         console.log($scope.data);
-
-                        //Fill facets template obj with current facets
-                        for(var i = 0; i < $scope.filtersCategories.length; i++){
-                            if ($scope.data.facets[$scope.filtersCategories[i].searchString]){
-                                $scope.filtersCategories[i].data = $scope.data.facets[$scope.filtersCategories[i].searchString];
-                                for (var j = 0; j < $scope.filtersCategories[i].data.length; j++) {
-                                    $scope.filtersCategories[i].data[j].id = j;
+                        if ($scope.data) {
+                            //Fill facets template obj with current facets
+                            for(var i = 0; i < $scope.filtersCategories.length; i++){
+                                if ($scope.data.facets[$scope.filtersCategories[i].searchString]){
+                                    $scope.filtersCategories[i].data = $scope.data.facets[$scope.filtersCategories[i].searchString];
+                                    for (var j = 0; j < $scope.filtersCategories[i].data.length; j++) {
+                                        $scope.filtersCategories[i].data[j].id = j;
+                                    }
+                                    //Set Facets' categories state (open/close) based on checked and unchecked facets
+                                    if ($scope.setCheckState($scope.filtersCategories[i].data)) {
+                                        $scope.filtersCategories[i].open = true;
+                                    }
+                                    $scope.filtersCategories[i].isDisabled = false;
+                                } else {
+                                    $scope.filtersCategories[i].data = [];
+                                    $scope.filtersCategories[i].isDisabled = true;
                                 }
-                                //Set Facets' categories state (open/close) based on checked and unchecked facets
-                                if ($scope.setCheckState($scope.filtersCategories[i].data)) {
-                                    $scope.filtersCategories[i].open = true;
-                                }
-                                $scope.filtersCategories[i].isDisabled = false;
-                            } else {
-                                $scope.filtersCategories[i].data = [];
-                                $scope.filtersCategories[i].isDisabled = true;
                             }
                         }
                         $scope.loader = false;
@@ -234,7 +238,7 @@ define(['angular'], function(){
                     }
                     if (exist){
 
-                        var filterArr = $scope.searchData[index].split(',');
+                        var filterArr = $scope.searchData[index].split('*');
 
                         for (var i = 0; i < filterArr.length; i++){
                             var newFilter = {
@@ -250,7 +254,7 @@ define(['angular'], function(){
             //Set active articles to array for use in Active filters panel
             $scope.setActiveArticles = function(){
                 if ($scope.searchData.article){
-                    var articles = $scope.searchData.article.split(',');
+                    var articles = $scope.searchData.article.split('*');
                     for (var i = 0; i < articles.length; i++) {
                         $scope.activeArticles.push(articles[i]);
                     }
@@ -260,7 +264,7 @@ define(['angular'], function(){
             //Set active categories to array for use in Active filters panel
             $scope.setActiveCategories = function(){
                 if ($scope.searchData.category){
-                    var categories = $scope.searchData.category.split(',');
+                    var categories = $scope.searchData.category.split('*');
                     for (var i = 0; i < categories.length; i++) {
                         $scope.activeCategories.push(categories[i]);
                     }
@@ -270,7 +274,7 @@ define(['angular'], function(){
             //Remove filter only from the Selected filters
             $scope.removeFilter = function(categoryName, facetName){
                 if ($scope.searchData[categoryName]){
-                    var filterArr = $scope.searchData[categoryName].split(',');
+                    var filterArr = $scope.searchData[categoryName].split('*');
                     for (var i = 0; i < filterArr.length; i++){
                         if (filterArr[i] == facetName){
                             filterArr.splice(i, 1);
@@ -279,7 +283,7 @@ define(['angular'], function(){
                     if (filterArr.length == 0){
                         delete $scope.searchData[categoryName];
                     } else {
-                        $scope.searchData[categoryName] = filterArr.join(',');
+                        $scope.searchData[categoryName] = filterArr.join('*');
                     }
                     $location.search($scope.searchData);
                 }
@@ -302,9 +306,9 @@ define(['angular'], function(){
                 if(angular.isUndefined($scope.searchData[$scope.filtersCategories[categoryIndex].searchString])){
                     $scope.searchData[$scope.filtersCategories[categoryIndex].searchString] = newFilter.facetName;
                 } else {
-                    var temp = $scope.searchData[$scope.filtersCategories[categoryIndex].searchString].split(',');
+                    var temp = $scope.searchData[$scope.filtersCategories[categoryIndex].searchString].split('*');
                     temp.push(newFilter.facetName);
-                    $scope.searchData[$scope.filtersCategories[categoryIndex].searchString] = temp.join(",");
+                    $scope.searchData[$scope.filtersCategories[categoryIndex].searchString] = temp.join("*");
                 }
 
                 $scope.searchData.offset = 0;
@@ -321,14 +325,14 @@ define(['angular'], function(){
             $scope.addSearchArticle = function(article){
                 var article = article.split(' ').join('_');
                 if ($scope.searchData.article) {
-                    var articles = $scope.searchData.article.split(',');
+                    var articles = $scope.searchData.article.split('*');
                     for (var i = 0; i < articles.length; i++) {
                         if (articles[i] == article) {
                             return;
                         }
                     }
                     articles.push(article);
-                    $scope.searchData.article = articles.join(',');
+                    $scope.searchData.article = articles.join('*');
                 } else {
                     $scope.searchData.article = article;
                 }
@@ -338,7 +342,7 @@ define(['angular'], function(){
             //Remove article from search filters
             $scope.removeArticle = function(article){
                 var article = article.split(' ').join('_'),
-                    articles = $scope.searchData.article.split(',');
+                    articles = $scope.searchData.article.split('*');
                 if (articles.length == 1) {
                     delete $scope.searchData.article;
                     $location.search($scope.searchData);
@@ -346,7 +350,7 @@ define(['angular'], function(){
                     for (var i = 0; i < articles.length; i++) {
                         if (articles[i] == article) {
                             articles.splice(i,1);
-                            $scope.searchData.article = articles.join(',');
+                            $scope.searchData.article = articles.join('*');
                             $location.search($scope.searchData);
                             return;
                         }
@@ -358,14 +362,14 @@ define(['angular'], function(){
             $scope.addCategory = function(category){
                 var category = category.split(' ').join('_');
                 if ($scope.searchData.category) {
-                    var categories = $scope.searchData.category.split(',');
+                    var categories = $scope.searchData.category.split('*');
                     for (var i = 0; i < categories.length; i++) {
                         if (categories[i] == category) {
                             return;
                         }
                     }
                     categories.push(category);
-                    $scope.searchData.category = categories.join(',');
+                    $scope.searchData.category = categories.join('*');
                 } else {
                     $scope.searchData.category = category;
                 }
@@ -375,7 +379,7 @@ define(['angular'], function(){
             //Remove category from search filters
             $scope.removeCategory = function(category){
                 var category = category.split(' ').join('_'),
-                    categories = $scope.searchData.category.split(',');
+                    categories = $scope.searchData.category.split('*');
                 if (categories.length == 1) {
                     delete $scope.searchData.category;
                     $location.search($scope.searchData);
@@ -383,7 +387,7 @@ define(['angular'], function(){
                     for (var i = 0; i < categories.length; i++) {
                         if (categories[i] == category) {
                             categories.splice(i,1);
-                            $scope.searchData.category = categories.join(',');
+                            $scope.searchData.category = categories.join('*');
                             $location.search($scope.searchData);
                             return;
                         }

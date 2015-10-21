@@ -111,10 +111,17 @@ body {
 }
 
 div[collection='category.subElements'] {
-    transition: all 1s;
+    padding-top: 0;
+    transition: all 0.5s;
     max-height: 0;
     overflow: hidden;
+    /*border-left: 1px solid #000;*/
 }
 .open-subcategories > div[collection='category.subElements'] {
+    padding-top: 6px;
     max-height: 10000px;
+}
+
+.fa-stack {
+    font-size: 0.8em;
 }

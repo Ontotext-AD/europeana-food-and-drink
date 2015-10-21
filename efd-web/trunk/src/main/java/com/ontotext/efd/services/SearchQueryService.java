@@ -32,6 +32,9 @@ public class SearchQueryService {
     @Value("${search.query}")
     private String searchQuery;
 
+//    @Value("${facet.county}")
+//    private String countQuery;
+
     @Value("${facets.query}")
     private String facetsQuery;
 
@@ -99,8 +102,16 @@ public class SearchQueryService {
         }
 
         SearchModel searchModel = new SearchModel(searchResults, searchFacets(queryString));
-        return null;
+        return searchModel;
     }
+
+//    public String count(String queryString, HttpServletRequest request) {
+//        TupleQueryResult tupleQueryResult = null;
+//        String query = decorateFilters(request, countQuery);
+//        if (query != null && !query.isEmpty()) {
+//
+//        }
+//    }
 
     public List<FTSSearchResults> autocomplete(String queryString) {
         TupleQueryResult tupleQueryResult = null;
@@ -402,5 +413,11 @@ public class SearchQueryService {
             q = q.replace("{articleFacet}", "");
         }
         return q;
+    }
+
+    private String decorateCountQuery(String query) {
+        String filter = "filter(uri(?key) in (dbc:Food_and_drink, dbc:Agriculture, dbr:Wood))";
+
+        return null;
     }
 }

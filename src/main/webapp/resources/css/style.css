@@ -97,3 +97,28 @@ body {
     height: 10em;
     overflow: hidden;
 }
+
+#food-and-drink {
+    padding: 0;
+}
+#food-and-drink > .panel-body {
+    padding: 0;
+    height: 300px;
+    overflow-y: scroll;
+}
+#food-and-drink > .panel-body > .ot-loader {
+    margin-top: 130px;
+}
+
+.category-name {
+    min-height: 28px;
+    display: inline-block;
+}
+div[collection='category.subElements'] {
+    transition: all 1s;
+    max-height: 0;
+    overflow: hidden;
+}
+.open-subcategories > div[collection='category.subElements'] {
+    max-height: 2000px;
+}

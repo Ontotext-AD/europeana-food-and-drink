@@ -70,7 +70,8 @@ define([
                 '$routeProvider',
                 '$locationProvider',
                 'toastrConfig',
-                function($routeProvider, $locationProvider, toastrConfig){
+                'localStorageServiceProvider',
+                function($routeProvider, $locationProvider, toastrConfig, localStorageServiceProvider){
 
                 angular.extend(toastrConfig, {
                     timeOut: 5000,
@@ -95,6 +96,10 @@ define([
                 });
 
                 $locationProvider.html5Mode(true);
+
+                localStorageServiceProvider
+                    .setPrefix('efd')
+                    .setStorageType('sessionStorage');
             }]);
 
             angular.bootstrap(document, ['efdApp']);

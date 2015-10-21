@@ -231,25 +231,25 @@ public class SearchQueryService {
         for (Map.Entry<String, String[]> entry : filterParams.entrySet()) {
             switch (entry.getKey()) {
                 case "mediaType" :
-                    filterModel.setMediaTypeFilter(entry.getValue()[0].split("\\*"));
+                    filterModel.setMediaTypeFilter(entry.getValue()[0].split(","));
                     break;
                 case "provider" :
-                    filterModel.setProviderFilter(entry.getValue()[0].split("\\*"));
+                    filterModel.setProviderFilter(entry.getValue()[0].split(","));
                     break;
                 case "dataProvider" :
-                    filterModel.setDataProviderFilter(entry.getValue()[0].split("\\*"));
+                    filterModel.setDataProviderFilter(entry.getValue()[0].split(","));
                     break;
                 case "language" :
-                    filterModel.setLanguageFilter(entry.getValue()[0].split("\\*"));
+                    filterModel.setLanguageFilter(entry.getValue()[0].split(","));
                     break;
                 case "article" :
-                    filterModel.setArticleFilter(entry.getValue()[0].split("\\*"));
+                    filterModel.setArticleFilter(entry.getValue()[0].split(","));
                     break;
                 case "country" :
-                    filterModel.setCountryFilter(entry.getValue()[0].split("\\*"));
+                    filterModel.setCountryFilter(entry.getValue()[0].split(","));
                     break;
                 case "category" :
-                    filterModel.setCategoryFacetFilter(entry.getValue()[0].split("\\*"));
+                    filterModel.setCategoryFacetFilter(entry.getValue()[0].split(","));
                     break;
 
             }

@@ -72,6 +72,19 @@ define(['angular'], function(){
                 return filter.data.length > 0;
             }
 
+            $scope.createSearchString = function(){
+                //Create search URL
+                var searchString = '';
+                for(var index in $scope.searchData) {
+                    if (searchString != '') {
+                        searchString += '&';
+                    }
+                    searchString += index + '=' + $scope.searchData[index];
+                }
+                searchString = encodeURI(searchString);
+                return searchString;
+            }
+
             //If no attr get the first level categoies and articles, otherwise get subCategories of category
             $scope.getCategories = function(category, categories, index, path){
                 if (!category) {
@@ -87,10 +100,17 @@ define(['angular'], function(){
                     }
                 }
                 //Setup API url
-                var httpString = '/app/rest/categoryFacet?query=' + $scope.searchQuery;
+                var httpString = '/app/rest/categoryFacet?';
+
+                //Create search string
+                var searchString = $scope.createSearchString();
+                if (searchString) {
+                    httpString += searchString;
+                }
+
                 if(category) {
                     var string = category.split(' ').join('_');
-                    httpString += '&category=' + string;
+                    httpString += '&subCategories=' + string;
                 }
 
                 $http.get(httpString).
@@ -177,15 +197,9 @@ define(['angular'], function(){
                 $scope.setActiveArticles();
                 $scope.setActiveCategories();
 
-                //Create search URL
-                var searchString = '';
-                for(var index in $scope.searchData) {
-                    if (searchString != '') {
-                        searchString += '&';
-                    }
-                    searchString += index + '=' + $scope.searchData[index];
-                }
-                searchString = encodeURI(searchString);
+                //Create search string
+                var searchString = $scope.createSearchString();
+
                 $http.get('/app/rest/search?' + searchString).
                     then(function(response) {
                         $scope.status = response.status;
@@ -369,6 +383,7 @@ define(['angular'], function(){
                 } else {
                     $scope.searchData.category = category;
                 }
+                localStorageService.remove('categories');
                 $location.search($scope.searchData);
             }
 

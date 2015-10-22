@@ -69,34 +69,13 @@
 <div class="row  one-edge-shadow" style="background: #fff; margin-bottom: 40px;">
     <div class="col-xs-6 col-sm-4">
 
-<!--        <div class="panel panel-default">
-            <div class="panel-heading">Selected filters</div>
-            <div class="panel-body">
-                <span ng-if="activeFilters.length == 0 && activeArticles.length == 0 && activeCategories.length == 0">No active filters</span>
-                <ul class="list-group" >
-                    <li class="list-group-item pointer" ng-repeat="article in activeArticles" ng-click="removeArticle(article)">
-                        <i>Article:</i> {{article}}
-                        <i class="fa fa-times"></i>
-                    </li>
-                    <li class="list-group-item pointer" ng-repeat="category in activeCategories" ng-click="removeCategory(category)">
-                        <i>Category:</i> {{category}}
-                        <i class="fa fa-times"></i>
-                    </li>
-                    <li class="list-group-item pointer" ng-repeat="filter in activeFilters" ng-click="removeFilter(filter.categoryName, filter.facetName)">
-                        {{filter.facetName}}
-                        <i class="fa fa-times"></i>
-                    </li>
-                </ul>
-            </div>
-        </div>-->
-
         <accordion id="food-and-drink">
             <accordion-group is-open="panelSettings.foodAndDrink" template-url="accordion-template-food.html" heading="Food and Drink">
                 <div ng-show="categoriesLoader" class="ot-loader" onto-loader  size="30" style="margin:20px auto"> </div>
 
                 <div ng-hide="categoriesLoader" style="padding-top: 15px;">
 
-                    <span ng-if="!categories">Categories are not loaded</span>
+                    <div ng-if="!categories" class="text-center">Categories are not loaded</div>
 
                     <category-collection collection='categories'></category-collection>
                 </div>
@@ -150,8 +129,8 @@
             <div class="col-xs-8 ot-loader" onto-loader  size="20" ng-if="countLoader"></div>
         </div>
         <div id="results-holder" class="row" ng-if="data">
-            <div class="col-sm-6 col-md-4 col-lg-3 pointer" ng-repeat="result in data.searchResults" ng-click="loadResource(result.resource)">
-                <div class="thumbnail">
+            <div class="col-sm-6 col-md-4 col-lg-3 pointer" ng-repeat="result in data.searchResults">
+                <div class="thumbnail" ng-click="loadResource(result.resource)">
                     <div class="image-holder img-thumbnail ">
                         <span>
                             <img class="img-responsive" ng-if="!result.picture" alt="{{result.title}}" src="app/resources/images/default.png"/>

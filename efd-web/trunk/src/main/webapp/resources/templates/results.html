@@ -43,22 +43,28 @@
         <p>Some ... probably text</p>
         <form search-form id="search-query-form" name="searchForm"></form>
         <p style="padding-bottom: 20px; line-height: 2.5em;">
-            <span ng-if="activeFilters.length == 0 && activeArticles.length == 0 && activeCategories.length == 0">No active filters</span>
             <span ng-hide="activeFilters.length == 0 && activeArticles.length == 0 && activeCategories.length == 0">Selected filters: </span>
+            <span ng-if="searchQuery">
+                <button class="btn btn-warning btn-sm" ng-click="removeQuery()" tooltip="Clear query search field" tooltip-placement="top" tooltip-trigger="mouseenter">
+                    <i>Query:</i> {{searchQuery}}
+                    <i class="fa fa-times"></i>
+                </button>
+            </span>
+            <span ng-if="activeFilters.length == 0 && activeArticles.length == 0 && activeCategories.length == 0">No active filters</span>
             <span ng-repeat="category in activeCategories" >
-                <button class="btn btn-primary btn-sm" ng-click="removeCategory(category)">
+                <button class="btn btn-primary btn-sm" ng-click="removeCategory(category)" tooltip="Remove filter by category {{category}}" tooltip-placement="top" tooltip-trigger="mouseenter">
                     <i>Category:</i> {{category}}
                     <i class="fa fa-times"></i>
                 </button>
             </span>
             <span ng-repeat="article in activeArticles">
-                <button class="btn btn-primary btn-sm" ng-click="removeArticle(article)">
+                <button class="btn btn-primary btn-sm" ng-click="removeArticle(article)" tooltip="Remove filter by article {{article}}" tooltip-placement="top" tooltip-trigger="mouseenter">
                     <i>Article:</i> {{article}}
                     <i class="fa fa-times"></i>
                 </button>
             </span>
             <span ng-repeat="filter in activeFilters">
-                <button class="btn btn-primary btn-sm" ng-click="removeFilter(filter.categoryName, filter.facetName)">
+                <button class="btn btn-primary btn-sm" ng-click="removeFilter(filter.categoryName, filter.facetName)" tooltip="Remove filter by facet {{filter.facetName}}" tooltip-placement="top" tooltip-trigger="mouseenter">
                     {{filter.facetName}}
                     <i class="fa fa-times"></i>
                 </button>

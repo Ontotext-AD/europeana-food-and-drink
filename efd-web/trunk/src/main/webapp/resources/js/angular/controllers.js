@@ -515,6 +515,12 @@ define(['angular'], function(){
                 localStorageService.set('panelSettings', $scope.panelSettings);
 
             }
+
+            $scope.removeQuery = function(){
+                localStorageService.remove('categories');
+                $scope.searchData.query = '';
+                $location.path('/app/search').search($scope.searchData);
+            }
         }
     ]);
 

@@ -114,12 +114,29 @@ define(['angular'], function(){
                 $scope.addSearchArticle = $scope.$parent.addSearchArticle;
             },
             template: '<li class="pointer" ng-click="addSearchArticle(article.facetName)" style="min-height: 30px; padding: 0 0 0 16px; margin: 0;">' +
-                '<i class="fa fa-file-text-o fa-lg"></i>' +
-                '<span class="pointer">' +
-                ' {{article.facetName}} ' +
-                    '<span class="badge">{{article.facetValue}}</span>' +
-                '</span>' +
-                '</li>'
+            '<i class="fa fa-file-text-o fa-lg"></i>' +
+            '<span class="pointer">' +
+            ' {{article.facetName}} ' +
+            '<span class="badge">{{article.facetValue}}</span>' +
+            '</span>' +
+            '</li>'
+        }
+    });
+
+    efdDirectives.directive('logo', function () {
+        return {
+            restrict: "E",
+            replace: true,
+            controller: function($scope, localStorageService, $location){
+                $scope.logoClick = function(){
+                    //Clear sessionStorage categories so you can take categories for empty category
+                    localStorageService.remove('categories');
+                    $location.path('/');
+                }
+            },
+            template: '<span ng-click="logoClick()">' +
+                '<img src="/app/resources/images/efd.png" class="img-responsive"/>' +
+            '</span>'
         }
     });
 

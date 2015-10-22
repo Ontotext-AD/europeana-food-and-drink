@@ -54,6 +54,11 @@ public class SearchController {
                               @RequestParam(value = "offset", required = false, defaultValue = "0") Integer offset,
                               @RequestParam(value = "limit", required = false) Integer limit) {
 
+        try {
+            query = URLDecoder.decode(query, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
         return searchQueryService.ftsSearch(query, offset, limit, request);
     }
 

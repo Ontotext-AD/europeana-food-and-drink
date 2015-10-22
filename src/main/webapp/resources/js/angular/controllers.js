@@ -75,7 +75,7 @@ define(['angular'], function(){
             //If no attr get the first level categoies and articles, otherwise get subCategories of category
             $scope.getCategories = function(category, categories, index, path){
                 if (!category) {
-                    //First load
+                    //First load or new query search
                     $scope.categoriesLoader = true;
                 } else {
                     //Set temp data to use it after API response
@@ -87,10 +87,10 @@ define(['angular'], function(){
                     }
                 }
                 //Setup API url
-                var httpString = '/app/rest/categoryFacet';
+                var httpString = '/app/rest/categoryFacet?query=' + $scope.searchQuery;
                 if(category) {
                     var string = category.split(' ').join('_');
-                    httpString += '?category=' + string;
+                    httpString += '&category=' + string;
                 }
 
                 $http.get(httpString).
@@ -162,6 +162,11 @@ define(['angular'], function(){
                     $scope.searchData.query = $scope.searchQuery;
                     $scope.searchData.limit = $scope.limit;
                     $scope.searchData.offset = parseInt($scope.offset);
+
+                    //Clear categories so you'll get it again based on new query
+                    $scope.categories = {};
+                    localStorageService.remove('categories');
+
                     $location.search($scope.searchData);
                 }
 
@@ -461,6 +466,10 @@ define(['angular'], function(){
                 $location.path('/app/resource/'+ encodeURIComponent(resource)).search($scope.searchData);
             }
 
+            //First load
+            $scope.searchQuery = $scope.searchData.query;
+            $scope.search();
+
             //Load categories
             if (localStorageService.get('categories')) {
                 //Reload page
@@ -488,11 +497,6 @@ define(['angular'], function(){
                 localStorageService.set('panelSettings', $scope.panelSettings);
 
             }
-
-
-            //First load
-            $scope.searchQuery = $scope.searchData.query;
-            $scope.search();
         }
     ]);
 

@@ -15,6 +15,25 @@
     </div>
 </script>
 <!--End fiter accordion template-->
+
+<!--Start food accordion template-->
+<script type="text/ng-template" id="accordion-template-food.html">
+    <div class="panel {{panelClass || 'panel-default'}}">
+        <div class="panel-heading" style="padding: 0;">
+            <h5 class="panel-title pointer" ng-click="$parent.toggleOpenFood()" style="padding: 10px 15px;" ng-class="{'not-allowed': isDisabled}">
+                <span href tabindex="0" class="accordion-toggle" accordion-transclude="heading">
+                    <span ng-class="{'text-muted': isDisabled}">{{heading}}</span>
+                </span>
+                <i class="pull-right fa" ng-class="{'fa-chevron-down': isOpen, 'fa-chevron-right': !isOpen}"></i>
+            </h5>
+        </div>
+        <div class="panel-collapse collapse" collapse="!isOpen">
+            <div class="panel-body" ng-transclude style="padding: 0; overflow-y: auto; max-height: 300px;"></div>
+        </div>
+    </div>
+</script>
+<!--End food accordion template-->
+
 <div class="row one-edge-shadow">
     <div class="hidden-xs hidden-sm col-md-2" style="margin: 20px 0;">
         <a href="/"><img src="/app/resources/images/efd.png" class="img-responsive"/></a>
@@ -23,15 +42,37 @@
         <h1>Europeana Food & Drink</h1>
         <p>Some ... probably text</p>
         <form search-form id="search-query-form" name="searchForm"></form>
+        <p style="padding-bottom: 20px; line-height: 2.5em;">
+            <span ng-if="activeFilters.length == 0 && activeArticles.length == 0 && activeCategories.length == 0">No active filters</span>
+            <span ng-hide="activeFilters.length == 0 && activeArticles.length == 0 && activeCategories.length == 0">Selected filters: </span>
+            <span ng-repeat="category in activeCategories" >
+                <button class="btn btn-primary btn-sm" ng-click="removeCategory(category)">
+                    <i>Category:</i> {{category}}
+                    <i class="fa fa-times"></i>
+                </button>
+            </span>
+            <span ng-repeat="article in activeArticles">
+                <button class="btn btn-primary btn-sm" ng-click="removeArticle(article)">
+                    <i>Article:</i> {{article}}
+                    <i class="fa fa-times"></i>
+                </button>
+            </span>
+            <span ng-repeat="filter in activeFilters">
+                <button class="btn btn-primary btn-sm" ng-click="removeFilter(filter.categoryName, filter.facetName)">
+                    {{filter.facetName}}
+                    <i class="fa fa-times"></i>
+                </button>
+            </span>
+        </p>
     </div>
 </div>
 <div class="row  one-edge-shadow" style="background: #fff; margin-bottom: 40px;">
     <div class="col-xs-6 col-sm-4">
 
-        <div class="panel panel-default">
+<!--        <div class="panel panel-default">
             <div class="panel-heading">Selected filters</div>
             <div class="panel-body">
-                <span ng-if="activeFilters.length == 0 && activeArticles.length == 0 && activeCatefories == 0">No active filters</span>
+                <span ng-if="activeFilters.length == 0 && activeArticles.length == 0 && activeCategories.length == 0">No active filters</span>
                 <ul class="list-group" >
                     <li class="list-group-item pointer" ng-repeat="article in activeArticles" ng-click="removeArticle(article)">
                         <i>Article:</i> {{article}}
@@ -47,18 +88,18 @@
                     </li>
                 </ul>
             </div>
-        </div>
+        </div>-->
 
         <accordion id="food-and-drink">
-            <accordion-group is-open="true" template-url="accordion-template.html" heading="Food and Drink">
-                        <div ng-show="categoriesLoader" class="ot-loader" onto-loader  size="30"> </div>
+            <accordion-group is-open="panelSettings.foodAndDrink" template-url="accordion-template-food.html" heading="Food and Drink">
+                <div ng-show="categoriesLoader" class="ot-loader" onto-loader  size="30" style="margin:20px auto"> </div>
 
-                        <div ng-hide="categoriesLoader" style="padding-top: 15px;">
+                <div ng-hide="categoriesLoader" style="padding-top: 15px;">
 
-                            <span ng-if="!categories">Categories are not loaded</span>
+                    <span ng-if="!categories">Categories are not loaded</span>
 
-                            <category-collection collection='categories'></category-collection>
-                        </div>
+                    <category-collection collection='categories'></category-collection>
+                </div>
             </accordion-group>
         </accordion>
 
@@ -106,7 +147,7 @@
             <div class="col-xs-8 ot-loader" onto-loader  size="20" ng-if="countLoader"></div>
         </div>
         <div id="results-holder" class="row" ng-if="data">
-            <div class="col-sm-6 col-md-4 pointer" ng-repeat="result in data.searchResults" ng-click="loadResource(result.resource)">
+            <div class="col-sm-6 col-md-4 col-lg-3 pointer" ng-repeat="result in data.searchResults" ng-click="loadResource(result.resource)">
                 <div class="thumbnail">
                     <div class="image-holder img-thumbnail ">
                         <span>

@@ -34,7 +34,7 @@ define(['angular'], function(){
             $scope.searchData = $location.search();
             $scope.limit = $scope.searchData.limit ? parseInt($scope.searchData.limit) : 24;
             $scope.offset = $scope.searchData.offset ? parseInt($scope.searchData.offset) : 0;
-
+            $scope.panelsSettings = {};
             //Active Filters arrays
             $scope.activeFilters = [];
             $scope.activeArticles = [];
@@ -117,15 +117,6 @@ define(['angular'], function(){
                         toastr.error('No info about categories', '');
                         $scope.categoriesLoader = false;
                     })
-            }
-
-            if (localStorageService.get('categories')) {
-                //Reload page
-                $scope.categories = localStorageService.get('categories');
-                $scope.categoriesLoader = false;
-            } else {
-                //First load
-                $scope.getCategories();
             }
 
             //Get data about number of results - also it's used for calculate number of pages
@@ -462,6 +453,35 @@ define(['angular'], function(){
             $scope.loadResource = function(resource){
                 $location.path('/app/resource/'+ encodeURIComponent(resource)).search($scope.searchData);
             }
+
+            //Load categories
+            if (localStorageService.get('categories')) {
+                //Reload page
+                $scope.categories = localStorageService.get('categories');
+                $scope.categoriesLoader = false;
+            } else {
+                //First load
+                $scope.getCategories();
+            }
+
+            //Load panelSettings (is panel is open or closed)
+            if (localStorageService.get('panelSettings')) {
+                //Reload page
+                $scope.panelSettings = localStorageService.get('panelSettings');
+            } else {
+                //First load
+                $scope.panelSettings = {
+                    foodAndDrink: true
+                }
+                localStorageService.set('panelSettings', $scope.panelSettings);
+            }
+
+            $scope.toggleOpenFood = function(){
+                $scope.panelSettings.foodAndDrink = !$scope.panelSettings.foodAndDrink;
+                localStorageService.set('panelSettings', $scope.panelSettings);
+
+            }
+
 
             //First load
             $scope.searchQuery = $scope.searchData.query;

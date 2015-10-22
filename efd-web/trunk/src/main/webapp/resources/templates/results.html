@@ -136,13 +136,16 @@
                     </ul>
                 </div>
             </div>
-            <div class="col-xs-4 text-center" ng-hide="countLoader">
+            <div class="col-xs-4 text-center" ng-hide="countLoader" style="padding: 10px;">
                 Results {{offset + 1}} - {{offset + limit > count ? count : offset + limit}} of {{count}}
             </div>
-            <div class="col-xs-4 text-right" ng-show="limit < count && !countLoader">
+            <div class="col-xs-4 text-right unselectable" ng-show="limit < count && !countLoader">
+
+                <i class="fa fa-chevron-left pointer" ng-click="changePage(-1)" style="padding: 10px"></i>
                 Page
                 <input type="number" ng-model="results.page" min="1" max="{{totalPages}}" ng-mode="page" ng-change="changePage()">
                 of {{totalPages}}
+                <i class="fa fa-chevron-right pointer" ng-click="changePage(1)" style="padding: 10px"></i>
             </div>
             <div class="col-xs-8 ot-loader" onto-loader  size="20" ng-if="countLoader"></div>
         </div>

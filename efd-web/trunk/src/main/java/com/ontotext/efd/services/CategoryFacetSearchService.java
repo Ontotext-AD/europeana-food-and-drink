@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -65,24 +67,54 @@ public class CategoryFacetSearchService {
         return category;
     }
 
-    public String preprocessCategoryQuery(String query, String category, String queryString){
+    public String preprocessCategoryQuery(String query, String subCategories, String category, String queryString, String articles){
         String q = "";
-        category = category.replace(" ", "_");
+        subCategories = subCategories.replace(" ", "_");
         if (query != null && !query.isEmpty())
-            if (category.equals("Food_and_drink")) {
+            if (subCategories.equals("Food_and_drink")) {
                 q = query.replace("{categoryFilter}", "optional{?sub efd:treeLevel ?level}.\n" +
                                                       "filter(xsd:integer(?level) = 1).");
             }
             else {
                 q = query.replace("{categoryFilter}", "optional{?sub efd:child ?cat}\n" +
-                                      " filter(?cat =  <http://dbpedia.org/resource/Category:" + category +">).");
+                                      " filter(?cat =  <http://dbpedia.org/resource/Category:" + subCategories +">).");
             }
+        String searchQ = "";
             if (queryString != null && !queryString.isEmpty()) {
-                q = q.replace("{query}", "title:" + queryString);
+                searchQ = "+title:" + queryString;
             }
-            else {
-                q = q.replace("{query}", "*:*");
+            if (category != null && !category.isEmpty()) {
+                searchQ += " +category:";
+                String cats[] = category.split(",");
+                for (int i=0; i < cats.length; i++) {
+                    String cat = cats[i];
+                    try {
+                        searchQ += "\\\\\\\"http://dbpedia.org/resource/Category:" + URLDecoder.decode(cat, "UTF-8") + "\\\\\\\" ";
+                        if (i < cats.length - 1) searchQ += " AND ";
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+
+                }
             }
+            if (articles != null && !articles.isEmpty()) {
+                searchQ += " +articles:";
+                String art[] = articles.split(",");
+                for (int i=0; i < art.length; i++) {
+                    String article = art[i];
+                    try {
+                        searchQ += "\\\\\\\"http://dbpedia.org/resource/" + URLDecoder.decode(article, "UTF-8") + "\\\\\\\" ";
+                        if (i < art.length - 1) searchQ += " AND ";
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }
+            if (searchQ.isEmpty()) {
+                searchQ = "*:*";
+            }
+        q = q.replace("{query}", searchQ);
         return q;
     }
 

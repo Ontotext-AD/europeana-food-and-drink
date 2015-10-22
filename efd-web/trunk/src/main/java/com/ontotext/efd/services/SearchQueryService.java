@@ -66,25 +66,33 @@ public class SearchQueryService {
                     String picture = "";
                     String date = "";
                     String mediaType = "";
+                    int size = 0;
                     BindingSet bindingSet = tupleQueryResult.next();
 
                     if (bindingSet.getValue("entity") != null) {
                         resource = bindingSet.getValue("entity").stringValue();
+                        if (!resource.isEmpty()) size++;
+
                     }
                     if (bindingSet.getValue("title") != null) {
                         title = bindingSet.getValue("title").stringValue();
+                        if (!title.isEmpty()) size++;
                     }
                     if (bindingSet.getValue("description") != null) {
                         description = bindingSet.getValue("description").stringValue();
+                        if (!description.isEmpty()) size++;
                     }
                     if (bindingSet.getValue("picture") != null) {
                         picture = bindingSet.getValue("picture").stringValue();
+                        if (!picture.isEmpty()) size++;
                     }
                     if (bindingSet.getValue("date") != null) {
                         date = bindingSet.getValue("date").stringValue();
+                        if (!date.isEmpty()) size++;
                     }
                     if (bindingSet.getValue("mediaType") != null) {
                         mediaType = bindingSet.getValue("mediaType").stringValue();
+                        if (!mediaType.isEmpty()) size++;
                     }
 
 //                    if (searchResults.containsKey(resource)) {
@@ -92,8 +100,9 @@ public class SearchQueryService {
 //                    } else {
 //                        searchResults.put(resource, new FTSSearchResults(title, description, picture, date));
 //                    }
-
-                    searchResults.add(new FTSSearchResults(resource, title, description, picture, date, mediaType));
+                    if (size > 0) {
+                        searchResults.add(new FTSSearchResults(resource, title, description, picture, date, mediaType));
+                    }
                 }
 
             }  catch (QueryEvaluationException e) {
@@ -102,7 +111,7 @@ public class SearchQueryService {
         }
 
         SearchModel searchModel = new SearchModel(searchResults, searchFacets(queryString));
-        if (searchModel.getFacets().size() == 0 && searchModel.getSearchResults().size() == 0) return null;
+        if (searchModel.getSearchResults().size() == 0) return null;
         return searchModel;
     }
 

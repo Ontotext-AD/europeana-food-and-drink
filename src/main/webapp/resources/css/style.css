@@ -28,6 +28,28 @@ body {
 .container {
     background: #FFFFFF;
 }
+@media (min-width: 1400px) {
+    .container {
+        width: 1300px;
+    }
+}
+@media (min-width: 1600px) {
+    .container {
+        width: 1500px;
+    }
+}
+@media (min-width: 1661px) {
+    .container {
+        width: 1600px;
+    }
+}
+@media (min-width: 1661px) {
+    .container {
+        width: 1570px;
+    }
+}
+
+
 .one-edge-shadow {
     margin-bottom: 20px;
     -webkit-box-shadow: 0 8px 6px -6px grey;

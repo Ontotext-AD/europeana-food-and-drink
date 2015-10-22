@@ -295,6 +295,7 @@ define(['angular'], function(){
                     } else {
                         $scope.searchData[categoryName] = filterArr.join(',');
                     }
+                    localStorageService.remove('categories');
                     $location.search($scope.searchData);
                 }
             }
@@ -323,6 +324,7 @@ define(['angular'], function(){
 
                 $scope.searchData.offset = 0;
                 addRemoveFilterTimeout = $timeout(function(){
+                    localStorageService.remove('categories');
                     $location.search($scope.searchData);
                 }, 1000);
 
@@ -346,6 +348,7 @@ define(['angular'], function(){
                 } else {
                     $scope.searchData.article = article;
                 }
+                localStorageService.remove('categories');
                 $location.search($scope.searchData);
             }
 
@@ -355,17 +358,17 @@ define(['angular'], function(){
                     articles = $scope.searchData.article.split(',');
                 if (articles.length == 1) {
                     delete $scope.searchData.article;
-                    $location.search($scope.searchData);
                 } else {
                     for (var i = 0; i < articles.length; i++) {
                         if (articles[i] == article) {
                             articles.splice(i,1);
                             $scope.searchData.article = articles.join(',');
-                            $location.search($scope.searchData);
-                            return;
+                            break;
                         }
                     }
                 }
+                localStorageService.remove('categories');
+                $location.search($scope.searchData);
             }
 
             //Click on Category to add it to search filters
@@ -393,17 +396,17 @@ define(['angular'], function(){
                     categories = $scope.searchData.category.split(',');
                 if (categories.length == 1) {
                     delete $scope.searchData.category;
-                    $location.search($scope.searchData);
                 } else {
                     for (var i = 0; i < categories.length; i++) {
                         if (categories[i] == category) {
                             categories.splice(i,1);
                             $scope.searchData.category = categories.join(',');
-                            $location.search($scope.searchData);
-                            return;
+                            break;
                         }
                     }
                 }
+                localStorageService.remove('categories');
+                $location.search($scope.searchData);
             }
 
             //Open/Close category // Show/Hide Subcategories and articles

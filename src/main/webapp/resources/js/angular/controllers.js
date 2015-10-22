@@ -432,7 +432,14 @@ define(['angular'], function(){
 
             //Change result page
             var changePageTimeout;
-            $scope.changePage = function(){
+            $scope.changePage = function(number){
+                if (number && $scope.results.page){
+                    if (number > 0 && $scope.results.page < $scope.totalPages) {
+                        $scope.results.page++;
+                    } else if (number < 0 && $scope.results.page > 1) {
+                        $scope.results.page--;
+                    }
+                }
                 //Cancel previous timeout to wait for user to choose page
                 $timeout.cancel(changePageTimeout);
                 //Wait 2 seconds before change page (offset) in URL to give time to user to add more digits or click several times on page selector

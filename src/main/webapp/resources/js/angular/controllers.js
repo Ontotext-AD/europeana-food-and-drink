@@ -449,7 +449,7 @@ define(['angular'], function(){
                         $scope.searchData.offset = parseInt($scope.offset);
                         $location.search($scope.searchData);
                     }
-                }, 2000);
+                }, 1000);
 
                 $scope.$on("$destroy", function(event) {
                     $timeout.cancel(changePageTimeout);

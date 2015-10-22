@@ -143,7 +143,7 @@
 
                 <i class="fa fa-chevron-left pointer" ng-click="changePage(-1)" style="padding: 10px"></i>
                 Page
-                <input type="number" ng-model="results.page" min="1" max="{{totalPages}}" ng-mode="page" ng-change="changePage()">
+                <input type="number" ng-model="results.page" min="1" max="{{totalPages}}" ng-mode="page" ng-change="changePage()" style="max-width: 60px;">
                 of {{totalPages}}
                 <i class="fa fa-chevron-right pointer" ng-click="changePage(1)" style="padding: 10px"></i>
             </div>

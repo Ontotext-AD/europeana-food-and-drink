@@ -52,10 +52,10 @@ define(['angular'], function(){
 
             //Facets obj template
             $scope.filtersCategories = [
-                {id: 0, title: 'By media type', searchString: 'mediaType', data: [], isDisabled: true},
-                {id: 1, title: 'By language of description', searchString: 'language', data: [], isDisabled: true},
-                {id: 2, title: 'By providing country', searchString: 'providingCountry', data: [], isDisabled: true},
-                {id: 3, title: 'By data provider', searchString: 'dataProvider', data: [], isDisabled: true}
+                {id: 0, title: 'Media type', searchString: 'mediaType', data: [], isDisabled: true},
+                {id: 1, title: 'Language of description', searchString: 'language', data: [], isDisabled: true},
+                {id: 2, title: 'Providing country', searchString: 'providingCountry', data: [], isDisabled: true},
+                {id: 3, title: 'Data provider', searchString: 'dataProvider', data: [], isDisabled: true}
             ]
 
             //Change number of results on page

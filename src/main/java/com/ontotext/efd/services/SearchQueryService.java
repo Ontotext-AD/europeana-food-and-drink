@@ -394,7 +394,7 @@ public class SearchQueryService {
 
         }
         else {
-            q = q.replace("{categoryFacet}", "");
+            q = q.replace("{categoryFacet}", filter + "}");
             }
         return q;
     }

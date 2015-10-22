@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -32,11 +34,15 @@ public class SearchQueryService {
     @Value("${search.query}")
     private String searchQuery;
 
-//    @Value("${facet.county}")
-//    private String countQuery;
+    @Value("${results.count}")
+    private String resultCount;
 
     @Value("${facets.query}")
     private String facetsQuery;
+
+
+    @Value("${es.search.query}")
+    private String choSearch;
 
     private Logger logger = Logger.getLogger(String.valueOf(SearchQueryService.class));
 
@@ -46,6 +52,84 @@ public class SearchQueryService {
             "      ?cat efd:ancestor ?ancestor.\n" +
             "      {articleFacet}\n";
     private boolean categoryArticleFilterIsSet = false;
+
+    public SearchModel choSearch(String queryString, Integer offset, Integer limit, HttpServletRequest request) {
+        FacetFilterModel filterModel = extractRequestFilters(request);
+        String query = decorateCountQuery(filterModel, queryString, choSearch);
+        TupleQueryResult tupleQueryResult = null;
+        List<FTSSearchResults> searchResults = null;
+
+        if (offset != null) {
+            query = query.replace("{OFFSET}", " OFFSET " + offset);
+        } else {
+            query = query.replace("{OFFSET}", "");
+        }
+        if (limit != null) {
+            query = query.replace("{LIMIT}", " LIMIT " + limit);
+        } else {
+            query = query.replace("{LIMIT}", "");
+        }
+
+        if (query != null && !query.isEmpty()) {
+
+            try {
+                searchResults = new ArrayList<>();
+                tupleQueryResult = connectionService.evaluateQuery(query);
+                while (tupleQueryResult != null && tupleQueryResult.hasNext()) {
+                    String resource = "";
+                    String title = "";
+                    String description = "";
+                    String picture = "";
+                    String date = "";
+                    String mediaType = "";
+                    int size = 0;
+                    BindingSet bindingSet = tupleQueryResult.next();
+
+                    if (bindingSet.getValue("entity") != null) {
+                        resource = bindingSet.getValue("entity").stringValue();
+                        if (!resource.isEmpty()) size++;
+
+                    }
+                    if (bindingSet.getValue("title") != null) {
+                        title = bindingSet.getValue("title").stringValue();
+                        if (!title.isEmpty()) size++;
+                    }
+                    if (bindingSet.getValue("description") != null) {
+                        description = bindingSet.getValue("description").stringValue();
+                        if (!description.isEmpty()) size++;
+                    }
+                    if (bindingSet.getValue("picture") != null) {
+                        picture = bindingSet.getValue("picture").stringValue();
+                        if (!picture.isEmpty()) size++;
+                    }
+                    if (bindingSet.getValue("date") != null) {
+                        date = bindingSet.getValue("date").stringValue();
+                        if (!date.isEmpty()) size++;
+                    }
+                    if (bindingSet.getValue("mediaType") != null) {
+                        mediaType = bindingSet.getValue("mediaType").stringValue();
+                        if (!mediaType.isEmpty()) size++;
+                    }
+
+//                    if (searchResults.containsKey(resource)) {
+//                        searchResults.get(resource).addDescription(description);  //TODO add all fields which are multiple value
+//                    } else {
+//                        searchResults.put(resource, new FTSSearchResults(title, description, picture, date));
+//                    }
+                    if (size > 0) {
+                        searchResults.add(new FTSSearchResults(resource, title, description, picture, date, mediaType));
+                    }
+                }
+
+            } catch (QueryEvaluationException e) {
+                logger.info("No CHO results in the query!");
+            }
+        }
+
+        SearchModel searchModel = new SearchModel(searchResults, searchFacets(queryString));
+        if (searchModel.getSearchResults().size() == 0) return null;
+        return searchModel;
+    }
 
     public SearchModel ftsSearch(String queryString, Integer offset, Integer limit, HttpServletRequest request) {
         categoryArticleFilterIsSet = false;
@@ -105,7 +189,7 @@ public class SearchQueryService {
                     }
                 }
 
-            }  catch (QueryEvaluationException e) {
+            } catch (QueryEvaluationException e) {
                 logger.info("No CHO results in the query!");
             }
         }
@@ -114,14 +198,6 @@ public class SearchQueryService {
         if (searchModel.getSearchResults().size() == 0) return null;
         return searchModel;
     }
-
-//    public String count(String queryString, HttpServletRequest request) {
-//        TupleQueryResult tupleQueryResult = null;
-//        String query = decorateFilters(request, countQuery);
-//        if (query != null && !query.isEmpty()) {
-//
-//        }
-//    }
 
     public List<FTSSearchResults> autocomplete(String queryString) {
         TupleQueryResult tupleQueryResult = null;
@@ -147,7 +223,7 @@ public class SearchQueryService {
                     searchResults.add(new FTSSearchResults(resource, title));
                 }
 
-            }  catch (QueryEvaluationException e) {
+            } catch (QueryEvaluationException e) {
                 e.printStackTrace();
             }
         }
@@ -155,7 +231,7 @@ public class SearchQueryService {
 
     }
 
-    private Map<String, List<FacetModel>> searchFacets(String queryString){
+    private Map<String, List<FacetModel>> searchFacets(String queryString) {
         TupleQueryResult tupleQueryResult = null;
         String query = prepareSearchQuery(queryString, facetsQuery, null, null);
         Map<String, List<FacetModel>> map = new HashMap<>();
@@ -180,9 +256,8 @@ public class SearchQueryService {
 
                     if (map.containsKey(facetName)) {
                         map.get(facetName).add(new FacetModel(facetValue, facetCount));
-                    }
-                    else {
-                        List <FacetModel> list = new ArrayList();
+                    } else {
+                        List<FacetModel> list = new ArrayList();
                         list.add(new FacetModel(facetValue, facetCount));
                         map.put(facetName, list);
                     }
@@ -195,7 +270,6 @@ public class SearchQueryService {
     }
 
 
-
     private String prepareSearchQuery(String queryString, String q, Integer offset, Integer limit) {
         String query = "";
         if (q != null && !queryString.isEmpty()) {
@@ -203,30 +277,29 @@ public class SearchQueryService {
             query = q.replace("{q}", ":query \"title:" + queryString + "\" ;");
 
             if (offset != null) {
-               query =  query.replace("{OFFSET}", " OFFSET " + offset);
+                query = query.replace("{OFFSET}", " OFFSET " + offset);
             } else {
                 query = query.replace("{OFFSET}", "");
             }
             if (limit != null) {
-               query =  query.replace("{LIMIT}", " LIMIT " + limit);
+                query = query.replace("{LIMIT}", " LIMIT " + limit);
             } else {
-                query =  query.replace("{LIMIT}", "");
+                query = query.replace("{LIMIT}", "");
             }
 
             return query;
-        }
-        else if (q != null && queryString.isEmpty()) {
+        } else if (q != null && queryString.isEmpty()) {
             query = q.replace("{q}", "");
 
             if (offset != null) {
-                query =  query.replace("{OFFSET}", " OFFSET " + offset);
+                query = query.replace("{OFFSET}", " OFFSET " + offset);
             } else {
                 query = query.replace("{OFFSET}", "");
             }
             if (limit != null) {
-                query =  query.replace("{LIMIT}", " LIMIT " + limit);
+                query = query.replace("{LIMIT}", " LIMIT " + limit);
             } else {
-                query =  query.replace("{LIMIT}", "");
+                query = query.replace("{LIMIT}", "");
             }
 
             return query;
@@ -235,34 +308,7 @@ public class SearchQueryService {
     }
 
     private String decorateFilters(HttpServletRequest request, String query) {
-        Map<String, String[]> filterParams = request.getParameterMap();
-        FacetFilterModel filterModel = new FacetFilterModel();
-        for (Map.Entry<String, String[]> entry : filterParams.entrySet()) {
-            switch (entry.getKey()) {
-                case "mediaType" :
-                    filterModel.setMediaTypeFilter(entry.getValue()[0].split(","));
-                    break;
-                case "provider" :
-                    filterModel.setProviderFilter(entry.getValue()[0].split(","));
-                    break;
-                case "dataProvider" :
-                    filterModel.setDataProviderFilter(entry.getValue()[0].split(","));
-                    break;
-                case "language" :
-                    filterModel.setLanguageFilter(entry.getValue()[0].split(","));
-                    break;
-                case "article" :
-                    filterModel.setArticleFilter(entry.getValue()[0].split(","));
-                    break;
-                case "country" :
-                    filterModel.setCountryFilter(entry.getValue()[0].split(","));
-                    break;
-                case "category" :
-                    filterModel.setCategoryFacetFilter(entry.getValue()[0].split(","));
-                    break;
-
-            }
-        }
+        FacetFilterModel filterModel = extractRequestFilters(request);
 
         String q = addTypeFilter(query, filterModel.getMediaTypeFilter());
         q = addProviderFilter(q, filterModel.getProviderFilter());
@@ -275,12 +321,67 @@ public class SearchQueryService {
         return q;
     }
 
+    private FacetFilterModel extractRequestFilters(HttpServletRequest request) {
+        Map<String, String[]> filterParams = request.getParameterMap();
+        FacetFilterModel filterModel = new FacetFilterModel();
+        for (Map.Entry<String, String[]> entry : filterParams.entrySet()) {
+            switch (entry.getKey()) {
+                case "mediaType":
+                    filterModel.setMediaTypeFilter(entry.getValue()[0].split(","));
+                    break;
+                case "provider":
+                    filterModel.setProviderFilter(entry.getValue()[0].split(","));
+                    break;
+                case "dataProvider":
+                    filterModel.setDataProviderFilter(entry.getValue()[0].split(","));
+                    break;
+                case "language":
+                    filterModel.setLanguageFilter(entry.getValue()[0].split(","));
+                    break;
+                case "article":
+                    filterModel.setArticleFilter(entry.getValue()[0].split(","));
+                    break;
+                case "country":
+                    filterModel.setCountryFilter(entry.getValue()[0].split(","));
+                    break;
+                case "category":
+                    filterModel.setCategoryFacetFilter(entry.getValue()[0].split(","));
+                    break;
+
+            }
+        }
+
+        return filterModel;
+    }
+
+    public String ESCount(String queryString, Integer offset, Integer limit, HttpServletRequest request) {
+        FacetFilterModel filterModel = extractRequestFilters(request);
+        String query = decorateCountQuery(filterModel, queryString, resultCount);
+        TupleQueryResult tupleQueryResult = null;
+        String count = "";
+        if (query != null && !query.isEmpty()) {
+            tupleQueryResult = connectionService.evaluateQuery(query);
+            try {
+                while(tupleQueryResult != null && tupleQueryResult.hasNext()) {
+                    BindingSet bindingSet = tupleQueryResult.next();
+                    if (bindingSet.getValue("count") != null) {
+                        count = bindingSet.getValue("count").stringValue();
+                    }
+                }
+            } catch (QueryEvaluationException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return count;
+    }
+
     private String addTypeFilter(String query, String types[]) {
         String q = query;
-        String filter =  "optional {?cho edm:type ?type}";
+        String filter = "optional {?cho edm:type ?type}";
 
         if (types != null && types.length > 0) {
-            for(String type : types) {
+            for (String type : types) {
                 filter += "\n  filter(?type = \"" + type.toUpperCase() + "\").";
             }
             q = q.replace("{mediaType}", filter);
@@ -293,11 +394,11 @@ public class SearchQueryService {
 
     private String addProviderFilter(String query, String providers[]) {
         String q = query;
-        String filter =  "optional {?entity edm:provider ?provider}";
+        String filter = "optional {?entity edm:provider ?provider}";
 
         if (providers != null && providers.length > 0) {
             filter += "\n  filter(";
-            for(int i = 0; i < providers.length; i++){
+            for (int i = 0; i < providers.length; i++) {
                 filter += "?provider = \"" + providers[i] + "\"";
                 if (i < providers.length - 1) filter += " || ";
             }
@@ -314,11 +415,11 @@ public class SearchQueryService {
 
     private String addDataProviderFilter(String query, String dataProviders[]) {
         String q = query;
-        String filter =  "optional {?entity edm:dataProvider ?dataProvider}";
+        String filter = "optional {?entity edm:dataProvider ?dataProvider}";
 
         if (dataProviders != null && dataProviders.length > 0) {
             filter += "\n  filter(";
-            for(int i = 0; i < dataProviders.length; i++){
+            for (int i = 0; i < dataProviders.length; i++) {
                 filter += "?dataProvider = \"" + dataProviders[i] + "\"";
                 if (i < dataProviders.length - 1) filter += " || ";
             }
@@ -335,11 +436,11 @@ public class SearchQueryService {
 
     private String addLanguageFilter(String query, String languages[]) {
         String q = query;
-        String filter =  "optional {?cho dc:language ?language}";
+        String filter = "optional {?cho dc:language ?language}";
 
         if (languages != null && languages.length > 0) {
             filter += "\n  filter(";
-            for(int i = 0; i < languages.length; i++){
+            for (int i = 0; i < languages.length; i++) {
                 filter += "?language = \"" + languages[i] + "\"";
                 if (i < languages.length - 1) filter += " || ";
             }
@@ -356,11 +457,11 @@ public class SearchQueryService {
 
     private String addCountryFilter(String query, String countries[]) {
         String q = query;
-        String filter =  "optional {?entity edm:country ?providingCountry}";
+        String filter = "optional {?entity edm:country ?providingCountry}";
 
         if (countries != null && countries.length > 0) {
             filter += "\n  filter(";
-            for(int i = 0; i < countries.length; i++){
+            for (int i = 0; i < countries.length; i++) {
                 filter += "?providingCountry = \"" + countries[i] + "\"";
                 if (i < countries.length - 1) filter += " || ";
             }
@@ -384,18 +485,17 @@ public class SearchQueryService {
         }
 
         if (category != null && category.length > 0) {
-            filter +=  " filter(?ancestor in (";
-            for (int i = 0; i < category.length; i++){
+            filter += " filter(?ancestor in (";
+            for (int i = 0; i < category.length; i++) {
                 filter += " dbc:" + category[i].replaceAll(" ", "_");
                 if (i < category.length - 1) filter += ", ";
             }
             filter += ")).\n}";
             q = q.replace("{categoryFacet}", filter);
 
-        }
-        else {
+        } else {
             q = q.replace("{categoryFacet}", filter + "}");
-            }
+        }
         return q;
     }
 
@@ -418,16 +518,124 @@ public class SearchQueryService {
             filter += ")).";
             q = q.replace("{articleFacet}", filter);
 
-        }
-        else {
+        } else {
             q = q.replace("{articleFacet}", "");
         }
         return q;
     }
 
-    private String decorateCountQuery(String query) {
-        String filter = "filter(uri(?key) in (dbc:Food_and_drink, dbc:Agriculture, dbr:Wood))";
+    private String decorateCountQuery(FacetFilterModel filterModel, String title, String searchQuery) {
+        String query = searchQuery;
+        String queryFilter = "";
+        if (filterModel.getCategoryFacetFilter() != null && filterModel.getCategoryFacetFilter().length > 0) {
+            queryFilter += "";
+            String category[] = filterModel.getCategoryFacetFilter();
+            for (int i = 0; i < category.length; i++) {
+                try {
+                    queryFilter += "+category:\\\\\\\"http://dbpedia.org/resource/Category:" + URLDecoder.decode(category[i], "UTF-8") + "\\\\\\\"";
+                    if (category.length - 1 > i) queryFilter += " AND ";
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
 
-        return null;
+        if (filterModel.getArticleFilter() != null && filterModel.getArticleFilter().length > 0) {
+            if (!queryFilter.isEmpty()) queryFilter += " AND ";
+            String articles[] = filterModel.getArticleFilter();
+            for (int i = 0; i < articles.length; i++) {
+                try {
+                    queryFilter += "+articles:\\\\\\\"http://dbpedia.org/resource/" + URLDecoder.decode(articles[i], "UTF-8") + "\\\\\\\"";
+                    if (articles.length - 1 > i) queryFilter += " AND ";
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        if (filterModel.getCountryFilter() != null && filterModel.getCountryFilter().length > 0) {
+            if (!queryFilter.isEmpty()) queryFilter += " AND ";
+            String country[] = filterModel.getCountryFilter();
+            for (int i = 0; i < country.length; i++) {
+                try {
+                    queryFilter += "+providingCountry:" + URLDecoder.decode(country[i], "UTF-8");
+                    if (country.length - 1 > i) queryFilter += " AND ";
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        if (filterModel.getDataProviderFilter() != null && filterModel.getDataProviderFilter().length > 0) {
+            if (!queryFilter.isEmpty()) queryFilter += " AND ";
+            String dataProvider[] = filterModel.getDataProviderFilter();
+            for (int i = 0; i < dataProvider.length; i++) {
+                try {
+                    queryFilter += "+dataProvider:" + URLDecoder.decode(dataProvider[i], "UTF-8");
+                    if (dataProvider.length - 1 > i) queryFilter += " AND ";
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        if (filterModel.getProviderFilter() != null && filterModel.getProviderFilter().length > 0) {
+            if (!queryFilter.isEmpty()) queryFilter += " AND ";
+            String provider[] = filterModel.getProviderFilter();
+            for (int i = 0; i < provider.length; i++) {
+                try {
+                    queryFilter += "+provider:" + URLDecoder.decode(provider[i], "UTF-8");
+                    if (provider.length - 1 > i) queryFilter += " AND ";
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        if (filterModel.getLanguageFilter() != null && filterModel.getLanguageFilter().length > 0) {
+            if (!queryFilter.isEmpty()) queryFilter += " AND ";
+            String language[] = filterModel.getLanguageFilter();
+            for (int i = 0; i < language.length; i++) {
+                try {
+                    queryFilter += "+language:" + URLDecoder.decode(language[i], "UTF-8");
+                    if (language.length - 1 > i) queryFilter += " AND ";
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        if (filterModel.getMediaTypeFilter() != null && filterModel.getMediaTypeFilter().length > 0) {
+            if (!queryFilter.isEmpty()) queryFilter += " AND ";
+            String mediaType[] = filterModel.getMediaTypeFilter();
+            for (int i = 0; i < mediaType.length; i++) {
+                try {
+                    queryFilter += "+mediaType:" + URLDecoder.decode(mediaType[i], "UTF-8");
+                    if (mediaType.length - 1 > i) queryFilter += " AND ";
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        if (title != null && !title.isEmpty()) {
+            if (!queryFilter.isEmpty()) queryFilter += " AND ";
+            try {
+                queryFilter += "+title:" + URLDecoder.decode(title, "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+        }
+        if (!queryFilter.isEmpty()) {
+            query = query.replace("{query}", queryFilter);
+        }
+        else {
+            query = query.replace("{query}", "*.*");
+        }
+
+        return query;
     }
+
+
+
 }

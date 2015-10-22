@@ -38,6 +38,7 @@ public class SearchController {
     @Value("${facet.article}")
     private String articleFacetQuery;
 
+
     @Autowired
     SearchQueryService searchQueryService;
 
@@ -59,16 +60,20 @@ public class SearchController {
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        return searchQueryService.ftsSearch(query, offset, limit, request);
+//        return searchQueryService.ftsSearch(query, offset, limit, request);
+        return searchQueryService.choSearch(query, offset, limit, request);
     }
 
     @RequestMapping(value = "/search/count", method = RequestMethod.GET)
     @ResponseBody
-    public Integer searchCount(HttpServletRequest request, @RequestParam("query") String query) {
-        SearchModel results = searchQueryService.ftsSearch(query, null, null, request);
+    public String searchCount(HttpServletRequest request, @RequestParam("query") String query) {
+//        SearchModel results = searchQueryService.ftsSearch(query, null, null, request);
 
-        if (results == null) return 0;
-        return results.getSearchResults().size();
+        String count = searchQueryService.ESCount(query, null, null, request);
+        System.out.println(count);
+
+//        if (results == null) return 0;
+        return count;
     }
 
     @RequestMapping(value = "/autocomplete", method = RequestMethod.GET)

@@ -74,7 +74,7 @@ public class SearchController {
 
         String count = searchQueryService.ESCount(query, null, null, request);
 
-//        if (results == null) return 0;
+        if (count == null) return "0";
         return count;
     }
 

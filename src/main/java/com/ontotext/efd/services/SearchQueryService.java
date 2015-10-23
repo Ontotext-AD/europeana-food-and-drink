@@ -347,7 +347,8 @@ public class SearchQueryService {
                 case "category":
                     filterModel.setCategoryFacetFilter(entry.getValue()[0].split(","));
                     break;
-
+                case "place":
+                    filterModel.setPlaceFilter(entry.getValue()[0].split(","));
             }
         }
 
@@ -612,6 +613,19 @@ public class SearchQueryService {
                 try {
                     queryFilter += "+mediaType:" + URLDecoder.decode(mediaType[i], "UTF-8");
                     if (mediaType.length - 1 > i) queryFilter += " AND ";
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        if (filterModel.getPlaceFilter() != null && filterModel.getPlaceFilter().length > 0) {
+            if (!queryFilter.isEmpty()) queryFilter += " AND ";
+            String places[] = filterModel.getPlaceFilter();
+            for (int i = 0; i < places.length; i++) {
+                try {
+                    queryFilter += "+places:\\\\\\\"http://dbpedia.org/resource/" + URLDecoder.decode(places[i], "UTF-8") + "\\\\\\\"";
+                    if (places.length - 1 > i) queryFilter += " AND ";
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }

@@ -38,6 +38,9 @@ public class SearchController {
     @Value("${facet.article}")
     private String articleFacetQuery;
 
+    @Value("${facet.places}")
+    private String placesFacetQuery;
+
 
     @Autowired
     SearchQueryService searchQueryService;
@@ -122,5 +125,16 @@ public class SearchController {
         return hierarchyFacet;
     }
 
+    @RequestMapping(value = "/placesFacet", method = RequestMethod.GET)
+    @ResponseBody
+    public HierarchyFacet getPlacesArticleFacet(HttpServletRequest request,
+                                                @RequestParam(value = "subCategories", required = false, defaultValue = "Earth") String subPlaces,
+                                                @RequestParam(value = "query", required = false) String query) {
+        HierarchyFacet hierarchyFacet = new HierarchyFacet();
+        String placesQuery = facetSearchService.preprocessPlacesQuery(placesFacetQuery, subPlaces, query, request);
+        hierarchyFacet.setCategoryFacet(facetSearchService.getCategoryArticleFacets(placesQuery));
+
+        return hierarchyFacet;
+    }
 
 }

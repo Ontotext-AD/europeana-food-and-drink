@@ -321,7 +321,7 @@ public class SearchQueryService {
         return q;
     }
 
-    private FacetFilterModel extractRequestFilters(HttpServletRequest request) {
+    public FacetFilterModel extractRequestFilters(HttpServletRequest request) {
         Map<String, String[]> filterParams = request.getParameterMap();
         FacetFilterModel filterModel = new FacetFilterModel();
         for (Map.Entry<String, String[]> entry : filterParams.entrySet()) {
@@ -524,7 +524,7 @@ public class SearchQueryService {
         return q;
     }
 
-    private String decorateCountQuery(FacetFilterModel filterModel, String title, String searchQuery) {
+    public String decorateCountQuery(FacetFilterModel filterModel, String title, String searchQuery) {
         String query = searchQuery;
         String queryFilter = "";
         if (filterModel.getCategoryFacetFilter() != null && filterModel.getCategoryFacetFilter().length > 0) {
@@ -630,7 +630,7 @@ public class SearchQueryService {
             query = query.replace("{query}", queryFilter);
         }
         else {
-            query = query.replace("{query}", "*.*");
+            query = query.replace("{query}", "*:*");
         }
 
         return query;

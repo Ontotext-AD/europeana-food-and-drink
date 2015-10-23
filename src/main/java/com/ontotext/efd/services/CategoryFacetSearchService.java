@@ -90,6 +90,25 @@ public class CategoryFacetSearchService {
         return q;
     }
 
+    public String preprocessPlacesQuery(String query, String subPlaces, String queryString, HttpServletRequest request){
+        String q = "";
+        subPlaces = subPlaces.replace(" ", "_");
+        if (query != null && !query.isEmpty())
+            if (subPlaces.equals("Earth")) {
+                q = query.replace("{categoryFilter}", "optional{?sub gn:parentFeature ?parent}.\n" +
+                        "filter(?parent = dbr:Earth).");
+            }
+            else {
+                q = query.replace("{categoryFilter}", "optional{?sub gn:parentFeature ?parent}.\n" +
+                        " filter(?parent =  <http://dbpedia.org/resource/" + subPlaces +">).");
+            }
+
+        FacetFilterModel facetFilterModel = searchQueryService.extractRequestFilters(request);
+        q = searchQueryService.decorateCountQuery(facetFilterModel, queryString, q);
+
+        return q;
+    }
+
     public String preprocessArticleQuery(String query, String category, String queryString) {
         String artQuery = "";
         if (query != null && !query.isEmpty()) {

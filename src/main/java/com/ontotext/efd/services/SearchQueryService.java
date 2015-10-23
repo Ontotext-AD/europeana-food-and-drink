@@ -85,8 +85,8 @@ public class SearchQueryService {
                     int size = 0;
                     BindingSet bindingSet = tupleQueryResult.next();
 
-                    if (bindingSet.getValue("entity") != null) {
-                        resource = bindingSet.getValue("entity").stringValue();
+                    if (bindingSet.getValue("aggr") != null) {
+                        resource = bindingSet.getValue("aggr").stringValue();
                         if (!resource.isEmpty()) size++;
 
                     }

@@ -12,6 +12,15 @@ public class FacetFilterModel {
     private String articleFilter[];
     private String countryFilter[];
     private String categoryFacetFilter[];
+    private String placeFilter[];
+
+    public String[] getPlaceFilter() {
+        return placeFilter;
+    }
+
+    public void setPlaceFilter(String[] placeFilter) {
+        this.placeFilter = placeFilter;
+    }
 
     public String[] getCategoryFacetFilter() {
         return categoryFacetFilter;

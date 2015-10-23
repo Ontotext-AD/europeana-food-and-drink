@@ -481,6 +481,7 @@ define(['angular'], function(){
 
             //Go to Resource page
             $scope.loadResource = function(resource){
+                localStorageService.remove('categories');
                 $location.path('/app/resource/'+ encodeURIComponent(resource)).search($scope.searchData);
             }
 

@@ -152,16 +152,20 @@
                     </td>
                 </tr>
                 <tr ng-if="resource.type.length > 0">
-                    <td><b>Type (object)</b></td>
+                    <td><b>DC Type</b></td>
                     <td><span ng-repeat="type in resource.type"><add-href href-data="type">{{type}}</add-href><span ng-if="!$last">;</span> </span></td>
                 </tr>
                 <tr ng-if="resource.EDMType.length > 0">
-                    <td><b>Type (resource)</b></td>
+                    <td><b>EDM Type</b></td>
                     <td><span ng-repeat="EDMType in resource.EDMType"><add-href href-data="EDMType">{{EDMType}}</add-href><span ng-if="!$last">;</span> </span></td>
                 </tr>
                 <tr ng-if="resource.year.length > 0">
                     <td><b>Year</b></td>
                     <td><span ng-repeat="year in resource.year"><add-href href-data="year">{{year}}</add-href><span ng-if="!$last">;</span> </span></td>
+                </tr>
+                <tr ng-if="resource.aggregatedCHO.length > 0">
+                    <td><b>Aggregated CHO</b></td>
+                    <td><span ng-repeat="CHO in resource.aggregatedCHO"><add-href href-data="CHO">{{aggregatedCHO}}</add-href><span ng-if="!$last">;</span> </span></td>
                 </tr>
             </tbody>
         </table>

@@ -119,11 +119,19 @@ public class ResourceQueryService {
         resourceMap.put("http://purl.org/dc/terms/subject", "termsSubject");
         resourceMap.put("http://www.europeana.eu/schemas/edm/dataProvider", "dataProvider");
         resourceMap.put("http://www.europeana.eu/schemas/edm/hasView", "hasView");
-        resourceMap.put("http://www.europeana.eu/schemas/edm/isShownAt", "externalLink");
+        resourceMap.put("http://www.europeana.eu/schemas/edm/isShownAt", "isShownAt");
         resourceMap.put("http://www.europeana.eu/schemas/edm/provider", "provider");
-        resourceMap.put("http://www.europeana.eu/schemas/edm/rights", "EDMRights");
+        resourceMap.put("http://www.europeana.eu/schemas/edm/rights", "rights");
         resourceMap.put("http://www.europeana.eu/schemas/edm/object", "object");
         resourceMap.put("http://www.europeana.eu/schemas/edm/isShownBy", "isShownBy");
+        resourceMap.put("http://www.europeana.eu/schemas/edm/type", "EDMType");
+        resourceMap.put("http://purl.org/dc/terms/spatial", "spatial");
+        resourceMap.put("http://purl.org/dc/elements/1.1/date", "date");
+        resourceMap.put("http://www.europeana.eu/schemas/edm/aggregatedCHO", "aggregatedCHO");
+        resourceMap.put("http://www.europeana.eu/schemas/edm/country", "country");
+        resourceMap.put("http://www.w3.org/1999/02/22-rdf-syntax-ns#type", "rdf:type");
+        resourceMap.put("http://purl.org/dc/elements/1.1/publisher", "publisher");
+
 
 
         return resourceMap;

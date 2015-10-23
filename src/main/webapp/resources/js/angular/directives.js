@@ -140,10 +140,24 @@ define(['angular'], function(){
         }
     });
 
+    efdDirectives.directive('addHref', function(){
+        return {
+            restrict: 'E',
+            scope: {
+                hrefData: '='
+            },
+            link: function(scope, element, attrs) {
+                var el = '';
+                if (typeof scope.hrefData === "string" && (scope.hrefData.substr(0,4) == 'http' || scope.hrefData.substr(0,4) == 'www.')) {
+                    var el = angular.element('<a href="' + scope.hrefData + '" target="_blank">' +  scope.hrefData + '</a>');
+                } else {
+                    el = scope.hrefData;
+                }
 
-
-
-
+                element.replaceWith(el);
+            }
+        }
+    })
 
     return efdDirectives;
 })

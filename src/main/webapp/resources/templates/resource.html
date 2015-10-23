@@ -19,122 +19,92 @@
         </carousel>
     </div>
     <div class="col-sm-8 col-md-9">
-        <h1 ng-repeat="title in resource.title" class="text-center">{{title}}</h1>
+        <h1 ng-repeat="title in resource.title">{{title}}</h1>
         <div>
             <h3>Description:</h3>
-            <ol>
-                <li ng-repeat="description in resource.description">{{description}}</li>
+            <ol class="list-inline">
+                <li ng-repeat="description in resource.description">{{description}} </li>
             </ol>
         </div>
     </div>
-    <div>
-        <h3>Contributor</h3>
-        <div ng-repeat="contributor in resource.contributor">
-            <div>{{contributor}}</div>
-        </div>
+    <div class="col-xs-12">
+        <table class="table table-striped table-hover table-bordered">
+<!--            <thead>
+                <tr>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>-->
+            <tbody>
+                <tr ng-if="resource.contributor.length > 0">
+                    <td><b>Contributor</b></td>
+                    <td><span ng-repeat="contributor in resource.contributor"><add-href href-data="contributor">{{contributor}}</add-href> <span ng-if="!$last">,</span> </span></td>
+                </tr>
+                <tr ng-if="resource.dataProvider.length > 0">
+                    <td><b>Data Provider</b></td>
+                    <td><span ng-repeat="dataProvider in resource.dataProvider"><add-href href-data="dataProvider">{{dataProvider}}</add-href> <span ng-if="!$last">,</span> </span></td>
+                </tr>
+                <tr ng-if="resource.EDMRights.length > 0">
+                    <td><b>EDM Rights</b></td>
+                    <td><span ng-repeat="EDMRights in resource.EDMRights"><add-href href-data="EDMRights">{{EDMRights}}</add-href> <span ng-if="!$last">,</span> </span></td>
+                </tr>
+                <tr ng-if="resource.hasView.length > 0">
+                    <td><b>Has View</b></td>
+                    <td><span ng-repeat="hasView in resource.hasView"><add-href href-data="hasView">{{hasView}}</add-href> <span ng-if="!$last">,</span> </span></td>
+                </tr>
+                <tr ng-if="resource.identifier.length > 0">
+                    <td><b>Identifier</b></td>
+                    <td><span ng-repeat="identifier in resource.identifier"><add-href href-data="identifier">{{identifier}}</add-href> <span ng-if="!$last">,</span> </span></td>
+                </tr>
+                <tr ng-if="resource.isShownAt.length > 0">
+                    <td><b>Is shown at</b></td>
+                    <td><span ng-repeat="isShownAt in resource.isShownAt"><add-href href-data="isShownAt">{{isShownAt}}</add-href> <span ng-if="!$last">,</span> </span></td>
+                </tr>
+                <tr ng-if="resource.isShownBy.length > 0">
+                    <td><b>Is shown by</b></td>
+                    <td><span ng-repeat="isShownBy in resource.isShownBy"><add-href href-data="isShownBy">{{isShownBy}}</add-href> <span ng-if="!$last">,</span> </span></td>
+                </tr>
+                <tr ng-if="resource.language.length > 0">
+                    <td><b>Language</b></td>
+                    <td><span ng-repeat="language in resource.language"><add-href href-data="language">{{language}}</add-href> <span ng-if="!$last">,</span> </span></td>
+                </tr>
+                <tr ng-if="resource.medium.length > 0">
+                    <td><b>Medium</b></td>
+                    <td><span ng-repeat="medium in resource.medium"><add-href href-data="medium">{{medium}}</add-href> <span ng-if="!$last">,</span> </span></td>
+                </tr>
+                <tr ng-if="resource.object.length > 0">
+                    <td><b>Object</b></td>
+                    <td><span ng-repeat="object in resource.object"><add-href href-data="object">{{object}}</add-href> <span ng-if="!$last">,</span> </span></td>
+                </tr>
+                <tr ng-if="resource.isPartOf.length > 0">
+                    <td><b>Part of</b></td>
+                    <td><span ng-repeat="isPartOf in resource.isPartOf"><add-href href-data="isPartOf">{{isPartOf}}</add-href> <span ng-if="!$last">,</span> </span></td>
+                </tr>
+                <tr ng-if="resource.provider.length > 0">
+                    <td><b>Provider</b></td>
+                    <td><span ng-repeat="provider in resource.provider"><add-href href-data="provider">{{provider}}</add-href> <span ng-if="!$last">,</span> </span></td>
+                </tr>
+                <tr ng-if="resource.rights.length > 0">
+                    <td><b>Rights</b></td>
+                    <td><span ng-repeat="copyright in resource.rights"><add-href href-data="copyright">{{copyright}}</add-href> <span ng-if="!$last">,</span> </span></td>
+                </tr>
+                <tr ng-if="resource.spatial.length > 0">
+                    <td><b>Spatial</b></td>
+                    <td><span ng-repeat="spatial in resource.spatial"><add-href href-data="spatial">{{spatial}}</add-href> <span ng-if="!$last">,</span> </span></td>
+                </tr>
+                <tr ng-if="resource.subject.length > 0 || resource.termsSubject.length > 0">
+                    <td><b>Subject</b></td>
+                    <td>
+                        <span ng-repeat="subject in resource.subject"><add-href href-data="subject">{{subject}}</add-href> <span ng-if="!$last">,</span> </span>
+                        <span ng-if="resource.subject.length > 0 && resource.termsSubject.length > 0">,</span>
+                        <span ng-repeat="termsSubject in resource.termsSubject"><add-href href-data="termsSubject">{{termsSubject}}</add-href> <span ng-if="!$last">,</span> </span>
+                    </td>
+                </tr>
+                <tr ng-if="resource.type.length > 0">
+                    <td><b>Type</b></td>
+                    <td><span ng-repeat="type in resource.type"><add-href href-data="type">{{type}}</add-href> <span ng-if="!$last">,</span> </span></td>
+                </tr>
+            </tbody>
+        </table>
     </div>
-    <div>
-        <h3>Identifier</h3>
-        <div ng-repeat="identifier in resource.identifier">
-            <div>{{identifier}}</div>
-        </div>
-    </div>
-    <div>
-        <h3>Language</h3>
-        <div ng-repeat="language in resource.language">
-            <div>{{language}}</div>
-        </div>
-    </div>
-    <div>
-        <h3>Rights</h3>
-        <div ng-repeat="copyright in resource.rights">
-            <div>{{copyright}}</div>
-        </div>
-    </div>
-    <div>
-        <h3>Subject</h3>
-        <div ng-repeat="subject in resource.subject">
-            <div>{{subject}}</div>
-        </div>
-    </div>
-    <div>
-        <h3>Title</h3>
-        <div ng-repeat="title in resource.title">
-            <div>{{title}}</div>
-        </div>
-    </div>
-    <div>
-        <h3>Type</h3>
-        <div ng-repeat="type in resource.type">
-            <div>{{type}}</div>
-        </div>
-    </div>
-    <div>
-        <h3>Part of</h3>
-        <div ng-repeat="isPartOf in resource.isPartOf">
-            <div>{{isPartOf}}</div>
-        </div>
-    </div>
-    <div>
-        <h3>Medium</h3>
-        <div ng-repeat="medium in resource.medium">
-            <div>{{medium}}</div>
-        </div>
-    </div>
-    <div>
-        <h3>Spatial</h3>
-        <div ng-repeat="spatial in resource.spatial">
-            <div>{{spatial}}</div>
-        </div>
-    </div>
-    <div>
-        <h3>Terms subject</h3>
-        <div ng-repeat="termsSubject in resource.termsSubject">
-            <div>{{termsSubject}}</div>
-        </div>
-    </div>
-    <div>
-        <h3>Data Provider</h3>
-        <div ng-repeat="dataProvider in resource.dataProvider">
-            <div>{{dataProvider}}</div>
-        </div>
-    </div>
-    <div>
-        <h3>Has View</h3>
-        <div ng-repeat="hasView in resource.hasView">
-            <div>{{hasView}}</div>
-        </div>
-    </div>
-    <div>
-        <h3>Is shown at:</h3>
-        <div ng-repeat="isShownAt in resource.isShownAt">
-            <div>{{isShownAt}}</div>
-        </div>
-    </div>
-    <div>
-        <h3>Provider</h3>
-        <div ng-repeat="provider in resource.provider">
-            <div>{{provider}}</div>
-        </div>
-    </div>
-    <div>
-        <h3>EDM Rights</h3>
-        <div ng-repeat="EDMRights in resource.EDMRights">
-            <div>{{EDMRights}}</div>
-        </div>
-    </div>
-    <div>
-        <h3>Object</h3>
-        <div ng-repeat="object in resource.object">
-            <div>{{object}}</div>
-        </div>
-    </div>
-    <div>
-        <h3>Is shown by</h3>
-        <div ng-repeat="isShownBy in resource.isShownBy">
-            <div>{{isShownBy}}</div>
-        </div>
-    </div>
-
-
 </div>

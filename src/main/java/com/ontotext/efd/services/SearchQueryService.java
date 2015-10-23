@@ -40,9 +40,12 @@ public class SearchQueryService {
     @Value("${facets.query}")
     private String facetsQuery;
 
-
     @Value("${es.search.query}")
     private String choSearch;
+
+    @Value("${facets.ES.query}")
+    private String facetsESQuery;
+
 
     private Logger logger = Logger.getLogger(String.valueOf(SearchQueryService.class));
 
@@ -111,11 +114,6 @@ public class SearchQueryService {
                         if (!mediaType.isEmpty()) size++;
                     }
 
-//                    if (searchResults.containsKey(resource)) {
-//                        searchResults.get(resource).addDescription(description);  //TODO add all fields which are multiple value
-//                    } else {
-//                        searchResults.put(resource, new FTSSearchResults(title, description, picture, date));
-//                    }
                     if (size > 0) {
                         searchResults.add(new FTSSearchResults(resource, title, description, picture, date, mediaType));
                     }
@@ -126,78 +124,78 @@ public class SearchQueryService {
             }
         }
 
-        SearchModel searchModel = new SearchModel(searchResults, searchFacets(queryString));
+        SearchModel searchModel = new SearchModel(searchResults, searchFacets(queryString, filterModel));
         if (searchModel.getSearchResults().size() == 0) return null;
         return searchModel;
     }
 
-    public SearchModel ftsSearch(String queryString, Integer offset, Integer limit, HttpServletRequest request) {
-        categoryArticleFilterIsSet = false;
-        TupleQueryResult tupleQueryResult = null;
-        List<FTSSearchResults> searchResults = null;
-//        Map<String, FTSSearchResults> searchResults = null;
-        String query = decorateFilters(request, searchQuery);
-        query = prepareSearchQuery(queryString, query, offset, limit);
-        if (query != null && !query.isEmpty()) {
-
-            try {
-                searchResults = new ArrayList<>();
-                tupleQueryResult = connectionService.evaluateQuery(query);
-                while (tupleQueryResult != null && tupleQueryResult.hasNext()) {
-                    String resource = "";
-                    String title = "";
-                    String description = "";
-                    String picture = "";
-                    String date = "";
-                    String mediaType = "";
-                    int size = 0;
-                    BindingSet bindingSet = tupleQueryResult.next();
-
-                    if (bindingSet.getValue("entity") != null) {
-                        resource = bindingSet.getValue("entity").stringValue();
-                        if (!resource.isEmpty()) size++;
-
-                    }
-                    if (bindingSet.getValue("title") != null) {
-                        title = bindingSet.getValue("title").stringValue();
-                        if (!title.isEmpty()) size++;
-                    }
-                    if (bindingSet.getValue("description") != null) {
-                        description = bindingSet.getValue("description").stringValue();
-                        if (!description.isEmpty()) size++;
-                    }
-                    if (bindingSet.getValue("picture") != null) {
-                        picture = bindingSet.getValue("picture").stringValue();
-                        if (!picture.isEmpty()) size++;
-                    }
-                    if (bindingSet.getValue("date") != null) {
-                        date = bindingSet.getValue("date").stringValue();
-                        if (!date.isEmpty()) size++;
-                    }
-                    if (bindingSet.getValue("mediaType") != null) {
-                        mediaType = bindingSet.getValue("mediaType").stringValue();
-                        if (!mediaType.isEmpty()) size++;
-                    }
-
-//                    if (searchResults.containsKey(resource)) {
-//                        searchResults.get(resource).addDescription(description);  //TODO add all fields which are multiple value
-//                    } else {
-//                        searchResults.put(resource, new FTSSearchResults(title, description, picture, date));
+//    public SearchModel ftsSearch(String queryString, Integer offset, Integer limit, HttpServletRequest request) {
+//        categoryArticleFilterIsSet = false;
+//        TupleQueryResult tupleQueryResult = null;
+//        List<FTSSearchResults> searchResults = null;
+////        Map<String, FTSSearchResults> searchResults = null;
+//        String query = decorateFilters(request, searchQuery);
+//        query = prepareSearchQuery(queryString, query, offset, limit);
+//        if (query != null && !query.isEmpty()) {
+//
+//            try {
+//                searchResults = new ArrayList<>();
+//                tupleQueryResult = connectionService.evaluateQuery(query);
+//                while (tupleQueryResult != null && tupleQueryResult.hasNext()) {
+//                    String resource = "";
+//                    String title = "";
+//                    String description = "";
+//                    String picture = "";
+//                    String date = "";
+//                    String mediaType = "";
+//                    int size = 0;
+//                    BindingSet bindingSet = tupleQueryResult.next();
+//
+//                    if (bindingSet.getValue("entity") != null) {
+//                        resource = bindingSet.getValue("entity").stringValue();
+//                        if (!resource.isEmpty()) size++;
+//
 //                    }
-                    if (size > 0) {
-                        searchResults.add(new FTSSearchResults(resource, title, description, picture, date, mediaType));
-                    }
-                }
-
-            } catch (QueryEvaluationException e) {
-                logger.info("No CHO results in the query!");
-            }
-        }
-
-        SearchModel searchModel = new SearchModel(searchResults, searchFacets(queryString));
-        if (searchModel.getSearchResults().size() == 0) return null;
-        return searchModel;
-    }
+//                    if (bindingSet.getValue("title") != null) {
+//                        title = bindingSet.getValue("title").stringValue();
+//                        if (!title.isEmpty()) size++;
+//                    }
+//                    if (bindingSet.getValue("description") != null) {
+//                        description = bindingSet.getValue("description").stringValue();
+//                        if (!description.isEmpty()) size++;
+//                    }
+//                    if (bindingSet.getValue("picture") != null) {
+//                        picture = bindingSet.getValue("picture").stringValue();
+//                        if (!picture.isEmpty()) size++;
+//                    }
+//                    if (bindingSet.getValue("date") != null) {
+//                        date = bindingSet.getValue("date").stringValue();
+//                        if (!date.isEmpty()) size++;
+//                    }
+//                    if (bindingSet.getValue("mediaType") != null) {
+//                        mediaType = bindingSet.getValue("mediaType").stringValue();
+//                        if (!mediaType.isEmpty()) size++;
+//                    }
+//
+////                    if (searchResults.containsKey(resource)) {
+////                        searchResults.get(resource).addDescription(description);  //TODO add all fields which are multiple value
+////                    } else {
+////                        searchResults.put(resource, new FTSSearchResults(title, description, picture, date));
+////                    }
+//                    if (size > 0) {
+//                        searchResults.add(new FTSSearchResults(resource, title, description, picture, date, mediaType));
+//                    }
+//                }
+//
+//            } catch (QueryEvaluationException e) {
+//                logger.info("No CHO results in the query!");
+//            }
+//        }
+//
+//        SearchModel searchModel = new SearchModel(searchResults, searchFacets(queryString));
+//        if (searchModel.getSearchResults().size() == 0) return null;
+//        return searchModel;
+//    }
 
     public List<FTSSearchResults> autocomplete(String queryString) {
         TupleQueryResult tupleQueryResult = null;
@@ -231,9 +229,11 @@ public class SearchQueryService {
 
     }
 
-    private Map<String, List<FacetModel>> searchFacets(String queryString) {
+    private Map<String, List<FacetModel>> searchFacets(String queryString,  FacetFilterModel filterModel) {
         TupleQueryResult tupleQueryResult = null;
-        String query = prepareSearchQuery(queryString, facetsQuery, null, null);
+//        String query = prepareSearchQuery(queryString, facetsQuery, null, null);
+        String query = decorateCountQuery(filterModel, queryString, facetsESQuery);
+
         Map<String, List<FacetModel>> map = new HashMap<>();
         if (query != null && !query.isEmpty()) {
             try {
@@ -244,14 +244,14 @@ public class SearchQueryService {
                     String facetCount = "";
                     BindingSet bindings = tupleQueryResult.next();
 
-                    if (bindings.getValue("facetName") != null) {
-                        facetName = bindings.getValue("facetName").stringValue();
+                    if (bindings.getValue("name") != null) {
+                        facetName = bindings.getValue("name").stringValue();
                     }
-                    if (bindings.getValue("facetValue") != null) {
-                        facetValue = bindings.getValue("facetValue").stringValue();
+                    if (bindings.getValue("key") != null) {
+                        facetValue = bindings.getValue("key").stringValue();
                     }
-                    if (bindings.getValue("facetCount") != null) {
-                        facetCount = bindings.getValue("facetCount").stringValue();
+                    if (bindings.getValue("count") != null) {
+                        facetCount = bindings.getValue("count").stringValue();
                     }
 
                     if (map.containsKey(facetName)) {

@@ -70,7 +70,6 @@ public class SearchController {
 //        SearchModel results = searchQueryService.ftsSearch(query, null, null, request);
 
         String count = searchQueryService.ESCount(query, null, null, request);
-        System.out.println(count);
 
 //        if (results == null) return 0;
         return count;

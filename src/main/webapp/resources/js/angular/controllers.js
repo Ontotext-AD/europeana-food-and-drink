@@ -52,10 +52,10 @@ define(['angular'], function(){
 
             //Facets obj template
             $scope.filtersCategories = [
-                {id: 0, title: 'Media type', searchString: 'mediaType', data: [], isDisabled: true},
-                {id: 1, title: 'Language of description', searchString: 'language', data: [], isDisabled: true},
-                {id: 2, title: 'Providing country', searchString: 'providingCountry', data: [], isDisabled: true},
-                {id: 3, title: 'Data provider', searchString: 'dataProvider', data: [], isDisabled: true}
+                {id: 0, title: 'Type (resource)', searchString: 'mediaType', data: [], isDisabled: true},
+                {id: 1, title: 'Language', searchString: 'language', data: [], isDisabled: true},
+                /*{id: 2, title: 'Providing country', searchString: 'providingCountry', data: [], isDisabled: true},*/
+                {id: 2, title: 'Data provider', searchString: 'dataProvider', data: [], isDisabled: true}
             ]
 
             //Change number of results on page
@@ -530,15 +530,18 @@ define(['angular'], function(){
         '$routeParams',
         '$http',
         '$location',
+        '$window',
         '$timeout',
         'toastr',
-        function($scope, $routeParams, $http, $location, $timeout, toastr) {
+        'localStorageService',
+        function($scope, $routeParams, $http, $location, $window, $timeout, toastr, localStorageService) {
 
         $scope.loader = true;
         $scope.params = $routeParams;
         $scope.searchData = $location.search();
         $scope.searchQuery = $scope.searchData.query;
         $scope.resource = {};
+        $scope.aggregatedCHO = decodeURIComponent($scope.params.resourceId);
 
         $scope.getResource = function(){
             $http.get('/app/rest/resource?uri=' + $scope.params.resourceId).
@@ -559,10 +562,17 @@ define(['angular'], function(){
         }
 
         $scope.toSearchResults = function(){
+            localStorageService.remove('categories');
             $location.path('/app/search').search($scope.searchData);
         }
 
+        $scope.toEdfRdf = function(){
+            localStorageService.remove('categories');
+            $window.location.replace('http://efd.ontotext.com/resource?uri=' + $scope.params.resourceId);
+        }
+
         $scope.search = function(){
+            localStorageService.remove('categories');
             $location.path('/app/search').search({query: $scope.searchQuery, limit: 24});
         }
 

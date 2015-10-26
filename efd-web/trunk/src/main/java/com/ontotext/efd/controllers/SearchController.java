@@ -128,7 +128,7 @@ public class SearchController {
     @RequestMapping(value = "/placesFacet", method = RequestMethod.GET)
     @ResponseBody
     public HierarchyFacet getPlacesArticleFacet(HttpServletRequest request,
-                                                @RequestParam(value = "subPlace", required = false, defaultValue = "Earth") String subPlaces,
+                                                @RequestParam(value = "place", required = false, defaultValue = "Earth") String subPlaces,
                                                 @RequestParam(value = "query", required = false) String query) {
         HierarchyFacet hierarchyFacet = new HierarchyFacet();
         String placesQuery = facetSearchService.preprocessPlacesQuery(placesFacetQuery, subPlaces, query, request);

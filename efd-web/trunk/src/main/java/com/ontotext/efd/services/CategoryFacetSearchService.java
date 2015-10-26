@@ -109,18 +109,20 @@ public class CategoryFacetSearchService {
         return q;
     }
 
-    public String preprocessArticleQuery(String query, String category, String queryString) {
+    public String preprocessArticleQuery(String query, String category, String queryString, HttpServletRequest request) {
         String artQuery = "";
         if (query != null && !query.isEmpty()) {
             artQuery = query.replace("{category}", category);
 
-            if (queryString != null && !queryString.isEmpty()) {
-                artQuery = artQuery.replace("{query}", "title:" + queryString);
-            }
-            else {
-                artQuery = artQuery.replace("{query}", "*:*");
-            }
+//            if (queryString != null && !queryString.isEmpty()) {
+//                artQuery = artQuery.replace("{query}", "title:" + queryString);
+//            }
+//            else {
+//                artQuery = artQuery.replace("{query}", "*:*");
+//            }
         }
+        FacetFilterModel facetFilterModel = searchQueryService.extractRequestFilters(request);
+        artQuery = searchQueryService.decorateCountQuery(facetFilterModel, queryString, artQuery);
         return artQuery;
     }
 }

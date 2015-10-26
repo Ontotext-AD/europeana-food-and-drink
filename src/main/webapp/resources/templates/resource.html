@@ -25,10 +25,13 @@
         </carousel>
     </div>
     <div class="col-sm-8 col-md-9" ng-class="(resource.isShownBy.length > 0 || resource.hasView.length > 0) ? 'col-sm-8 col-md-9':'col-xs-12'" style="padding-bottom: 20px;">
-        <p><a ng-href="{{externalLink}}" target="_blank" ng-repeat="externalLink in resource.externalLink">{{externalLink}}</a> <button ng-click="toEdfRdf()" class="btn btn-info btn-xs">EDF RDF</button></p>
+        <p>
+            <a ng-href="{{externalLink}}" target="_blank" ng-repeat="externalLink in resource.isShownAt">{{externalLink}}</a>
+            <a ng-if="resource.isShownAt.length == 0" ng-href="{{externalLink}}" target="_blank" ng-repeat="externalLink in resource.isShownBy">{{externalLink}}</a>
+            <a ng-href="{{'http://efd.ontotext.com/resource?uri=' + params.resourceId}}" target="_blank" class="btn btn-info btn-xs">EFD RDF</a>
+        </p>
         <h1 ng-if="resource.title.length > 0" ng-repeat="title in resource.title">{{title}}</h1>
         <div ng-if="resource.description.length > 0" >
-            <h3>Description:</h3>
             <ol class="list-inline">
                 <li ng-repeat="description in resource.description">{{description}} </li>
             </ol>
@@ -87,6 +90,10 @@
                     <td><b>Extent</b></td>
                     <td><span ng-repeat="extent in resource.extent"><add-href href-data="extent">{{extent}}</add-href><span ng-if="!$last">;</span> </span></td>
                 </tr>
+                <tr ng-if="resource.extent.length > 0">
+                    <td><b>Has met</b></td>
+                    <td><span ng-repeat="hasMet in resource.hasMet"><add-href href-data="hasMet">{{hasMet}}</add-href><span ng-if="!$last">;</span> </span></td>
+                </tr>
                 <tr ng-if="resource.format.length > 0">
                     <td><b>Format</b></td>
                     <td><span ng-repeat="format in resource.format"><add-href href-data="format">{{format}}</add-href><span ng-if="!$last">;</span> </span></td>
@@ -139,10 +146,6 @@
                     <td><b>Source</b></td>
                     <td><span ng-repeat="source in resource.source"><add-href href-data="source">{{source}}</add-href><span ng-if="!$last">;</span> </span></td>
                 </tr>
-                <tr ng-if="resource.spatial.length > 0">
-                    <td><b>Spatial</b></td>
-                    <td><span ng-repeat="spatial in resource.spatial"><add-href href-data="spatial">{{spatial}}</add-href><span ng-if="!$last">;</span> </span></td>
-                </tr>
                 <tr ng-if="resource.subject.length > 0 || resource.termsSubject.length > 0">
                     <td><b>Subject</b></td>
                     <td>
@@ -152,21 +155,21 @@
                     </td>
                 </tr>
                 <tr ng-if="resource.type.length > 0">
-                    <td><b>DC Type</b></td>
+                    <td><b>Type (object)</b></td>
                     <td><span ng-repeat="type in resource.type"><add-href href-data="type">{{type}}</add-href><span ng-if="!$last">;</span> </span></td>
                 </tr>
                 <tr ng-if="resource.EDMType.length > 0">
-                    <td><b>EDM Type</b></td>
+                    <td><b>Type (resource)</b></td>
                     <td><span ng-repeat="EDMType in resource.EDMType"><add-href href-data="EDMType">{{EDMType}}</add-href><span ng-if="!$last">;</span> </span></td>
                 </tr>
                 <tr ng-if="resource.year.length > 0">
                     <td><b>Year</b></td>
                     <td><span ng-repeat="year in resource.year"><add-href href-data="year">{{year}}</add-href><span ng-if="!$last">;</span> </span></td>
                 </tr>
-                <tr ng-if="resource.aggregatedCHO.length > 0">
+<!--                <tr ng-if="resource.aggregatedCHO.length > 0">
                     <td><b>Aggregated CHO</b></td>
                     <td><span ng-repeat="CHO in resource.aggregatedCHO"><add-href href-data="CHO">{{aggregatedCHO}}</add-href><span ng-if="!$last">;</span> </span></td>
-                </tr>
+                </tr>-->
             </tbody>
         </table>
     </div>

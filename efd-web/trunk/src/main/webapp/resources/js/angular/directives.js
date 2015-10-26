@@ -30,6 +30,66 @@ define(['angular'], function(){
     });
 
 
+    efdDirectives.directive('placesCollection', function () {
+        return {
+            restrict: "E",
+            replace: true,
+            scope: {
+                collection: '=',
+                addClass: '='
+            },
+            controller: function($scope){
+                $scope.openPlace = $scope.$parent.openPlace;
+                $scope.addPlace = $scope.$parent.addPlace;
+            },
+            template: '<div class="{{addClass}}">' +
+            '<ul class="list-unstyled"><place ng-repeat="place in collection.categoryFacet | orderBy:\'facetName\'" place="place" path="collection.path"></place></ul>' +
+            '</div>'
+        }
+    });
+
+    efdDirectives.directive('place', function ($compile) {
+        return {
+            restrict: "E",
+            replace: true,
+            scope: {
+                place: '=',
+                path: '='
+            },
+            controller: function($scope){
+                $scope.openPlace = $scope.$parent.openPlace;
+                $scope.addPlace = $scope.$parent.addPlace;
+            },
+            template: '<li class="" style="min-height: 26px; padding: 0 0 0 10px; margin: 0;" ng-class="place.open ? \'open-subcategories\' : \'\'">' +
+            '<div class="clearfix">' +
+            '<div class="pull-left pointer" ng-click="openPlace(place.facetName, path, $event)">' +
+            '<span ng-hide="place.open" class="fa-stack">' +
+            '<i class="fa fa-square-o fa-stack-2x"></i>' +
+            '<i class="fa fa-plus fa-stack-1x"></i>' +
+            '</span>' +
+            '<span ng-show="place.open" class="fa-stack">' +
+            '<i class="fa fa-square-o fa-stack-2x"></i>' +
+            '<i class="fa fa-minus fa-stack-1x"></i>' +
+            '</span>' +
+            '</div>' +
+            '<span class="pointer category-name" ng-click="addPlace(place.facetName)">' +
+            ' {{place.facetName}} ' +
+            '<span class="badge">{{place.facetValue}}</span>' +
+            '</span>' +
+            '</div>' +
+            '</li>',
+            link: function (scope, element, attrs) {
+                scope.$watch(function(scope) { return scope.place.subElements },
+                    function(newValue, oldValue) {
+                        if (scope.place.subElements) {
+                            element.append('<places-collection collection="place.subElements"></places-collection>');
+                            $compile(element.contents())(scope)
+                        }
+                    }
+                );
+            }
+        }
+    });
 
 
 

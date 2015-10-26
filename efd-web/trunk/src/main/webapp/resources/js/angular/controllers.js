@@ -32,6 +32,7 @@ define(['angular'], function(){
         function($scope, $routeParams, $http, $location, $timeout, localStorageService ,toastr) {
 
             localStorageService.remove('categories');
+            localStorageService.remove('places');
 
             $scope.searchData = $location.search();
             $scope.limit = $scope.searchData.limit ? parseInt($scope.searchData.limit) : 24;
@@ -41,16 +42,23 @@ define(['angular'], function(){
             $scope.activeFilters = [];
             $scope.activeArticles = [];
             $scope.activeCategories = [];
+            $scope.activePlaces = [];
 
             //Loaders
             $scope.loader = true; //Main loader
             $scope.countLoader = true; //Loader for results per page + Pagination
             $scope.categoriesLoader = true; //Loader for Categories panel
+            $scope.placesLoader = true; //Loader for Categories panel
 
             //Categories obj
             $scope.categories = {};
             //Temp obj used to store data about clicked category when wait for API response for subCategories
             $scope.tempGetCategoriesData = {};
+
+            //Places obj
+            $scope.places = {};
+            //Temp obj used to store data about clicked place when wait for API response for subPlaces
+            $scope.tempGetPlacesData = {};
 
             //Facets obj template
             $scope.filtersCategories = [
@@ -141,6 +149,61 @@ define(['angular'], function(){
                     })
             }
 
+            //If no attr get the first level categoies and articles, otherwise get subCategories of category
+            $scope.getPlaces = function(place, places, index, path){
+                if (!places) {
+                    //First load or new query search
+                    $scope.placesLoader = true;
+                } else {
+                    //Set temp data to use it after API response
+                    $scope.tempGetPlacesData = {
+                        place: place,
+                        places: places,
+                        index: index,
+                        path: angular.copy(path)
+                    }
+                }
+                //Setup API url
+                var httpString = '/app/rest/placesFacet?';
+
+                //Create search string
+                var searchString = $scope.createSearchString();
+                if (searchString) {
+                    httpString += searchString;
+                }
+
+                if(place) {
+                    var string = place.split(' ').join('_');
+                    httpString += '&subPlace=' + string;
+                }
+
+                $http.get(httpString).
+                    then(function(response) {
+                        console.log(response.data)
+                        if (!place) {
+                            //First load
+                            $scope.places = response.data;
+                            $scope.places.path = [];
+                            $scope.placesLoader = false;
+                        } else {
+                            //receive subCategories
+                            var parentPlace = $scope.tempGetPlacesData.places[$scope.tempGetPlacesData.index];
+                            parentPlace.subElements = response.data;
+                            var path = $scope.tempGetPlacesData.path;
+                            path.push($scope.tempGetPlacesData.place)
+                            parentPlace.subElements.path = path;
+                        }
+                        //Add new data to sessionStorage
+                        localStorageService.set('places', $scope.places);
+                    }, function(){
+                        if (category) {
+                            $scope.tempGetPlacesData.places[$scope.tempGetPlacesData.index].open = false;
+                        }
+                        toastr.error('No info about places', '');
+                        $scope.placesLoader = false;
+                    })
+            }
+
             //Get data about number of results - also it's used for calculate number of pages
             $scope.getCount = function(searchString){
                 $http.get('/app/rest/search/count?' + searchString).
@@ -197,6 +260,7 @@ define(['angular'], function(){
                 $scope.setActiveFilters();
                 $scope.setActiveArticles();
                 $scope.setActiveCategories();
+                $scope.setActivePlaces();
 
                 //Create search string
                 var searchString = $scope.createSearchString();
@@ -205,7 +269,6 @@ define(['angular'], function(){
                     then(function(response) {
                         $scope.status = response.status;
                         $scope.data = response.data;
-                        console.log($scope.data);
                         if ($scope.data) {
                             //Fill facets template obj with current facets
                             for(var i = 0; i < $scope.filtersCategories.length; i++){
@@ -278,6 +341,16 @@ define(['angular'], function(){
                     var categories = $scope.searchData.category.split(',');
                     for (var i = 0; i < categories.length; i++) {
                         $scope.activeCategories.push(decodeURIComponent(categories[i]).split('_').join(' '));
+                    }
+                }
+            }
+
+            //Set active places to array for use in Active filters panel
+            $scope.setActivePlaces = function(){
+                if ($scope.searchData.place){
+                    var places = $scope.searchData.place.split(',');
+                    for (var i = 0; i < places.length; i++) {
+                        $scope.activePlaces.push(decodeURIComponent(places[i]).split('_').join(' '));
                     }
                 }
             }
@@ -404,6 +477,42 @@ define(['angular'], function(){
                 $location.search($scope.searchData);
             }
 
+            //Click on Place to add it to search filters
+            $scope.addPlace = function(place){
+                var place = encodeURIComponent(place.split(' ').join('_'));
+                if ($scope.searchData.place) {
+                    var places = $scope.searchData.place.split(',');
+                    for (var i = 0; i < places.length; i++) {
+                        if (places[i] == place) {
+                            return;
+                        }
+                    }
+                    places.push(place);
+                    $scope.searchData.place = places.join(',');
+                } else {
+                    $scope.searchData.place = place;
+                }
+                $location.search($scope.searchData);
+            }
+
+            //Remove place from search filters
+            $scope.removePlace = function(place){
+                var place = encodeURIComponent(place.split(' ').join('_')),
+                    places = $scope.searchData.place.split(',');
+                if (places.length == 1) {
+                    delete $scope.searchData.place;
+                } else {
+                    for (var i = 0; i < places.length; i++) {
+                        if (places[i] == place) {
+                            places.splice(i,1);
+                            $scope.searchData.place = places.join(',');
+                            break;
+                        }
+                    }
+                }
+                $location.search($scope.searchData);
+            }
+
             //Open/Close category // Show/Hide Subcategories and articles
             $scope.openCategory = function(category, path, clickEvent){
                 clickEvent.stopImmediatePropagation();
@@ -448,6 +557,50 @@ define(['angular'], function(){
                 }
             }
 
+            //Open/Close place // Show/Hide Subplaces
+            $scope.openPlace = function(place, path, clickEvent){
+                clickEvent.stopImmediatePropagation();
+                var place  = place,
+                    path = path,
+                    places = $scope.places.categoryFacet;
+
+                //Get current level of categories
+                for (var i = 0; i < path.length; i++) {
+                    for (var j = 0; j < places.length; j++) {
+                        if (path[i] == places[j].facetName) {
+                            places = places[j].subElements.categoryFacet;
+                            break;
+                        }
+                    }
+                }
+
+
+                for (var i = 0; i < places.length; i++) {
+                    //Find current category
+                    if (place== places[i].facetName){
+                        if (places[i].open) {
+                            //Close category
+                            places[i].open = false;
+                            localStorageService.set('places', $scope.places);
+                        } else {
+                            //Open category
+                            if (places[i].subElements) {
+                                //Subcategories are loaded from API before - only change open/close state
+                                places[i].open = true;
+                                localStorageService.set('places', $scope.places);
+                            } else {
+                                //Load subcategories from API
+                                var index = i;
+                                //TODO
+                                places[i].open = true;
+                                $scope.getPlaces(place, places, index, path);
+                            }
+                        }
+                        return;
+                    }
+                }
+            }
+
             //Change result page
             var changePageTimeout;
             $scope.changePage = function(number){
@@ -485,6 +638,7 @@ define(['angular'], function(){
 
 
             $scope.getCategories();
+            $scope.getPlaces();
 
             //Load panelSettings (is panel is open or closed)
             if (localStorageService.get('panelSettings')) {
@@ -493,15 +647,15 @@ define(['angular'], function(){
             } else {
                 //First load
                 $scope.panelSettings = {
-                    foodAndDrink: true
+                    foodAndDrink: true,
+                    places: true
                 }
                 localStorageService.set('panelSettings', $scope.panelSettings);
             }
 
-            $scope.toggleOpenFood = function(){
-                $scope.panelSettings.foodAndDrink = !$scope.panelSettings.foodAndDrink;
+            $scope.toggleOpen = function(index){
+                $scope.panelSettings[index] = !$scope.panelSettings[index];
                 localStorageService.set('panelSettings', $scope.panelSettings);
-
             }
 
             $scope.removeQuery = function(){
@@ -532,11 +686,9 @@ define(['angular'], function(){
         $scope.getResource = function(){
             $http.get('/app/rest/resource?uri=' + $scope.params.resourceId).
                 then(function(response) {
-                    console.log(response.data);
                     $scope.resource = response.data;
                     $scope.loader = false;
                 }, function(response){
-                    console.log(response);
                     toastr.error('Resource not found', '');
                     var t = $timeout(function(){
                         $location.path('/app/search').search($scope.searchData);

@@ -31,6 +31,8 @@ define(['angular'], function(){
         'toastr',
         function($scope, $routeParams, $http, $location, $timeout, localStorageService ,toastr) {
 
+            localStorageService.remove('categories');
+
             $scope.searchData = $location.search();
             $scope.limit = $scope.searchData.limit ? parseInt($scope.searchData.limit) : 24;
             $scope.offset = $scope.searchData.offset ? parseInt($scope.searchData.offset) : 0;
@@ -185,7 +187,6 @@ define(['angular'], function(){
 
                     //Clear categories so you'll get it again based on new query
                     $scope.categories = {};
-                    localStorageService.remove('categories');
 
                     $location.search($scope.searchData);
                 }
@@ -295,7 +296,6 @@ define(['angular'], function(){
                     } else {
                         $scope.searchData[categoryName] = filterArr.join(',');
                     }
-                    localStorageService.remove('categories');
                     $location.search($scope.searchData);
                 }
             }
@@ -324,7 +324,6 @@ define(['angular'], function(){
 
                 $scope.searchData.offset = 0;
                 addRemoveFilterTimeout = $timeout(function(){
-                    localStorageService.remove('categories');
                     $location.search($scope.searchData);
                 }, 1000);
 
@@ -348,7 +347,6 @@ define(['angular'], function(){
                 } else {
                     $scope.searchData.article = article;
                 }
-                localStorageService.remove('categories');
                 $location.search($scope.searchData);
             }
 
@@ -367,7 +365,6 @@ define(['angular'], function(){
                         }
                     }
                 }
-                localStorageService.remove('categories');
                 $location.search($scope.searchData);
             }
 
@@ -386,7 +383,6 @@ define(['angular'], function(){
                 } else {
                     $scope.searchData.category = category;
                 }
-                localStorageService.remove('categories');
                 $location.search($scope.searchData);
             }
 
@@ -405,7 +401,6 @@ define(['angular'], function(){
                         }
                     }
                 }
-                localStorageService.remove('categories');
                 $location.search($scope.searchData);
             }
 
@@ -481,7 +476,6 @@ define(['angular'], function(){
 
             //Go to Resource page
             $scope.loadResource = function(resource){
-                localStorageService.remove('categories');
                 $location.path('/app/resource/'+ encodeURIComponent(resource)).search($scope.searchData);
             }
 
@@ -489,15 +483,8 @@ define(['angular'], function(){
             $scope.searchQuery = $scope.searchData.query;
             $scope.search();
 
-            //Load categories
-            if (localStorageService.get('categories')) {
-                //Reload page
-                $scope.categories = localStorageService.get('categories');
-                $scope.categoriesLoader = false;
-            } else {
-                //First load
-                $scope.getCategories();
-            }
+
+            $scope.getCategories();
 
             //Load panelSettings (is panel is open or closed)
             if (localStorageService.get('panelSettings')) {
@@ -518,7 +505,6 @@ define(['angular'], function(){
             }
 
             $scope.removeQuery = function(){
-                localStorageService.remove('categories');
                 $scope.searchData.query = '';
                 $location.path('/app/search').search($scope.searchData);
             }
@@ -562,17 +548,14 @@ define(['angular'], function(){
         }
 
         $scope.toSearchResults = function(){
-            localStorageService.remove('categories');
             $location.path('/app/search').search($scope.searchData);
         }
 
         $scope.toEdfRdf = function(){
-            localStorageService.remove('categories');
             $window.location.replace('http://efd.ontotext.com/resource?uri=' + $scope.params.resourceId);
         }
 
         $scope.search = function(){
-            localStorageService.remove('categories');
             $location.path('/app/search').search({query: $scope.searchQuery, limit: 24});
         }
 

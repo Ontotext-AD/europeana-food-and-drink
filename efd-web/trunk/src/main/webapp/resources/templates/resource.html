@@ -10,7 +10,7 @@
     </div>
 </div>
 <div ng-show="loader" class="ot-loader ot-main-loader" onto-loader  size="50"></div>
-<div ng-hide="loader" class="row" style="margin-bottom: 40px; background: #fff;">
+<div ng-hide="loader" class="row one-edge-shadow" style="background: #fff;">
     <div class="col-sm-4 col-md-3 panel panel-default" ng-if="resource.isShownBy.length > 0 || resource.hasView.length > 0">
         <carousel interval="4000" no-wrap="true" class="col-xs-12 text-center" disable-animation="true" ng-if="resource.hasView.length > 0 || resource.isShownBy.length > 0 || resource.object.length > 0">
 <!--            <slide ng-repeat="src in resource.object" ng-active="{{$first?'true':'false'}}" class="col-xs-12">

@@ -195,7 +195,7 @@ define(['angular'], function(){
                 }
             },
             template: '<span ng-click="logoClick()">' +
-                '<img src="/app/resources/images/efd.png" class="img-responsive"  alt="Europeana Food and Drink" style="margin: 0 auto;"/>' +
+                '<img src="/app/resources/images/efd.png" class="img-responsive pointer"  alt="Europeana Food and Drink" style="margin: 0 auto;"/>' +
             '</span>'
         }
     });

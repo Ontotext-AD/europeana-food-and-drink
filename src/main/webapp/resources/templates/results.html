@@ -20,7 +20,25 @@
 <script type="text/ng-template" id="accordion-template-food.html">
     <div class="panel {{panelClass || 'panel-default'}}">
         <div class="panel-heading" style="padding: 0;">
-            <h5 class="panel-title pointer" ng-click="$parent.toggleOpenFood()" style="padding: 10px 15px;" ng-class="{'not-allowed': isDisabled}">
+            <h5 class="panel-title pointer" ng-click="$parent.toggleOpen('foodAndDrink')" style="padding: 10px 15px;" ng-class="{'not-allowed': isDisabled}">
+                <span href tabindex="0" class="accordion-toggle" accordion-transclude="heading">
+                    <span ng-class="{'text-muted': isDisabled}">{{heading}}</span>
+                </span>
+                <i class="pull-right fa" ng-class="{'fa-chevron-down': isOpen, 'fa-chevron-right': !isOpen}"></i>
+            </h5>
+        </div>
+        <div class="panel-collapse collapse" collapse="!isOpen">
+            <div class="panel-body" ng-transclude style="padding: 0; overflow-y: auto; max-height: 300px;"></div>
+        </div>
+    </div>
+</script>
+<!--End food accordion template-->
+
+<!--Start places accordion template-->
+<script type="text/ng-template" id="accordion-template-places.html">
+    <div class="panel {{panelClass || 'panel-default'}}">
+        <div class="panel-heading" style="padding: 0;">
+            <h5 class="panel-title pointer" ng-click="$parent.toggleOpen('places')" style="padding: 10px 15px;" ng-class="{'not-allowed': isDisabled}">
                 <span href tabindex="0" class="accordion-toggle" accordion-transclude="heading">
                     <span ng-class="{'text-muted': isDisabled}">{{heading}}</span>
                 </span>
@@ -70,6 +88,12 @@
                     <i class="fa fa-times"></i>
                 </button>
             </span>
+            <span ng-repeat="place in activePlaces">
+                <button class="btn btn-primary btn-sm" ng-click="removePlace(place)" tooltip="Remove filter by place {{place}}" tooltip-placement="top" tooltip-trigger="mouseenter">
+                    <i>Place:</i> {{place}}
+                    <i class="fa fa-times"></i>
+                </button>
+            </span>
             <span ng-repeat="filter in activeFilters">
                 <button class="btn btn-primary btn-sm" ng-click="removeFilter(filter.categoryName, filter.facetName)" tooltip="Remove filter by facet {{filter.facetName}}" tooltip-placement="top" tooltip-trigger="mouseenter">
                     {{filter.facetName}}
@@ -91,6 +115,19 @@
                     <div ng-if="!categories" class="text-center">Categories are not loaded</div>
 
                     <category-collection collection='categories'></category-collection>
+                </div>
+            </accordion-group>
+        </accordion>
+
+        <accordion id="places">
+            <accordion-group is-open="panelSettings.places" template-url="accordion-template-places.html" heading="Places">
+                <div ng-show="placesLoader" class="ot-loader" onto-loader  size="30" style="margin:20px auto"> </div>
+
+                <div ng-hide="placesLoader" style="padding-top: 15px;">
+
+                    <div ng-if="!places" class="text-center">Places are not loaded</div>
+
+                    <places-collection collection='places'></places-collection>
                 </div>
             </accordion-group>
         </accordion>

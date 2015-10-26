@@ -119,7 +119,7 @@ public class SearchController {
         String categoryQuery = facetSearchService.preprocessCategoryQuery(categoryFacetQuery, subCategories, category, query, article, request);
         hierarchyFacet.setCategoryFacet(facetSearchService.getCategoryArticleFacets(categoryQuery));
 
-        String articleQuery = facetSearchService.preprocessArticleQuery(articleFacetQuery, subCategories, query);
+        String articleQuery = facetSearchService.preprocessArticleQuery(articleFacetQuery, subCategories, query, request);
         hierarchyFacet.setArticleModel(facetSearchService.getCategoryArticleFacets(articleQuery));
 
         return hierarchyFacet;

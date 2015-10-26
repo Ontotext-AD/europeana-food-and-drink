@@ -551,10 +551,6 @@ define(['angular'], function(){
             $location.path('/app/search').search($scope.searchData);
         }
 
-        $scope.toEdfRdf = function(){
-            $window.location.replace('http://efd.ontotext.com/resource?uri=' + $scope.params.resourceId);
-        }
-
         $scope.search = function(){
             $location.path('/app/search').search({query: $scope.searchQuery, limit: 24});
         }

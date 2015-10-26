@@ -125,26 +125,26 @@ body {
     overflow: hidden;
 }
 
-#food-and-drink {
+.tree-categories {
     padding: 0;
 }
-#food-and-drink > .panel-body {
+.tree-categories > .panel-body {
     padding: 0;
     height: 300px;
     overflow-y: scroll;
 }
-#food-and-drink > .panel-body > .ot-loader {
+.tree-categories > .panel-body > .ot-loader {
     margin-top: 130px;
 }
 
-div[collection='category.subElements'] {
+div[collection*='subElements'] {
     padding-top: 0;
     transition: all 0.5s;
     max-height: 0;
     overflow: hidden;
     /*border-left: 1px solid #000;*/
 }
-.open-subcategories > div[collection='category.subElements'] {
+.open-subcategories > div[collection*='subElements'] {
     padding-top: 6px;
     max-height: 10000px;
 }

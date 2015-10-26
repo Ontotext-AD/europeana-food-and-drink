@@ -13,9 +13,6 @@
 <div ng-hide="loader" class="row one-edge-shadow" style="background: #fff;">
     <div class="col-sm-4 col-md-3 panel panel-default" ng-if="resource.isShownBy.length > 0 || resource.hasView.length > 0">
         <carousel interval="4000" no-wrap="true" class="col-xs-12 text-center" disable-animation="true" ng-if="resource.hasView.length > 0 || resource.isShownBy.length > 0 || resource.object.length > 0">
-<!--            <slide ng-repeat="src in resource.object" ng-active="{{$first?'true':'false'}}" class="col-xs-12">
-                <img ng-src="{{src}}" style="margin:auto;" />
-            </slide>-->
             <slide ng-repeat="src in resource.isShownBy" ng-active="{{$first ? 'true':'false'}}" class="col-xs-12">
                 <img ng-src="{{src}}" style="margin:auto;" />
             </slide>
@@ -27,7 +24,18 @@
     <div class="col-sm-8 col-md-9" ng-class="(resource.isShownBy.length > 0 || resource.hasView.length > 0) ? 'col-sm-8 col-md-9':'col-xs-12'" style="padding-bottom: 20px;">
         <p>
             <a ng-href="{{externalLink}}" target="_blank" ng-repeat="externalLink in resource.isShownAt">{{externalLink}}</a>
-            <a ng-if="resource.isShownAt.length == 0" ng-href="{{externalLink}}" target="_blank" ng-repeat="externalLink in resource.isShownBy">{{externalLink}}</a>
+            <a ng-if="!resource.isShownAt" ng-href="{{externalLink}}" target="_blank" ng-repeat="externalLink in resource.isShownBy">{{externalLink}}</a>
+        </p>
+        <p ng-if="resource.aggregatedCHO.length > 0">
+            <b>CHO:</b>
+            <span ng-repeat="CHO in resource.aggregatedCHO">
+                {{CHO}}
+                <a ng-href="{{'http://efd.ontotext.com/resource?uri=' + CHO}}" target="_blank" class="btn btn-info btn-xs">EFD RDF</a>
+            </span>
+        </p>
+        <p>
+            <b>Aggregation:</b>
+            {{resourceId}}
             <a ng-href="{{'http://efd.ontotext.com/resource?uri=' + params.resourceId}}" target="_blank" class="btn btn-info btn-xs">EFD RDF</a>
         </p>
         <h1 ng-if="resource.title.length > 0" ng-repeat="title in resource.title">{{title}}</h1>
@@ -39,17 +47,7 @@
     </div>
     <div class="col-xs-12">
         <table class="table table-striped table-hover table-bordered">
-<!--            <thead>
-                <tr>
-                    <th></th>
-                    <th></th>
-                </tr>
-            </thead>-->
             <tbody>
-                <tr ng-if="resource.aggregatedCHO.length > 0">
-                    <td><b>Aggregated CHO</b></td>
-                    <td><span ng-repeat="CHO in resource.aggregatedCHO"><add-href href-data="CHO">{{CHO}}</add-href><span ng-if="!$last">;</span> </span></td>
-                </tr>
                 <tr ng-if="resource.alternative.length > 0">
                     <td><b>Alternative Title </b></td>
                     <td><span ng-repeat="alternative in resource.alternative"><add-href href-data="alternative">{{alternative}}</add-href><span ng-if="!$last">;</span> </span></td>

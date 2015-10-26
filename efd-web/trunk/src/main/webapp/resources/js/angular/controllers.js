@@ -676,6 +676,7 @@ define(['angular'], function(){
 
         $scope.loader = true;
         $scope.params = $routeParams;
+        $scope.resourceId = decodeURIComponent($scope.params.resourceId);
         $scope.searchData = $location.search();
         $scope.searchQuery = $scope.searchData.query;
         $scope.resource = {};

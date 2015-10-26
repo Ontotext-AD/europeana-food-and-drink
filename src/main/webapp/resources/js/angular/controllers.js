@@ -547,7 +547,6 @@ define(['angular'], function(){
                             } else {
                                 //Load subcategories from API
                                 var index = i;
-                                //TODO
                                 categories[i].open = true;
                                 $scope.getCategories(category, categories, index, path);
                             }
@@ -591,7 +590,6 @@ define(['angular'], function(){
                             } else {
                                 //Load subcategories from API
                                 var index = i;
-                                //TODO
                                 places[i].open = true;
                                 $scope.getPlaces(place, places, index, path);
                             }

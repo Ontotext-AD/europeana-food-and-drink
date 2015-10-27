@@ -190,13 +190,28 @@ define(['angular'], function(){
             controller: function($scope, localStorageService, $location){
                 $scope.logoClick = function(){
                     //Clear sessionStorage categories so you can take categories for empty category
-                    localStorageService.remove('categories');
                     $location.path('/');
                 }
             },
             template: '<span ng-click="logoClick()">' +
-                '<img src="/app/resources/images/efd.png" class="img-responsive pointer"  alt="Europeana Food and Drink" style="margin: 0 auto;"/>' +
+            '<img src="/app/resources/images/efd.png" class="img-responsive pointer"  alt="Europeana Food and Drink" style="margin: 0 auto;"/>' +
             '</span>'
+        }
+    });
+
+    efdDirectives.directive('title', function () {
+        return {
+            restrict: "E",
+            replace: true,
+            template: '<h1 class="clearfix">' +
+                '<span class="hidden-xs hidden-sm">Europeana Food & Drink</span> ' +
+                '<a href="http://foodanddrinkeurope.eu" target="_blank" class="pull-right">' +
+                    '<img src="/app/resources/images/madewitheuropeana.png" alt="Part of the Europeana Food and Drink project"/>' +
+                '</a>' +
+                '<a href="http://ontotext.com" target="_blank" class="pull-right" style="margin-right: 20px;">' +
+                    '<img src="/app/resources/images/ontotext-logo.png" alt="Created by Ontotext"/>' +
+                '</a>' +
+            '</h1>'
         }
     });
 

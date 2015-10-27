@@ -53,11 +53,11 @@
 <!--End food accordion template-->
 
 <div class="row one-edge-shadow">
-    <div class="col-xs-2" style="margin: 20px 0;">
+    <div class="col-xs-3 col-sm-2" style="margin: 20px 0;">
         <logo></logo>
     </div>
-    <div class="col-xs-10">
-        <h1>Europeana Food & Drink</h1>
+    <div class="col-xs-9 col-sm-10"  style="margin-bottom: 20px;">
+        <title></title>
         <p>
             The
             <a href="http://foodanddrinkeurope.eu/professional-applications/semantic-demonstrator/" target="_blank">Semantic Demonstrator</a>
@@ -67,7 +67,7 @@
             <a href="http://efd.ontotext.com/sparql" target="_blank">SPARQL endpoint</a>.
         </p>
         <form search-form id="search-query-form" name="searchForm"></form>
-        <p style="padding-bottom: 20px; line-height: 2.5em;">
+        <p style="line-height: 2.5em;">
             <span ng-hide="activeFilters.length == 0 && activeArticles.length == 0 && activeCategories.length == 0">Selected filters: </span>
             <span ng-if="searchQuery">
                 <button class="btn btn-warning btn-sm" ng-click="removeQuery()" tooltip="Clear query search field" tooltip-placement="top" tooltip-trigger="mouseenter">

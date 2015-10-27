@@ -29,13 +29,19 @@
         <p ng-if="resource.aggregatedCHO.length > 0">
             <b>CHO:</b>
             <span ng-repeat="CHO in resource.aggregatedCHO">
-                {{CHO}}
+                <span ng-click="copyToClipboard(CHO)" class="pointer" tooltip="Copy to clipboard" tooltip-position="top" tooltip-trigger="mouseenter">
+                    <u>{{CHO}}</u>
+                    <i class="fa fa-clipboard"></i>
+                </span>
                 <a ng-href="{{'http://efd.ontotext.com/resource?uri=' + CHO}}" target="_blank" class="btn btn-info btn-xs">EFD RDF</a>
             </span>
         </p>
         <p>
             <b>Aggregation:</b>
-            {{resourceId}}
+            <span ng-click="copyToClipboard(resourceId)" class="pointer" tooltip="Copy to clipboard" tooltip-position="top" tooltip-trigger="mouseenter">
+                <u>{{resourceId}}</u>
+                <i class="fa fa-clipboard"></i>
+            </span>
             <a ng-href="{{'http://efd.ontotext.com/resource?uri=' + params.resourceId}}" target="_blank" class="btn btn-info btn-xs">EFD RDF</a>
         </p>
         <h1 ng-if="resource.title.length > 0" ng-repeat="title in resource.title">{{title}}</h1>

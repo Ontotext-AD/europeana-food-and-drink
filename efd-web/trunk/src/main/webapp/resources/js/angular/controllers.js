@@ -670,9 +670,10 @@ define(['angular'], function(){
         '$location',
         '$window',
         '$timeout',
+        '$modal',
         'toastr',
         'localStorageService',
-        function($scope, $routeParams, $http, $location, $window, $timeout, toastr, localStorageService) {
+        function($scope, $routeParams, $http, $location, $window, $timeout, $modal, toastr, localStorageService) {
 
         $scope.loader = true;
         $scope.params = $routeParams;
@@ -706,7 +707,39 @@ define(['angular'], function(){
             $location.path('/app/search').search({query: $scope.searchQuery, limit: 24});
         }
 
+        ///Copy to clipboard popover options
+        $scope.copyToClipboard = function(URI){
+            var modalInstance = $modal.open({
+                templateUrl: 'app/resources/templates/copyToClipboard.html',
+                controller: 'CopyToClipboardModalCtrl',
+                resolve: {
+                    URI: function () {
+                        return URI;
+                    }
+                }
+            });
+
+            modalInstance.opened.then(function(){
+                $timeout(function(){
+                    document.getElementById('clipboardURI').select();
+                }, 100)
+            })
+        }
+
         $scope.getResource();
+    }]);
+
+    efdControllers.controller('CopyToClipboardModalCtrl', ["$scope", "$modalInstance", "URI", function($scope, $modalInstance, URI) {
+
+        $scope.clipboardURI = URI;
+
+        $scope.ok = function () {
+            $modalInstance.close();
+        };
+
+        $scope.cancel = function () {
+            $modalInstance.dismiss('cancel');
+        };
     }]);
 
     return efdControllers;

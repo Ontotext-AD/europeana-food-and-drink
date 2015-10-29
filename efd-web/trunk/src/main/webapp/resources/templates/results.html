@@ -78,13 +78,13 @@
             <span ng-if="activeFilters.length == 0 && activeArticles.length == 0 && activeCategories.length == 0">No active filters</span>
             <span ng-repeat="category in activeCategories" >
                 <button class="btn btn-primary btn-sm" ng-click="removeCategory(category)" tooltip="Remove filter by category {{category}}" tooltip-placement="top" tooltip-trigger="mouseenter">
-                    <i>Category:</i> {{category}}
+                    <i>FD:</i> {{category}}
                     <i class="fa fa-times"></i>
                 </button>
             </span>
             <span ng-repeat="article in activeArticles">
                 <button class="btn btn-primary btn-sm" ng-click="removeArticle(article)" tooltip="Remove filter by article {{article}}" tooltip-placement="top" tooltip-trigger="mouseenter">
-                    <i>Article:</i> {{article}}
+                    <i>FD:</i> {{article}}
                     <i class="fa fa-times"></i>
                 </button>
             </span>
@@ -96,7 +96,7 @@
             </span>
             <span ng-repeat="filter in activeFilters">
                 <button class="btn btn-primary btn-sm" ng-click="removeFilter(filter.categoryName, filter.facetName)" tooltip="Remove filter by facet {{filter.facetName}}" tooltip-placement="top" tooltip-trigger="mouseenter">
-                    {{filter.facetName}}
+                    <i>{{categoriesNamesMap[filter.categoryName]}}:</i> {{filter.facetName}}
                     <i class="fa fa-times"></i>
                 </button>
             </span>

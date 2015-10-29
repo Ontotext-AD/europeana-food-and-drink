@@ -60,11 +60,17 @@ define(['angular'], function(){
             //Temp obj used to store data about clicked place when wait for API response for subPlaces
             $scope.tempGetPlacesData = {};
 
+            //Map to use it for active facets prefixes
+            $scope.categoriesNamesMap = {
+                mediaType: 'Type (resource)',
+                language: 'Language',
+                dataProvider: 'Data provider'
+            }
+
             //Facets obj template
             $scope.filtersCategories = [
                 {id: 0, title: 'Type (resource)', searchString: 'mediaType', data: [], isDisabled: true},
                 {id: 1, title: 'Language', searchString: 'language', data: [], isDisabled: true},
-                /*{id: 2, title: 'Providing country', searchString: 'providingCountry', data: [], isDisabled: true},*/
                 {id: 2, title: 'Data provider', searchString: 'dataProvider', data: [], isDisabled: true}
             ]
 

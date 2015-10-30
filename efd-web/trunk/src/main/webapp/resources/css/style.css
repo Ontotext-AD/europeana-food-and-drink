@@ -33,6 +33,21 @@ body {
 .container {
     background: #FFFFFF;
 }
+@media (min-width: 768px) {
+    .container {
+        width: auto;
+    }
+}
+@media (min-width: 992px) {
+    .container {
+        width: auto;
+    }
+}
+@media (min-width: 1280px) {
+    .container {
+        width: 1200px;
+    }
+}
 @media (min-width: 1400px) {
     .container {
         width: 1300px;

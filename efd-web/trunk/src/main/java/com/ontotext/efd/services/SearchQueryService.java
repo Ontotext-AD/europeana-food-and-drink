@@ -504,7 +504,8 @@ public class SearchQueryService {
             String dataProvider[] = filterModel.getDataProviderFilter();
             for (int i = 0; i < dataProvider.length; i++) {
                 try {
-                    queryFilter += "+dataProvider:" + URLDecoder.decode(dataProvider[i], "UTF-8");
+                    String dataP =  URLDecoder.decode(dataProvider[i] + "'", "UTF-8");
+                    queryFilter += "+dataProvider:\\\\\\\"" + URLDecoder.decode(dataProvider[i], "UTF-8")+ "\\\\\\\"";
                     if (dataProvider.length - 1 > i) queryFilter += " AND ";
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();

@@ -151,7 +151,7 @@
     <div ng-show="loader" class="ot-loader ot-main-loader" onto-loader  size="50"></div>
     <div ng-hide="loader" class="col-xs-6 col-sm-8 ">
         <div class="row" ng-if="data" style="padding-bottom: 20px;">
-            <div class="col-xs-4">
+            <div class="col-xs-6 col-md-4">
                 <div class="btn-group pull-left" dropdown keyboard-nav>
                     <button id="simple-btn-keyboard-nav" type="button" class="btn btn-primary col-xs-12" dropdown-toggle>
                         Results per page: {{limit}} <span class="caret"></span>
@@ -165,18 +165,18 @@
                     </ul>
                 </div>
             </div>
-            <div class="col-xs-4 text-center" ng-hide="countLoader" style="padding: 10px;">
-                Results {{offset + 1}} - {{offset + limit > count ? count : offset + limit}} of {{count}}
+            <div class="col-xs-6 col-md-4 text-center" ng-hide="countLoader" style="padding: 10px;">
+                <span class="hidden-xs">Results </span>{{offset + 1}} - {{offset + limit > count ? count : offset + limit}} of {{count}}
             </div>
-            <div class="col-xs-4 text-right unselectable" ng-show="limit < count && !countLoader">
+            <div class="col-xs-12 col-md-4 text-right unselectable" ng-show="limit < count && !countLoader">
 
-                <i class="fa fa-chevron-left pointer" ng-click="changePage(-1)" style="padding: 10px"></i>
+                <i class="fa fa-chevron-left pointer" ng-click="changePage(-1)" style="padding: 10px 3px;"></i>
                 Page
                 <input type="number" ng-model="results.page" min="1" max="{{totalPages}}" ng-mode="page" ng-change="changePage()" style="max-width: 60px;">
                 of {{totalPages}}
-                <i class="fa fa-chevron-right pointer" ng-click="changePage(1)" style="padding: 10px"></i>
+                <i class="fa fa-chevron-right pointer" ng-click="changePage(1)" style="padding: 10px 3px"></i>
             </div>
-            <div class="col-xs-8 ot-loader" onto-loader  size="20" ng-if="countLoader"></div>
+            <div class="col-xs-6 col-md-8 ot-loader" onto-loader  size="20" ng-if="countLoader"></div>
         </div>
         <div id="results-holder" class="row" ng-if="data">
             <div class="col-sm-6 col-md-4 col-lg-3 pointer" ng-repeat="result in data.searchResults">

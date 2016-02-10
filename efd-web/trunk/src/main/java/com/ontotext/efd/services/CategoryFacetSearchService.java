@@ -29,6 +29,9 @@ public class CategoryFacetSearchService {
     @Autowired
     SearchQueryService searchQueryService;
 
+    @Value("${elasticsearch.index}")
+    private String ESIndex;
+
     private Logger logger = Logger.getLogger(String.valueOf(CategoryFacetSearchService.class));
 
     public List<FacetModel> getCategoryArticleFacets(String query){
@@ -36,6 +39,7 @@ public class CategoryFacetSearchService {
         List<FacetModel> categoryFacet = null;
 
         if (query != null && !query.isEmpty()) {
+            query = addESIndex(query);
             tupleQueryResult = connectionService.evaluateQuery(query);
             categoryFacet = new ArrayList<>();
             try {
@@ -76,6 +80,7 @@ public class CategoryFacetSearchService {
         String q = "";
         subCategories = subCategories.replace(" ", "_");
         if (query != null && !query.isEmpty())
+            query = addESIndex(query);
             if (subCategories.equals("Food_and_drink")) {
                 q = query.replace("{categoryFilter}", "optional{?sub efd:treeLevel ?level}.\n" +
                                                       "filter(xsd:integer(?level) = 1).");
@@ -94,6 +99,7 @@ public class CategoryFacetSearchService {
         String q = "";
         subPlaces = subPlaces.replace(" ", "_");
         if (query != null && !query.isEmpty())
+            query = addESIndex(query);
             if (subPlaces.equals("Earth")) {
                 q = query.replace("{categoryFilter}", "optional{?sub gn:parentFeature ?parent}.\n" +
                         "filter(?parent = dbr:Earth).");
@@ -112,6 +118,7 @@ public class CategoryFacetSearchService {
     public String preprocessArticleQuery(String query, String category, String queryString, HttpServletRequest request) {
         String artQuery = "";
         if (query != null && !query.isEmpty()) {
+            query = addESIndex(query);
             artQuery = query.replace("{category}", category);
 
 //            if (queryString != null && !queryString.isEmpty()) {
@@ -124,5 +131,17 @@ public class CategoryFacetSearchService {
         FacetFilterModel facetFilterModel = searchQueryService.extractRequestFilters(request);
         artQuery = searchQueryService.decorateCountQuery(facetFilterModel, queryString, artQuery);
         return artQuery;
+    }
+
+    public String addESIndex(String query) {
+        String newQuery = "";
+        if(ESIndex != null && !ESIndex.isEmpty()) {
+            newQuery = query.replace("{index}", ESIndex);
+        }
+        else {
+            newQuery = query.replace("{index}", "efd");
+        }
+
+        return newQuery;
     }
 }

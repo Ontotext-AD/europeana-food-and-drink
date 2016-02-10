@@ -28,6 +28,9 @@ public class SearchQueryService {
     @Autowired
     private RepositoryConnectionService connectionService;
 
+    @Autowired
+    private CategoryFacetSearchService categoryFacetSearchService;
+
     @Value("${repository.id}")
     private String repositoryID;
 
@@ -59,6 +62,7 @@ public class SearchQueryService {
     public SearchModel choSearch(String queryString, Integer offset, Integer limit, HttpServletRequest request) {
         FacetFilterModel filterModel = extractRequestFilters(request);
         String query = decorateCountQuery(filterModel, queryString, choSearch);
+        query = categoryFacetSearchService.addESIndex(query);
         TupleQueryResult tupleQueryResult = null;
         List<FTSSearchResults> searchResults = null;
 
@@ -133,6 +137,7 @@ public class SearchQueryService {
         TupleQueryResult tupleQueryResult = null;
         List<FTSSearchResults> searchResults = null;
         String query = prepareSearchQuery(queryString, searchQuery, null, 10);
+        query = categoryFacetSearchService.addESIndex(query);
 
         if (query != null && !query.isEmpty()) {
             try {
@@ -165,6 +170,7 @@ public class SearchQueryService {
         TupleQueryResult tupleQueryResult = null;
 //        String query = prepareSearchQuery(queryString, facetsQuery, null, null);
         String query = decorateCountQuery(filterModel, queryString, facetsESQuery);
+        query = categoryFacetSearchService.addESIndex(query);
 
         Map<String, List<FacetModel>> map = new HashMap<>();
         if (query != null && !query.isEmpty()) {
@@ -290,6 +296,7 @@ public class SearchQueryService {
     public String ESCount(String queryString, Integer offset, Integer limit, HttpServletRequest request) {
         FacetFilterModel filterModel = extractRequestFilters(request);
         String query = decorateCountQuery(filterModel, queryString, resultCount);
+        query = categoryFacetSearchService.addESIndex(query);
         TupleQueryResult tupleQueryResult = null;
         String count = "";
         if (query != null && !query.isEmpty()) {

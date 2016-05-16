@@ -1,5 +1,6 @@
 package com.ontotext.efd.services;
 
+import org.openrdf.model.Statement;
 import org.openrdf.query.*;
 import org.openrdf.repository.Repository;
 import org.openrdf.repository.RepositoryConnection;
@@ -28,6 +29,9 @@ public class ResourceQueryService {
     @Value("${resource.cho.query}")
     private String choQuery;
 
+    @Value("${get.resource.construct}")
+    private String resourceConstruct;
+
     private static Map<String, String> resourceMap;
 
     {
@@ -37,30 +41,28 @@ public class ResourceQueryService {
     public Map<String, List<String>> getResource(String resource) {
 
         Map<String, List<String>> resourceMap = new HashMap<>();
-        getTriples(resourceMap, resource, aggregationQuery);
-        getTriples(resourceMap, resource, choQuery);
+//        getTriples(resourceMap, resource, aggregationQuery);
+//        getTriples(resourceMap, resource, choQuery);
+        getTriples(resourceMap, resource, resourceConstruct);
 
         if (resourceMap.size() == 0) return null;
         return resourceMap;
     }
 
     private void getTriples(Map<String, List<String>> resourceMapLocal, String resource, String query) {
-        TupleQueryResult tupleQueryResult = null;
+        GraphQueryResult tupleQueryResult = null;
         String aggregationQ = preprocessQuery(resource, query);
         if (aggregationQ != null && !aggregationQ.isEmpty()) {
             try{
-                tupleQueryResult = evaluateQuery(aggregationQ);
+                 tupleQueryResult = evaluateQuery(aggregationQ);
                 while (tupleQueryResult.hasNext()) {
                     String predicate = "";
                     String object = "";
 
-                    BindingSet bindings = tupleQueryResult.next();
-                    if (bindings.getValue("p") != null) {
-                        predicate = bindings.getValue("p").stringValue();
-                    }
-                    if (bindings.getValue("o") != null) {
-                        object = bindings.getValue("o").stringValue();
-                    }
+                    Statement bindings = tupleQueryResult.next();
+                    predicate = bindings.getPredicate().stringValue();
+                    object = bindings.getObject().stringValue();
+
 
                     String key = resourceMap.get(predicate);
                     if (key == null) continue;
@@ -85,14 +87,15 @@ public class ResourceQueryService {
     }
 
 
-    private TupleQueryResult evaluateQuery(String query) {
+    private GraphQueryResult evaluateQuery(String query) {
         Repository repository = connectionService.getRepository();;
         RepositoryConnection repositoryConnection = null;
-        TupleQueryResult tupleQueryResult = null;
+        GraphQueryResult  graphQueryResult = null;
         try {
             repositoryConnection = repository.getConnection();
-            TupleQuery tupleQuery = repositoryConnection.prepareTupleQuery(QueryLanguage.SPARQL, query);
-            tupleQueryResult = tupleQuery.evaluate();
+
+            GraphQuery graphQuery =   repositoryConnection.prepareGraphQuery(QueryLanguage.SPARQL, query);
+            graphQueryResult = graphQuery.evaluate();
         } catch (RepositoryException e) {
             e.printStackTrace();
         } catch (QueryEvaluationException e) {
@@ -100,7 +103,7 @@ public class ResourceQueryService {
         } catch (MalformedQueryException e) {
             e.printStackTrace();
         }
-        return tupleQueryResult;
+        return graphQueryResult;
     }
 
     private Map<String,String> initResourceMap() {

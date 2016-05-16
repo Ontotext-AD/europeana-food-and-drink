@@ -99,10 +99,16 @@ public class SearchQueryService {
                     }
                     if (bindingSet.getValue("title") != null) {
                         title = bindingSet.getValue("title").stringValue();
+                        if (title.isEmpty()) {
+                            title = bindingSet.getValue("title1").stringValue();
+                        }
                         if (!title.isEmpty()) size++;
                     }
                     if (bindingSet.getValue("description") != null) {
                         description = bindingSet.getValue("description").stringValue();
+                        if (description.isEmpty()) {
+                            description = bindingSet.getValue("description1").stringValue();
+                        }
                         if (!description.isEmpty()) size++;
                     }
                     if (bindingSet.getValue("picture") != null) {

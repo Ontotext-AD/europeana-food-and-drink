@@ -67,6 +67,19 @@ public class SearchController {
         return searchQueryService.choSearch(query, offset, limit, request);
     }
 
+    @RequestMapping(value = "/search/locations", method = RequestMethod.GET)
+    @ResponseBody
+    public SearchModel searchLocations(HttpServletRequest request,
+                              @RequestParam(value = "query", required = false, defaultValue = "") String query) {
+
+        try {
+            query = URLDecoder.decode(query, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return searchQueryService.locationsSearch(query, request);
+    }
+
     @RequestMapping(value = "/search/count", method = RequestMethod.GET)
     @ResponseBody
     public String searchCount(HttpServletRequest request, @RequestParam("query") String query) {

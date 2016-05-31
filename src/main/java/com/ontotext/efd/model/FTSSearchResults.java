@@ -15,7 +15,20 @@ public class FTSSearchResults {
     private String picture;
     private String date;
     private String mediaType;
+    private String lat;
+    private String longitude;
 
+
+    public FTSSearchResults(String resource, String title, String description, String picture, String date, String mediaType, String lat, String longitude) {
+        this.resource = resource;
+        this.title = title;
+        this.description = description;
+        this.picture = picture;
+        this.date = date;
+        this.mediaType = mediaType;
+        this.lat = lat;
+        this.longitude = longitude;
+    }
 
     public FTSSearchResults(String resource, String title, String description, String picture, String date, String mediaType) {
         this.resource = resource;
@@ -24,11 +37,29 @@ public class FTSSearchResults {
         this.picture = picture;
         this.date = date;
         this.mediaType = mediaType;
+        this.lat = lat;
+        this.longitude = longitude;
     }
 
     public FTSSearchResults(String resource, String title) {
 //        this.resource = resource;
         this.title = title;
+    }
+
+    public String getLat() {
+        return lat;
+    }
+
+    public void setLat(String lat) {
+        this.lat = lat;
+    }
+
+    public String getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(String longitude) {
+        this.longitude = longitude;
     }
 
     public String getMediaType() {

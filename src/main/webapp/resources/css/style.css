@@ -1,4 +1,5 @@
 .pointer {
+
     cursor: pointer;
 }
 .not-allowed {
@@ -21,6 +22,9 @@
 }
 .absolute {
     position: absolute;
+}
+.fixed {
+    position: fixed;
 }
 html, body, .container {
     height: 100%;
@@ -166,4 +170,30 @@ div[collection*='subElements'] {
 
 .fa-stack {
     font-size: 0.8em;
+}
+
+
+.map-label {
+}
+
+#map {
+    width: 100%;
+    height: 100%;
+    top: 0;
+    right: -100%;
+    transition: all 1s;
+}
+
+#map.show {
+    right: 0;
+}
+#map > button {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
+
+ng-map {
+    width: 100%;
+    height: 100%;
 }

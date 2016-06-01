@@ -100,6 +100,9 @@
                     <i class="fa fa-times"></i>
                 </button>
             </span>
+
+
+            <button class="btn btn-warning map-label pull-right pointer" ng-show="showMapButton" ng-click="showMap = true"><i class="fa fa-map"></i> View on map</button>
         </p>
     </div>
 </div>
@@ -199,3 +202,8 @@
         </div>
     </div>
 </div>
+
+<aside id="map" class="fixed" ng-class="{'show': showMap}">
+    <ng-map zoom="4" center="[52.504185, 13.469238]"></ng-map>
+    <button class="btn btn-default" ng-click="showMap = false">Close map <i class="fa fa-times"></i></button>
+</aside>

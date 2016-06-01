@@ -7,7 +7,9 @@ require.config({
         'angularLocalStorage': '../../../webjars/angular-local-storage/0.2.1/angular-local-storage.min',
         'toastr': '../../../webjars/angular-toastr/1.5.0/angular-toastr.tpls',
         'ui-bootstrap-tpls': '../../../webjars/angular-ui-bootstrap/0.13.3/ui-bootstrap-tpls.min',
-        'ui-bootstrap': '../../../webjars/angular-ui-bootstrap/0.13.3/ui-bootstrap-tpls'
+        'ui-bootstrap': '../../../webjars/angular-ui-bootstrap/0.13.3/ui-bootstrap-tpls',
+        'ngmap': '../../../webjars/ngmap/1.17.3/build/scripts/ng-map.min',
+        'markerclustererplus': '../../../webjars/markerclustererplus/2.1.2/markerclusterer',
     },
 
     // angular does not support AMD out of the box, put it in a shim
@@ -38,6 +40,10 @@ require.config({
         'ui-bootstrap': {
             deps: ['angular', 'ui-bootstrap-tpls'],
             exports: 'angular'
+        },
+        'ngmap': {
+            deps: ['angular'],
+            exports: 'angular'
         }
     }
 });
@@ -51,7 +57,9 @@ define([
         'angularLocalStorage',
         'ui-bootstrap-tpls',
         'ui-bootstrap',
-        'toastr'
+        'toastr',
+        'ngmap',
+        'markerclustererplus',
     ],
     function() {
         (function(angular){
@@ -63,7 +71,8 @@ define([
                 'efdApp.directives',
                 'ui.bootstrap',
                 'toastr',
-                'LocalStorageModule'
+                'LocalStorageModule',
+                'ngMap',
             ]);
 
             efd.config([

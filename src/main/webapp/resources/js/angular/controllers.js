@@ -29,7 +29,8 @@ define(['angular'], function(){
         '$timeout',
         'localStorageService',
         'toastr',
-        function($scope, $routeParams, $http, $location, $timeout, localStorageService ,toastr) {
+        'NgMap',
+        function($scope, $routeParams, $http, $location, $timeout, localStorageService ,toastr, NgMap) {
 
             localStorageService.remove('categories');
             localStorageService.remove('places');
@@ -88,14 +89,23 @@ define(['angular'], function(){
                 return filter.data.length > 0;
             }
 
-            $scope.createSearchString = function(){
+            $scope.createSearchString = function(map){
                 //Create search URL
                 var searchString = '';
                 for(var index in $scope.searchData) {
-                    if (searchString != '') {
-                        searchString += '&';
+                    if (map) {
+                        if (index != 'limit' && index != 'offset') {
+                            if (searchString != '') {
+                                searchString += '&';
+                            }
+                            searchString += index + '=' + $scope.searchData[index];
+                        }
+                    } else {
+                        if (searchString != '') {
+                            searchString += '&';
+                        }
+                        searchString += index + '=' + $scope.searchData[index];
                     }
-                    searchString += index + '=' + $scope.searchData[index];
                 }
                 searchString = encodeURI(searchString);
                 return searchString;
@@ -270,6 +280,7 @@ define(['angular'], function(){
 
                 //Create search string
                 var searchString = $scope.createSearchString();
+                $scope.getLocations();
 
                 $http.get('/app/rest/search?' + searchString).
                     then(function(response) {
@@ -305,6 +316,35 @@ define(['angular'], function(){
                         $scope.countLoader = false;
                         toastr.error('Request failed', '');
                     });
+            }
+
+
+            NgMap.getMap().then(function(map) {
+                $scope.map = map;
+            });
+
+            $scope.getLocations = function(){
+                $scope.showMapButton = false;
+                $scope.showMap = false;
+                var searchString = $scope.createSearchString(true);
+                $http.get('/app/rest/search/locations?' + searchString)
+                    .then(function(response) {
+                        $scope.markers = [];
+
+                        var results = response.data.searchResults;
+                        for (var i in results) {
+                            if (results[i].lat && results[i].longitude) {
+                                var latLng = new google.maps.LatLng(results[i].lat, results[i].longitude);
+                                $scope.markers.push(new google.maps.Marker({position:latLng}));
+                            }
+                        };
+
+                        $scope.markerClusterer = new MarkerClusterer($scope.map, $scope.markers, {imagePath: '/app/resources/images/markerclusterer/m'});
+                        $scope.map.setCenter([52.504185, 13.469238]);
+                        $scope.map.setZoom(4);
+
+                        $scope.showMapButton = true;
+                    }, function(){});
             }
 
             //Set active filters to array for use in Active filters panel
@@ -638,7 +678,7 @@ define(['angular'], function(){
 
             //First load
             $scope.searchQuery = $scope.searchData.query;
-            $scope.search();
+            $scope.search(true);
 
 
             $scope.getCategories();

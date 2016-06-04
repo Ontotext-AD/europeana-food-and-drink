@@ -18,6 +18,12 @@ define(['angular'], function(){
         };
     });
 
+    efdDirectives.directive('ontoLoaderWhite', function () {
+        return {
+            template: function (elem, attr) {return '<object width="' + attr.size + '" height="' + attr.size + '" data="app/resources/images/ot-loader-white.svg">Loading...</object>'}
+        };
+    });
+
     efdDirectives.directive('disableAnimation', function($animate){
         return {
             restrict: 'A',

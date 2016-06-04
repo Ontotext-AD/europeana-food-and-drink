@@ -330,12 +330,21 @@ define(['angular'], function(){
                 $http.get('/app/rest/search/locations?' + searchString)
                     .then(function(response) {
                         $scope.markers = [];
+                        if ($scope.markerClusterer) {
+                            $scope.markerClusterer.setMap(null);
+                        }
 
                         var results = response.data.searchResults;
                         for (var i in results) {
                             if (results[i].lat && results[i].longitude) {
-                                var latLng = new google.maps.LatLng(results[i].lat, results[i].longitude);
-                                $scope.markers.push(new google.maps.Marker({position:latLng}));
+                                var latLng = new google.maps.LatLng(results[i].lat, results[i].longitude),
+                                    marker = new google.maps.Marker({position:latLng, data: results[i]}),
+                                    data = results[i];
+                                google.maps.event.addListener(marker, 'click', function (event) {
+                                    $scope.infoWinData = this.data;
+                                    $scope.map.showInfoWindow('infoWindow', this);
+                                })
+                                $scope.markers.push(marker);
                             }
                         };
 

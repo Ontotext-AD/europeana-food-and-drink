@@ -52,6 +52,8 @@ public class SearchQueryService {
     @Value("${facets.ES.query}")
     private String facetsESQuery;
 
+    private static SearchModel locationsSearchModel;
+
 
     private Logger logger = Logger.getLogger(String.valueOf(SearchQueryService.class));
 
@@ -143,85 +145,89 @@ public class SearchQueryService {
     }
 
     public SearchModel locationsSearch(String queryString, HttpServletRequest request) {
-        FacetFilterModel filterModel = extractRequestFilters(request);
-        String query = decorateCountQuery(filterModel, queryString, locationsSearch);
-        query = categoryFacetSearchService.addESIndex(query);
-        TupleQueryResult tupleQueryResult = null;
-        List<FTSSearchResults> searchResults = null;
+        if (locationsSearchModel != null) {
+            return locationsSearchModel;
+        } else {
+            FacetFilterModel filterModel = extractRequestFilters(request);
+            String query = decorateCountQuery(filterModel, queryString, locationsSearch);
+            query = categoryFacetSearchService.addESIndex(query);
+            TupleQueryResult tupleQueryResult = null;
+            List<FTSSearchResults> searchResults = null;
 
 
-        if (query != null && !query.isEmpty()) {
+            if (query != null && !query.isEmpty()) {
 
-            try {
-                searchResults = new ArrayList<>();
-                tupleQueryResult = connectionService.evaluateQuery(query);
-                while (tupleQueryResult != null && tupleQueryResult.hasNext()) {
-                    String resource = "";
-                    String title = "";
-                    String description = "";
-                    String picture = "";
-                    String date = "";
-                    String mediaType = "";
-                    String lat = "";
-                    String Long = "";
-                    int size = 0;
-                    BindingSet bindingSet = tupleQueryResult.next();
+                try {
+                    searchResults = new ArrayList<>();
+                    tupleQueryResult = connectionService.evaluateQuery(query);
+                    while (tupleQueryResult != null && tupleQueryResult.hasNext()) {
+                        String resource = "";
+                        String title = "";
+                        String description = "";
+                        String picture = "";
+                        String date = "";
+                        String mediaType = "";
+                        String lat = "";
+                        String Long = "";
+                        int size = 0;
+                        BindingSet bindingSet = tupleQueryResult.next();
 
-                    if (bindingSet.getValue("aggr") != null) {
-                        resource = bindingSet.getValue("aggr").stringValue();
-                        if (!resource.isEmpty()) size++;
+                        if (bindingSet.getValue("aggr") != null) {
+                            resource = bindingSet.getValue("aggr").stringValue();
+                            if (!resource.isEmpty()) size++;
 
-                    }
-                    if (bindingSet.getValue("title") != null) {
-                        title = bindingSet.getValue("title").stringValue();
-                        if (title.isEmpty()) {
-                            title = bindingSet.getValue("title1").stringValue();
                         }
-                        if (!title.isEmpty()) size++;
-                    }
-                    if (bindingSet.getValue("description") != null) {
-                        description = bindingSet.getValue("description").stringValue();
-                        if (description.isEmpty()) {
-                            description = bindingSet.getValue("description1").stringValue();
+                        if (bindingSet.getValue("title") != null) {
+                            title = bindingSet.getValue("title").stringValue();
+                            if (title.isEmpty()) {
+                                title = bindingSet.getValue("title1").stringValue();
+                            }
+                            if (!title.isEmpty()) size++;
                         }
-                        if (!description.isEmpty()) size++;
-                    }
-                    if (bindingSet.getValue("picture") != null) {
-                        picture = bindingSet.getValue("picture").stringValue();
-                        if (!picture.isEmpty()) size++;
-                    }
-                    if (bindingSet.getValue("date") != null) {
-                        date = bindingSet.getValue("date").stringValue();
-                        if (!date.isEmpty()) size++;
-                    }
-                    if (bindingSet.getValue("mediaType") != null) {
-                        mediaType = bindingSet.getValue("mediaType").stringValue();
-                        if (!mediaType.isEmpty()) size++;
+                        if (bindingSet.getValue("description") != null) {
+                            description = bindingSet.getValue("description").stringValue();
+                            if (description.isEmpty()) {
+                                description = bindingSet.getValue("description1").stringValue();
+                            }
+                            if (!description.isEmpty()) size++;
+                        }
+                        if (bindingSet.getValue("picture") != null) {
+                            picture = bindingSet.getValue("picture").stringValue();
+                            if (!picture.isEmpty()) size++;
+                        }
+                        if (bindingSet.getValue("date") != null) {
+                            date = bindingSet.getValue("date").stringValue();
+                            if (!date.isEmpty()) size++;
+                        }
+                        if (bindingSet.getValue("mediaType") != null) {
+                            mediaType = bindingSet.getValue("mediaType").stringValue();
+                            if (!mediaType.isEmpty()) size++;
+                        }
+
+                        if (bindingSet.getValue("lat") != null) {
+                            lat = bindingSet.getValue("lat").stringValue();
+                            if (!mediaType.isEmpty()) size++;
+                        }
+
+                        if (bindingSet.getValue("long") != null) {
+                            Long = bindingSet.getValue("long").stringValue();
+                            if (!mediaType.isEmpty()) size++;
+                        }
+
+                        if (size > 0) {
+                            searchResults.add(new FTSSearchResults(resource, title, description, picture, date, mediaType, lat, Long));
+                        }
                     }
 
-                    if (bindingSet.getValue("lat") != null) {
-                        lat = bindingSet.getValue("lat").stringValue();
-                        if (!mediaType.isEmpty()) size++;
-                    }
-
-                    if (bindingSet.getValue("long") != null) {
-                        Long = bindingSet.getValue("long").stringValue();
-                        if (!mediaType.isEmpty()) size++;
-                    }
-
-                    if (size > 0) {
-                        searchResults.add(new FTSSearchResults(resource, title, description, picture, date, mediaType, lat, Long));
-                    }
+                } catch (QueryEvaluationException e) {
+                    logger.info("No CHO results in the query!");
                 }
-
-            } catch (QueryEvaluationException e) {
-                logger.info("No CHO results in the query!");
             }
-        }
 
-        SearchModel searchModel = new SearchModel(searchResults, null);
-        if (searchModel.getSearchResults().size() == 0) return null;
-        return searchModel;
+            SearchModel searchModel = new SearchModel(searchResults, null);
+            if (searchModel.getSearchResults().size() == 0) return null;
+            return searchModel;
+        }
     }
 
     public List<FTSSearchResults> autocomplete(String queryString) {

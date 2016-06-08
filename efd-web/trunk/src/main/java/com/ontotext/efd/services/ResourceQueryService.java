@@ -32,6 +32,9 @@ public class ResourceQueryService {
     @Value("${get.resource.construct}")
     private String resourceConstruct;
 
+    @Value("${resource.details.map}")
+    private String resourceDetailsMap;
+
     private static Map<String, String> resourceMap;
 
     {
@@ -44,6 +47,7 @@ public class ResourceQueryService {
 //        getTriples(resourceMap, resource, aggregationQuery);
 //        getTriples(resourceMap, resource, choQuery);
         getTriples(resourceMap, resource, resourceConstruct);
+        getResourceLocation(resourceMap, resource, resourceDetailsMap);
 
         if (resourceMap.size() == 0) return null;
         return resourceMap;
@@ -81,6 +85,41 @@ public class ResourceQueryService {
 
     }
 
+    private void getResourceLocation(Map<String, List<String>> resourceMapLocal, String resource, String query) {
+        String q = preprocessQuery(resource, query);
+        if (q != null && !q.isEmpty()) {
+            TupleQueryResult result = connectionService.evaluateQuery(q);
+            try {
+                while (result.hasNext()) {
+                    BindingSet bindings = result.next();
+
+                    String lat = "";
+                    String lon = "";
+
+                    if (bindings.getValue("lat") != null) {
+                        lat = bindings.getValue("lat").stringValue();
+                    }
+
+                    if (bindings.getValue("long") != null) {
+                        lon = bindings.getValue("long").stringValue();
+                    }
+
+                    List<String> list = new ArrayList<>();
+                    list.add(lat);
+                    resourceMapLocal.put("lat", list);
+
+                    List<String> longitude = new ArrayList<>();
+                    list.add(lon);
+                    resourceMapLocal.put("lat", longitude);
+
+                }
+            } catch (QueryEvaluationException e) {
+                e.printStackTrace();
+            }
+
+        }
+    }
+
     private String preprocessQuery(String resource, String query) {
 
         return query.replace("OBJ", resource);
@@ -88,7 +127,7 @@ public class ResourceQueryService {
 
 
     private GraphQueryResult evaluateQuery(String query) {
-        Repository repository = connectionService.getRepository();;
+        Repository repository = connectionService.getRepository();
         RepositoryConnection repositoryConnection = null;
         GraphQueryResult  graphQueryResult = null;
         try {

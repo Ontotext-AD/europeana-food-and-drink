@@ -64,7 +64,7 @@ public class SearchController {
             e.printStackTrace();
         }
 //        return searchQueryService.ftsSearch(query, offset, limit, request);
-        return searchQueryService.choSearch(query, offset, limit, request);
+        return searchQueryService.retreiveCho(query, offset, limit, request);
     }
 
     @RequestMapping(value = "/search/locations", method = RequestMethod.GET)
@@ -77,7 +77,13 @@ public class SearchController {
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        return searchQueryService.locationsSearch(query, request);
+        return searchQueryService.retreiveLocations(query, request);
+    }
+
+    @RequestMapping(value = "/search/locations/reset", method = RequestMethod.GET)
+    @ResponseBody
+    public String resetCache() {
+       return searchQueryService.resetLocationsCache();
     }
 
     @RequestMapping(value = "/search/count", method = RequestMethod.GET)

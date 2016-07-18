@@ -52,7 +52,8 @@ public class SearchQueryService {
     @Value("${facets.ES.query}")
     private String facetsESQuery;
 
-    private static SearchModel locationsSearchModel;
+    private static Map<String, SearchModel> locationsSearchModel = new HashMap<>();
+    private static Map<String, SearchModel> choSearchModel = new HashMap<>();
 
 
     private Logger logger = Logger.getLogger(String.valueOf(SearchQueryService.class));
@@ -144,10 +145,29 @@ public class SearchQueryService {
         return searchModel;
     }
 
+
+    public SearchModel retreiveLocations(String queryString, HttpServletRequest request) {
+        String requestString = request.getQueryString();
+        if (locationsSearchModel.containsKey(requestString)) {
+            return locationsSearchModel.get(requestString);
+        }
+        SearchModel searchModel = locationsSearch(queryString, request);
+        locationsSearchModel.put(requestString, searchModel);
+        return searchModel;
+    }
+
+    public SearchModel retreiveCho(String queryString, Integer offset, Integer limit, HttpServletRequest request) {
+        String requestString = request.getQueryString();
+        if (choSearchModel.containsKey(requestString)) {
+            return choSearchModel.get(requestString);
+        }
+        SearchModel searchModel = choSearch(queryString, offset, limit, request);
+        choSearchModel.put(requestString, searchModel);
+        return searchModel;
+    }
+
     public SearchModel locationsSearch(String queryString, HttpServletRequest request) {
-        if (locationsSearchModel != null) {
-            return locationsSearchModel;
-        } else {
+
             FacetFilterModel filterModel = extractRequestFilters(request);
             String query = decorateCountQuery(filterModel, queryString, locationsSearch);
             query = categoryFacetSearchService.addESIndex(query);
@@ -214,6 +234,10 @@ public class SearchQueryService {
                             if (!mediaType.isEmpty()) size++;
                         }
 
+                        if (lat.equals("0.0") && Long.equals("0.0")){
+                            continue;
+                        }
+
                         if (size > 0) {
                             searchResults.add(new FTSSearchResults(resource, title, description, picture, date, mediaType, lat, Long));
                         }
@@ -227,7 +251,7 @@ public class SearchQueryService {
             SearchModel searchModel = new SearchModel(searchResults, null);
             if (searchModel.getSearchResults().size() == 0) return null;
             return searchModel;
-        }
+//        }
     }
 
     public List<FTSSearchResults> autocomplete(String queryString) {
@@ -687,6 +711,10 @@ public class SearchQueryService {
         return query;
     }
 
+    public String resetLocationsCache() {
+        locationsSearchModel = new HashMap<>();
+        choSearchModel = new HashMap<>();
 
-
+        return "OK";
+    }
 }

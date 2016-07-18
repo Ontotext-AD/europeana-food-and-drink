@@ -280,6 +280,7 @@ define(['angular'], function(){
 
                 //Create search string
                 var searchString = $scope.createSearchString();
+                $scope.googleMapsUrl="https://maps.googleapis.com/maps/api/js?key=AIzaSyDVmtxpD_M2Y3mAEOYcx_Xbld_ywPqfyI8";
                 $scope.getLocations();
 
                 $http.get('/app/rest/search?' + searchString).
@@ -349,7 +350,8 @@ define(['angular'], function(){
                         };
 
                         $scope.markerClusterer = new MarkerClusterer($scope.map, $scope.markers, {imagePath: '/app/resources/images/markerclusterer/m'});
-                        $scope.map.setCenter([52.504185, 13.469238]);
+                        //$scope.map.setCenter([52.504185, 13.469238]);
+                        $scope.map.setCenter(new google.maps.LatLng(52.504185, 13.469238));
                         $scope.map.setZoom(4);
 
                         $scope.showMapButton = true;

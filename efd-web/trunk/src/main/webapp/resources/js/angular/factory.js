@@ -7,6 +7,7 @@ define(['angular'], function(){
 
     function mapFactory() {
         var factory = {
+            map: '',
             markerClusterer: '',
             markers: [],
             clearMarkers: clearMarkers,

@@ -282,7 +282,7 @@ define(['angular'], function(){
                 //Create search string
                 var searchString = $scope.createSearchString();
                 $scope.googleMapsUrl="https://maps.googleapis.com/maps/api/js?key=AIzaSyDVmtxpD_M2Y3mAEOYcx_Xbld_ywPqfyI8";
-                if ($scope.map) {
+                if (mapFactory.map) {
                     $scope.getLocations();
                 }
                 $http.get('/app/rest/search?' + searchString).
@@ -321,11 +321,12 @@ define(['angular'], function(){
                     });
             }
 
-
-            NgMap.getMap().then(function(map) {
-                $scope.map = map;
-                $scope.getLocations();
-            });
+            if (!mapFactory.map) {
+                NgMap.getMap().then(function(map) {
+                    mapFactory.map = map;
+                    $scope.getLocations();
+                });
+            }
 
             $scope.getLocations = function(){
                 $scope.showMapButton = false;
@@ -345,16 +346,16 @@ define(['angular'], function(){
                                     data = results[i];
                                 google.maps.event.addListener(marker, 'click', function (event) {
                                     $scope.infoWinData = this.data;
-                                    $scope.map.showInfoWindow('infoWindow', this);
+                                    mapFactory.map.showInfoWindow('infoWindow', this);
                                 })
                                 mapFactory.markers.push(marker);
                             }
                         };
 
-                        mapFactory.markerClusterer = new MarkerClusterer($scope.map, mapFactory.markers, {imagePath: '/app/resources/images/markerclusterer/m'});
+                        mapFactory.markerClusterer = new MarkerClusterer(mapFactory.map, mapFactory.markers, {imagePath: '/app/resources/images/markerclusterer/m'});
                         //$scope.map.setCenter([52.504185, 13.469238]);
-                        $scope.map.setCenter(new google.maps.LatLng(52.504185, 13.469238));
-                        $scope.map.setZoom(4);
+                        mapFactory.map.setCenter(new google.maps.LatLng(52.504185, 13.469238));
+                        mapFactory.map.setZoom(4);
 
                         $scope.showMapButton = true;
                     }, function(){});

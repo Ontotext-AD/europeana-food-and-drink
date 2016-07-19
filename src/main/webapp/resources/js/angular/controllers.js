@@ -30,7 +30,8 @@ define(['angular'], function(){
         'localStorageService',
         'toastr',
         'NgMap',
-        function($scope, $routeParams, $http, $location, $timeout, localStorageService ,toastr, NgMap) {
+        'mapFactory',
+        function($scope, $routeParams, $http, $location, $timeout, localStorageService ,toastr, NgMap, mapFactory) {
 
             localStorageService.remove('categories');
             localStorageService.remove('places');
@@ -281,8 +282,9 @@ define(['angular'], function(){
                 //Create search string
                 var searchString = $scope.createSearchString();
                 $scope.googleMapsUrl="https://maps.googleapis.com/maps/api/js?key=AIzaSyDVmtxpD_M2Y3mAEOYcx_Xbld_ywPqfyI8";
-                $scope.getLocations();
-
+                if ($scope.map) {
+                    $scope.getLocations();
+                }
                 $http.get('/app/rest/search?' + searchString).
                     then(function(response) {
                         $scope.status = response.status;
@@ -322,6 +324,7 @@ define(['angular'], function(){
 
             NgMap.getMap().then(function(map) {
                 $scope.map = map;
+                $scope.getLocations();
             });
 
             $scope.getLocations = function(){
@@ -330,9 +333,8 @@ define(['angular'], function(){
                 var searchString = $scope.createSearchString(true);
                 $http.get('/app/rest/search/locations?' + searchString)
                     .then(function(response) {
-                        $scope.markers = [];
-                        if ($scope.markerClusterer) {
-                            $scope.markerClusterer.setMap(null);
+                        if (mapFactory.markerClusterer) {
+                            mapFactory.clearMarkers();
                         }
 
                         var results = response.data.searchResults;
@@ -345,11 +347,11 @@ define(['angular'], function(){
                                     $scope.infoWinData = this.data;
                                     $scope.map.showInfoWindow('infoWindow', this);
                                 })
-                                $scope.markers.push(marker);
+                                mapFactory.markers.push(marker);
                             }
                         };
 
-                        $scope.markerClusterer = new MarkerClusterer($scope.map, $scope.markers, {imagePath: '/app/resources/images/markerclusterer/m'});
+                        mapFactory.markerClusterer = new MarkerClusterer($scope.map, mapFactory.markers, {imagePath: '/app/resources/images/markerclusterer/m'});
                         //$scope.map.setCenter([52.504185, 13.469238]);
                         $scope.map.setCenter(new google.maps.LatLng(52.504185, 13.469238));
                         $scope.map.setZoom(4);

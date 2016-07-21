@@ -154,6 +154,10 @@
                     <td><b>Source</b></td>
                     <td><span ng-repeat="source in resource.source"><add-href href-data="source">{{source}}</add-href><span ng-if="!$last">;</span> </span></td>
                 </tr>
+                <tr ng-if="resource.coverage.length > 0">
+                    <td><b>Coverage</b></td>
+                    <td><span ng-repeat="source in resource.source"><add-href href-data="coverage">{{coverage}}</add-href><span ng-if="!$last">;</span> </span></td>
+                </tr>
                 <tr ng-if="resource.subject.length > 0 || resource.termsSubject.length > 0">
                     <td><b>Subject</b></td>
                     <td>

@@ -692,7 +692,7 @@ define(['angular'], function(){
 
             //First load
             $scope.searchQuery = $scope.searchData.query;
-            $scope.search(true);
+            $scope.search(false);
 
 
             $scope.getCategories();

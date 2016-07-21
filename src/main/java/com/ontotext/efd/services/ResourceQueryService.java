@@ -172,6 +172,7 @@ public class ResourceQueryService {
         resourceMap.put("http://www.europeana.eu/schemas/edm/country", "country");
         resourceMap.put("http://www.w3.org/1999/02/22-rdf-syntax-ns#type", "RDFType");
         resourceMap.put("http://purl.org/dc/elements/1.1/publisher", "publisher");
+        resourceMap.put("http://purl.org/dc/elements/1.1/coverage", "coverage");
 
 
 

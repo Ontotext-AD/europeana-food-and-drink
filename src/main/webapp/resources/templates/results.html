@@ -207,7 +207,7 @@
     </div>
 </div>
 
-<aside id="map" class="fixed" ng-class="{'show': showMap}">
+<aside style="z-index: 9999" id="map" class="fixed" ng-class="{'show': showMap}">
     <ng-map zoom="4" center="[52.504185, 13.469238]">
         <info-window id="infoWindow" max-width="420">
             <div ng-non-bindable="" class="pointer" ng-click="loadResource(infoWinData.resource)">

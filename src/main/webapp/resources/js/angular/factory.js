@@ -1,5 +1,3 @@
-
-
 define(['angular'], function(){
     var factories = angular.module('efdApp.factories', []);
 

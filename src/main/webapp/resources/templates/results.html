@@ -15,7 +15,6 @@
     </div>
 </script>
 <!--End fiter accordion template-->
-
 <!--Start food accordion template-->
 <script type="text/ng-template" id="accordion-template-food.html">
     <div class="panel {{panelClass || 'panel-default'}}">
@@ -33,7 +32,6 @@
     </div>
 </script>
 <!--End food accordion template-->
-
 <!--Start places accordion template-->
 <script type="text/ng-template" id="accordion-template-places.html">
     <div class="panel {{panelClass || 'panel-default'}}">
@@ -51,17 +49,15 @@
     </div>
 </script>
 <!--End food accordion template-->
-
 <div class="row one-edge-shadow">
     <div class="col-xs-3 col-sm-2" style="margin: 20px 0;">
         <logo></logo>
     </div>
-    <div class="col-xs-9 col-sm-10"  style="margin-bottom: 20px;">
+    <div class="col-xs-9 col-sm-10" style="margin-bottom: 20px;">
         <title></title>
         <p>
             The
-            <a href="http://foodanddrinkeurope.eu/professional-applications/semantic-demonstrator/" target="_blank">Semantic Demonstrator</a>
-            shows the use of semantic technologies for classification and discovery of Europeana objects related to Food and Drink.
+            <a href="http://foodanddrinkeurope.eu/professional-applications/semantic-demonstrator/" target="_blank">Semantic Demonstrator</a> shows the use of semantic technologies for classification and discovery of Europeana objects related to Food and Drink.
             <a href="http://foodanddrinkeurope.eu/wp-content/uploads/2015/09/EFD-Semantic-Demonstrator.pdf" target="_blank">Detailed description</a>,
             <a href="http://efd.ontotext.com/data/" target="_blank">data</a>,
             <a href="http://efd.ontotext.com/sparql" target="_blank">SPARQL endpoint</a>.
@@ -76,77 +72,64 @@
                 </button>
             </span>
             <span ng-if="activeFilters.length == 0 && activeArticles.length == 0 && activeCategories.length == 0">No active filters</span>
-            <span ng-repeat="category in activeCategories" >
-                <button class="btn btn-primary btn-sm" ng-click="removeCategory(category)" tooltip="Remove filter by category {{category}}" tooltip-placement="top" tooltip-trigger="mouseenter">
+            <span ng-repeat="category in activeCategories">
+                <button class="btn btn-primary btn-sm dark-green-theme" ng-click="removeCategory(category)" tooltip="Remove filter by category {{category}}" tooltip-placement="top" tooltip-trigger="mouseenter">
                     <i>FD:</i> {{category}}
                     <i class="fa fa-times"></i>
                 </button>
             </span>
             <span ng-repeat="article in activeArticles">
-                <button class="btn btn-primary btn-sm" ng-click="removeArticle(article)" tooltip="Remove filter by article {{article}}" tooltip-placement="top" tooltip-trigger="mouseenter">
+                <button class="btn btn-primary btn-sm dark-green-theme" ng-click="removeArticle(article)" tooltip="Remove filter by article {{article}}" tooltip-placement="top" tooltip-trigger="mouseenter">
                     <i>FD:</i> {{article}}
                     <i class="fa fa-times"></i>
                 </button>
             </span>
             <span ng-repeat="place in activePlaces">
-                <button class="btn btn-primary btn-sm" ng-click="removePlace(place)" tooltip="Remove filter by place {{place}}" tooltip-placement="top" tooltip-trigger="mouseenter">
+                <button class="btn btn-primary btn-sm dark-green-theme" ng-click="removePlace(place)" tooltip="Remove filter by place {{place}}" tooltip-placement="top" tooltip-trigger="mouseenter">
                     <i>Place:</i> {{place}}
                     <i class="fa fa-times"></i>
                 </button>
             </span>
             <span ng-repeat="filter in activeFilters">
-                <button class="btn btn-primary btn-sm" ng-click="removeFilter(filter.categoryName, filter.facetName)" tooltip="Remove filter by facet {{filter.facetName}}" tooltip-placement="top" tooltip-trigger="mouseenter">
+                <button class="btn btn-primary btn-sm dark-green-theme" ng-click="removeFilter(filter.categoryName, filter.facetName)" tooltip="Remove filter by facet {{filter.facetName}}" tooltip-placement="top" tooltip-trigger="mouseenter">
                     <i>{{categoriesNamesMap[filter.categoryName]}}:</i> {{filter.facetName}}
                     <i class="fa fa-times"></i>
                 </button>
             </span>
-
-
-            <button class="btn btn-warning map-label pull-right pointer" ng-disabled="!showMapButton" ng-click="showMap = true">
-                <i ng-show="!showMapButton" class="maploading" onto-loader-white  size="20"></i>
-                <i ng-show="showMapButton" class="fa fa-map"></i>
-                View on map
+            <button class="btn btn-warning map-label pull-right pointer light-green-theme" ng-disabled="!showMapButton" ng-click="showMap = true">
+                <i ng-show="!showMapButton" class="maploading" onto-loader-white size="20"></i>
+                <i ng-show="showMapButton" class="fa fa-map"></i> View on map
             </button>
         </p>
     </div>
 </div>
 <div class="row  one-edge-shadow" style="background: #fff;">
     <div class="col-xs-6 col-sm-4">
-
         <accordion id="food-and-drink" class="tree-categories">
             <accordion-group is-open="panelSettings.foodAndDrink" template-url="accordion-template-food.html" heading="Food and Drink">
-                <div ng-show="categoriesLoader" class="ot-loader" onto-loader  size="30" style="margin:20px auto"> </div>
-
+                <div ng-show="categoriesLoader" class="ot-loader" onto-loader size="30" style="margin:20px auto"> </div>
                 <div ng-hide="categoriesLoader" style="padding-top: 15px;">
-
                     <div ng-if="!categories" class="text-center">Categories are not loaded</div>
-
                     <category-collection collection='categories'></category-collection>
                 </div>
             </accordion-group>
         </accordion>
-
         <accordion id="places" class="tree-categories">
             <accordion-group is-open="panelSettings.places" template-url="accordion-template-places.html" heading="Places">
-                <div ng-show="placesLoader" class="ot-loader" onto-loader  size="30" style="margin:20px auto"> </div>
-
+                <div ng-show="placesLoader" class="ot-loader" onto-loader size="30" style="margin:20px auto"> </div>
                 <div ng-hide="placesLoader" style="padding-top: 15px;">
-
                     <div ng-if="!places" class="text-center">Places are not loaded</div>
-
                     <places-collection collection='places'></places-collection>
                 </div>
             </accordion-group>
         </accordion>
-
         <accordion id="filters" close-others="false">
             <accordion-group ng-repeat="filter in filtersCategories" is-disabled="filter.isDisabled" is-open="filter.open" template-url="accordion-template.html" heading="{{filter.title}}">
                 <ul class="list-group" style="margin:0">
                     <li class="list-group-item" ng-repeat="filterElement in filter.data | orderBy:'facetName'" style="padding:0; -webkit-border-radius: 0;-moz-border-radius: 0;border-radius: 0;">
                         <div class="checkbox pointer" style="padding: 0; margin: 0;">
                             <label style="width: 100%; padding: 10px 20px 10px 40px">
-                                <input type="checkbox" ng-model="filterElement.checked"  ng-change="addRemoveFilter(filter.id, filterElement.id)">
-                                {{filterElement.facetName}}
+                                <input type="checkbox" ng-model="filterElement.checked" ng-change="addRemoveFilter(filter.id, filterElement.id)"> {{filterElement.facetName}}
                                 <span class="badge">{{filterElement.facetValue}}</span>
                             </label>
                         </div>
@@ -155,12 +138,12 @@
             </accordion-group>
         </accordion>
     </div>
-    <div ng-show="loader" class="ot-loader ot-main-loader" onto-loader  size="50"></div>
+    <div ng-show="loader" class="ot-loader ot-main-loader" onto-loader size="50"></div>
     <div ng-hide="loader" class="col-xs-6 col-sm-8 ">
         <div class="row" ng-if="data" style="padding-bottom: 20px;">
-            <div class="col-xs-6 col-md-4">
+            <div class="col-xs-12 col-md-4">
                 <div class="btn-group pull-left" dropdown keyboard-nav>
-                    <button id="simple-btn-keyboard-nav" type="button" class="btn btn-primary col-xs-12" dropdown-toggle>
+                    <button id="simple-btn-keyboard-nav" type="button" class="btn btn-primary col-xs-12 dark-green-theme" dropdown-toggle>
                         Results per page: {{limit}} <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu" role="menu" aria-labelledby="simple-btn-keyboard-nav" style="max-width:100px;">
@@ -168,36 +151,32 @@
                         <li role="menuitem"><a href="#" ng-click="changeLimit(24)">24</a></li>
                         <li role="menuitem"><a href="#" ng-click="changeLimit(48)">48</a></li>
                         <li role="menuitem"><a href="#" ng-click="changeLimit(96)">96</a></li>
-                        <!--TODO <li role="menuitem"><a href="#" ng-click="changeLimit()">All</a></li>-->
                     </ul>
                 </div>
             </div>
-            <div class="col-xs-6 col-md-4 text-center" ng-hide="countLoader" style="padding: 10px;">
+            <div class="col-xs-12 col-md-4 text-center" ng-hide="countLoader" style="padding: 10px;">
                 <span class="hidden-xs">Results </span>{{offset + 1}} - {{offset + limit > count ? count : offset + limit}} of {{count}}
             </div>
             <div class="col-xs-12 col-md-4 text-right unselectable" ng-show="limit < count && !countLoader">
-
-                <i class="fa fa-chevron-left pointer" ng-click="changePage(-1)" style="padding: 10px 3px;"></i>
-                Page
-                <input type="number" ng-model="results.page" min="1" max="{{totalPages}}" ng-mode="page" ng-change="changePage()" style="max-width: 60px;">
-                of {{totalPages}}
+                <i class="fa fa-chevron-left pointer" ng-click="changePage(-1)" style="padding: 10px 3px;"></i> Page
+                <input type="number" ng-model="results.page" class="results_input" min="1" max="{{totalPages}}" ng-mode="page" ng-change="changePage()"> of {{totalPages}}
                 <i class="fa fa-chevron-right pointer" ng-click="changePage(1)" style="padding: 10px 3px"></i>
             </div>
-            <div class="col-xs-6 col-md-8 ot-loader" onto-loader  size="20" ng-if="countLoader"></div>
+            <div class="col-xs-6 col-md-8 ot-loader" onto-loader size="20" ng-if="countLoader"></div>
         </div>
         <div id="results-holder" class="row" ng-if="data">
             <div class="col-sm-6 col-md-4 col-lg-3 pointer" ng-repeat="result in data.searchResults">
                 <div class="thumbnail" ng-click="loadResource(result.resource)">
                     <div class="image-holder img-thumbnail ">
                         <span>
-                            <img class="img-responsive" ng-if="!result.picture" alt="{{result.title}}" src="app/resources/images/default.png"/>
-                            <img class="img-responsive" ng-if="result.picture" ng-src="{{result.picture}}" alt="{{result.title}}" onError="this.src = 'app/resources/images/default.png';"/>
+                            <img class="img-responsive result_img" ng-if="!result.picture" alt="{{result.title}}" src="app/resources/images/default.png" title="{{result.title}}"/>
+                            <img class="img-responsive result_img" ng-if="result.picture" ng-src="{{result.picture}}" alt="{{result.title}}" onError="this.src = 'app/resources/images/default.png';" title="{{result.title}}"/>
                         </span>
                     </div>
                     <div class="caption">
                         <h4 ng-if="result.title" style="margin: 7px 0;">{{result.title}}</h4>
                         <p>{{result.description}}</p>
-                   </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -206,14 +185,13 @@
         </div>
     </div>
 </div>
-
 <aside style="z-index: 9999" id="map" class="fixed" ng-class="{'show': showMap}">
     <ng-map zoom="4" center="[52.504185, 13.469238]">
         <info-window id="infoWindow" max-width="420">
             <div ng-non-bindable="" class="pointer" ng-click="loadResource(infoWinData.resource)">
                 <h3>{{infoWinData.title}}</h3>
                 <div>
-                    <img class="img-responsive" ng-show="infoWinData.picture" ng-src="{{infoWinData.picture}}" alt="{{infoWinData.title}}" onError="this.src = 'app/resources/images/default.png';"/>
+                    <img class="img-responsive" ng-show="infoWinData.picture" ng-src="{{infoWinData.picture}}" alt="{{infoWinData.title}}" onError="this.src = 'app/resources/images/default.png';" />
                     <p>{{infoWinData.description}}</p>
                 </div>
             </div>
@@ -221,3 +199,12 @@
     </ng-map>
     <button class="btn btn-default" ng-click="showMap = false">Close map <i class="fa fa-times"></i></button>
 </aside>
+<script type="text/javascript">
+$(document).ready(function() {
+    $('.result_img').each(function() {
+        var imgSrc = $(this).attr('src');
+        imgSrc = imgSrc.replace('imagethumb', 'imagepreview');
+        $(this).attr('src', imgSrc);
+    });
+});
+</script>

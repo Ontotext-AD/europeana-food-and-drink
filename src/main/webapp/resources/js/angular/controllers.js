@@ -2,22 +2,21 @@
  * Created by Rostislav on 23-Sep-15.
  */
 
-
-define(['angular'], function(){
+define(['angular'], function() {
     var efdControllers = angular.module('efdApp.controllers', [
         'ngRoute'
     ]);
 
-    efdControllers.controller('MainCtrl', ["$scope",  function($scope) {
+    efdControllers.controller('MainCtrl', ["$scope", function($scope) {
 
         $scope.test = 'MainCtrl';
     }]);
 
-    efdControllers.controller('HomeCtrl',[
+    efdControllers.controller('HomeCtrl', [
         "$scope",
         '$location',
         function($scope, $location) {
-            $location.path('/app/search').search({query: '', limit: 24});
+            $location.path('/app/search').search({ query: '', limit: 24 });
         }
     ]);
 
@@ -31,7 +30,7 @@ define(['angular'], function(){
         'toastr',
         'NgMap',
         'mapFactory',
-        function($scope, $routeParams, $http, $location, $timeout, localStorageService ,toastr, NgMap, mapFactory) {
+        function($scope, $routeParams, $http, $location, $timeout, localStorageService, toastr, NgMap, mapFactory) {
 
             localStorageService.remove('categories');
             localStorageService.remove('places');
@@ -71,13 +70,13 @@ define(['angular'], function(){
 
             //Facets obj template
             $scope.filtersCategories = [
-                {id: 0, title: 'Type (resource)', searchString: 'mediaType', data: [], isDisabled: true},
-                {id: 1, title: 'Language', searchString: 'language', data: [], isDisabled: true},
-                {id: 2, title: 'Data provider', searchString: 'dataProvider', data: [], isDisabled: true}
+                { id: 0, title: 'Type (resource)', searchString: 'mediaType', data: [], isDisabled: true },
+                { id: 1, title: 'Language', searchString: 'language', data: [], isDisabled: true },
+                { id: 2, title: 'Data provider', searchString: 'dataProvider', data: [], isDisabled: true }
             ]
 
             //Change number of results on page
-            $scope.changeLimit = function(limit){
+            $scope.changeLimit = function(limit) {
                 $scope.limit = limit;
                 $scope.offset = 0;
                 $scope.searchData.limit = limit;
@@ -86,14 +85,14 @@ define(['angular'], function(){
                 $scope.search();
             }
 
-            $scope.hasFacets = function(filter){
+            $scope.hasFacets = function(filter) {
                 return filter.data.length > 0;
             }
 
-            $scope.createSearchString = function(map){
+            $scope.createSearchString = function(map) {
                 //Create search URL
                 var searchString = '';
-                for(var index in $scope.searchData) {
+                for (var index in $scope.searchData) {
                     if (map) {
                         if (index != 'limit' && index != 'offset') {
                             if (searchString != '') {
@@ -113,7 +112,7 @@ define(['angular'], function(){
             }
 
             //If no attr get the first level categoies and articles, otherwise get subCategories of category
-            $scope.getCategories = function(category, categories, index, path){
+            $scope.getCategories = function(category, categories, index, path) {
                 if (!category) {
                     //First load or new query search
                     $scope.categoriesLoader = true;
@@ -135,39 +134,39 @@ define(['angular'], function(){
                     httpString += searchString;
                 }
 
-                if(category) {
+                if (category) {
                     var string = category.split(' ').join('_');
                     httpString += '&subCategories=' + string;
                 }
 
                 $http.get(httpString).
-                    then(function(response) {
-                        if (!category) {
-                            //First load
-                            $scope.categories = response.data;
-                            $scope.categories.path = [];
-                            $scope.categoriesLoader = false;
-                        } else {
-                            //receive subCategories
-                            var parentCategory = $scope.tempGetCategoriesData.categories[$scope.tempGetCategoriesData.index];
-                            parentCategory.subElements = response.data;
-                            var path = $scope.tempGetCategoriesData.path;
-                            path.push($scope.tempGetCategoriesData.category)
-                            parentCategory.subElements.path = path;
-                        }
-                        //Add new data to sessionStorage
-                        localStorageService.set('categories', $scope.categories);
-                    }, function(){
-                        if (category) {
-                            $scope.tempGetCategoriesData.categories[$scope.tempGetCategoriesData.index].open = false;
-                        }
-                        toastr.error('No info about categories', '');
+                then(function(response) {
+                    if (!category) {
+                        //First load
+                        $scope.categories = response.data;
+                        $scope.categories.path = [];
                         $scope.categoriesLoader = false;
-                    })
+                    } else {
+                        //receive subCategories
+                        var parentCategory = $scope.tempGetCategoriesData.categories[$scope.tempGetCategoriesData.index];
+                        parentCategory.subElements = response.data;
+                        var path = $scope.tempGetCategoriesData.path;
+                        path.push($scope.tempGetCategoriesData.category)
+                        parentCategory.subElements.path = path;
+                    }
+                    //Add new data to sessionStorage
+                    localStorageService.set('categories', $scope.categories);
+                }, function() {
+                    if (category) {
+                        $scope.tempGetCategoriesData.categories[$scope.tempGetCategoriesData.index].open = false;
+                    }
+                    toastr.error('No info about categories', '');
+                    $scope.categoriesLoader = false;
+                })
             }
 
             //If no attr get the first level categoies and articles, otherwise get subCategories of category
-            $scope.getPlaces = function(place, places, index, path){
+            $scope.getPlaces = function(place, places, index, path) {
                 if (!places) {
                     //First load or new query search
                     $scope.placesLoader = true;
@@ -189,60 +188,60 @@ define(['angular'], function(){
                     httpString += searchString;
                 }
 
-                if(place) {
+                if (place) {
                     var string = place.split(' ').join('_');
                     httpString += '&subPlace=' + string;
                 }
 
                 $http.get(httpString).
-                    then(function(response) {
-                        console.log(response.data)
-                        if (!place) {
-                            //First load
-                            $scope.places = response.data;
-                            $scope.places.path = [];
-                            $scope.placesLoader = false;
-                        } else {
-                            //receive subCategories
-                            var parentPlace = $scope.tempGetPlacesData.places[$scope.tempGetPlacesData.index];
-                            parentPlace.subElements = response.data;
-                            var path = $scope.tempGetPlacesData.path;
-                            path.push($scope.tempGetPlacesData.place)
-                            parentPlace.subElements.path = path;
-                        }
-                        //Add new data to sessionStorage
-                        localStorageService.set('places', $scope.places);
-                    }, function(){
-                        if (category) {
-                            $scope.tempGetPlacesData.places[$scope.tempGetPlacesData.index].open = false;
-                        }
-                        toastr.error('No info about places', '');
+                then(function(response) {
+                    //console.log(response.data)
+                    if (!place) {
+                        //First load
+                        $scope.places = response.data;
+                        $scope.places.path = [];
                         $scope.placesLoader = false;
-                    })
+                    } else {
+                        //receive subCategories
+                        var parentPlace = $scope.tempGetPlacesData.places[$scope.tempGetPlacesData.index];
+                        parentPlace.subElements = response.data;
+                        var path = $scope.tempGetPlacesData.path;
+                        path.push($scope.tempGetPlacesData.place)
+                        parentPlace.subElements.path = path;
+                    }
+                    //Add new data to sessionStorage
+                    localStorageService.set('places', $scope.places);
+                }, function() {
+                    if (category) {
+                        $scope.tempGetPlacesData.places[$scope.tempGetPlacesData.index].open = false;
+                    }
+                    toastr.error('No info about places', '');
+                    $scope.placesLoader = false;
+                })
             }
 
             //Get data about number of results - also it's used for calculate number of pages
-            $scope.getCount = function(searchString){
+            $scope.getCount = function(searchString) {
                 $http.get('/app/rest/search/count?' + searchString).
-                    then(function(response) {
-                        $scope.count = response.data;
-                        $scope.totalPages = Math.ceil($scope.count/$scope.limit);
-                        $scope.results = {page: $scope.offset/$scope.limit + 1};
-                        $scope.countLoader = false;
-                    }, function(){
-                        $scope.count = 0;
-                        toastr.error('No info about number of elements', '');
-                        $scope.countLoader = false;
-                    })
+                then(function(response) {
+                    $scope.count = response.data;
+                    $scope.totalPages = Math.ceil($scope.count / $scope.limit);
+                    $scope.results = { page: $scope.offset / $scope.limit + 1 };
+                    $scope.countLoader = false;
+                }, function() {
+                    $scope.count = 0;
+                    toastr.error('No info about number of elements', '');
+                    $scope.countLoader = false;
+                })
             }
 
             //Set state of Facets checkboxes based on facets used in page URL
-            $scope.setCheckState = function(data){
+            $scope.setCheckState = function(data) {
                 var answer = false;
                 if ($scope.activeFilters.length > 0) {
-                    for(var i = 0; i < data.length; i++) {
+                    for (var i = 0; i < data.length; i++) {
                         for (var j = 0; j < $scope.activeFilters.length; j++) {
-                            if (data[i].facetName == $scope.activeFilters[j].facetName){
+                            if (data[i].facetName == $scope.activeFilters[j].facetName) {
                                 data[i].checked = true;
                                 answer = true;
                             }
@@ -253,7 +252,7 @@ define(['angular'], function(){
             }
 
             //Search results
-            $scope.search = function(newSearch){
+            $scope.search = function(newSearch) {
                 $scope.countLoader = true;
                 $scope.loader = true;
 
@@ -281,44 +280,44 @@ define(['angular'], function(){
 
                 //Create search string
                 var searchString = $scope.createSearchString();
-                $scope.googleMapsUrl="https://maps.googleapis.com/maps/api/js?key=AIzaSyDVmtxpD_M2Y3mAEOYcx_Xbld_ywPqfyI8";
+                $scope.googleMapsUrl = "https://maps.googleapis.com/maps/api/js?key=AIzaSyDVmtxpD_M2Y3mAEOYcx_Xbld_ywPqfyI8";
                 if (mapFactory.map) {
                     $scope.getLocations();
                 }
                 $http.get('/app/rest/search?' + searchString).
-                    then(function(response) {
-                        $scope.status = response.status;
-                        $scope.data = response.data;
-                        if ($scope.data) {
-                            //Fill facets template obj with current facets
-                            for(var i = 0; i < $scope.filtersCategories.length; i++){
-                                if ($scope.data.facets[$scope.filtersCategories[i].searchString]){
-                                    $scope.filtersCategories[i].data = $scope.data.facets[$scope.filtersCategories[i].searchString];
-                                    for (var j = 0; j < $scope.filtersCategories[i].data.length; j++) {
-                                        $scope.filtersCategories[i].data[j].id = j;
-                                    }
-                                    //Set Facets' categories state (open/close) based on checked and unchecked facets
-                                    if ($scope.setCheckState($scope.filtersCategories[i].data)) {
-                                        $scope.filtersCategories[i].open = true;
-                                    }
-                                    $scope.filtersCategories[i].isDisabled = false;
-                                } else {
-                                    $scope.filtersCategories[i].data = [];
-                                    $scope.filtersCategories[i].isDisabled = true;
+                then(function(response) {
+                    $scope.status = response.status;
+                    $scope.data = response.data;
+                    if ($scope.data) {
+                        //Fill facets template obj with current facets
+                        for (var i = 0; i < $scope.filtersCategories.length; i++) {
+                            if ($scope.data.facets[$scope.filtersCategories[i].searchString]) {
+                                $scope.filtersCategories[i].data = $scope.data.facets[$scope.filtersCategories[i].searchString];
+                                for (var j = 0; j < $scope.filtersCategories[i].data.length; j++) {
+                                    $scope.filtersCategories[i].data[j].id = j;
                                 }
+                                //Set Facets' categories state (open/close) based on checked and unchecked facets
+                                if ($scope.setCheckState($scope.filtersCategories[i].data)) {
+                                    $scope.filtersCategories[i].open = true;
+                                }
+                                $scope.filtersCategories[i].isDisabled = false;
+                            } else {
+                                $scope.filtersCategories[i].data = [];
+                                $scope.filtersCategories[i].isDisabled = true;
                             }
                         }
-                        $scope.loader = false;
+                    }
+                    $scope.loader = false;
 
-                        //Get number of all resultss
-                        $scope.getCount(searchString);
-                    }, function(response) {
-                        $scope.data = "";
-                        $scope.status = response.status;
-                        $scope.loader = false;
-                        $scope.countLoader = false;
-                        toastr.error('Request failed', '');
-                    });
+                    //Get number of all resultss
+                    $scope.getCount(searchString);
+                }, function(response) {
+                    $scope.data = "";
+                    $scope.status = response.status;
+                    $scope.loader = false;
+                    $scope.countLoader = false;
+                    toastr.error('Request failed', '');
+                });
             }
 
             if (!mapFactory.map) {
@@ -328,7 +327,7 @@ define(['angular'], function(){
                 });
             }
 
-            $scope.getLocations = function(){
+            $scope.getLocations = function() {
                 $scope.showMapButton = false;
                 $scope.showMap = false;
                 var searchString = $scope.createSearchString(true);
@@ -342,9 +341,9 @@ define(['angular'], function(){
                         for (var i in results) {
                             if (results[i].lat && results[i].longitude) {
                                 var latLng = new google.maps.LatLng(results[i].lat, results[i].longitude),
-                                    marker = new google.maps.Marker({position:latLng, data: results[i]}),
+                                    marker = new google.maps.Marker({ position: latLng, data: results[i] }),
                                     data = results[i];
-                                google.maps.event.addListener(marker, 'click', function (event) {
+                                google.maps.event.addListener(marker, 'click', function(event) {
                                     $scope.infoWinData = this.data;
                                     mapFactory.map.showInfoWindow('infoWindow', this);
                                 })
@@ -352,29 +351,29 @@ define(['angular'], function(){
                             }
                         };
 
-                        mapFactory.markerClusterer = new MarkerClusterer(mapFactory.map, mapFactory.markers, {imagePath: '/app/resources/images/markerclusterer/m'});
+                        mapFactory.markerClusterer = new MarkerClusterer(mapFactory.map, mapFactory.markers, { imagePath: '/app/resources/images/markerclusterer/m' });
                         //$scope.map.setCenter([52.504185, 13.469238]);
                         mapFactory.map.setCenter(new google.maps.LatLng(52.504185, 13.469238));
                         mapFactory.map.setZoom(4);
 
                         $scope.showMapButton = true;
-                    }, function(){});
+                    }, function() {});
             }
 
             //Set active filters to array for use in Active filters panel
-            $scope.setActiveFilters = function(){
+            $scope.setActiveFilters = function() {
                 for (index in $scope.searchData) {
                     var exist = false;
-                    for (var i = 0; i < $scope.filtersCategories.length; i++){
+                    for (var i = 0; i < $scope.filtersCategories.length; i++) {
                         if (index == $scope.filtersCategories[i].searchString) {
                             exist = true;
                         }
                     }
-                    if (exist){
+                    if (exist) {
 
                         var filterArr = $scope.searchData[index].split(',');
 
-                        for (var i = 0; i < filterArr.length; i++){
+                        for (var i = 0; i < filterArr.length; i++) {
                             var newFilter = {
                                 categoryName: index,
                                 facetName: filterArr[i]
@@ -386,8 +385,8 @@ define(['angular'], function(){
             }
 
             //Set active articles to array for use in Active filters panel
-            $scope.setActiveArticles = function(){
-                if ($scope.searchData.article){
+            $scope.setActiveArticles = function() {
+                if ($scope.searchData.article) {
                     var articles = $scope.searchData.article.split(',');
                     for (var i = 0; i < articles.length; i++) {
                         $scope.activeArticles.push(decodeURIComponent(articles[i]).split('_').join(' '));
@@ -396,8 +395,8 @@ define(['angular'], function(){
             }
 
             //Set active categories to array for use in Active filters panel
-            $scope.setActiveCategories = function(){
-                if ($scope.searchData.category){
+            $scope.setActiveCategories = function() {
+                if ($scope.searchData.category) {
                     var categories = $scope.searchData.category.split(',');
                     for (var i = 0; i < categories.length; i++) {
                         $scope.activeCategories.push(decodeURIComponent(categories[i]).split('_').join(' '));
@@ -406,8 +405,8 @@ define(['angular'], function(){
             }
 
             //Set active places to array for use in Active filters panel
-            $scope.setActivePlaces = function(){
-                if ($scope.searchData.place){
+            $scope.setActivePlaces = function() {
+                if ($scope.searchData.place) {
                     var places = $scope.searchData.place.split(',');
                     for (var i = 0; i < places.length; i++) {
                         $scope.activePlaces.push(decodeURIComponent(places[i]).split('_').join(' '));
@@ -416,15 +415,15 @@ define(['angular'], function(){
             }
 
             //Remove filter only from the Selected filters
-            $scope.removeFilter = function(categoryName, facetName){
-                if ($scope.searchData[categoryName]){
+            $scope.removeFilter = function(categoryName, facetName) {
+                if ($scope.searchData[categoryName]) {
                     var filterArr = $scope.searchData[categoryName].split(',');
-                    for (var i = 0; i < filterArr.length; i++){
-                        if (filterArr[i] == facetName){
+                    for (var i = 0; i < filterArr.length; i++) {
+                        if (filterArr[i] == facetName) {
                             filterArr.splice(i, 1);
                         }
                     }
-                    if (filterArr.length == 0){
+                    if (filterArr.length == 0) {
                         delete $scope.searchData[categoryName];
                     } else {
                         $scope.searchData[categoryName] = filterArr.join(',');
@@ -435,7 +434,7 @@ define(['angular'], function(){
 
             //Add/Remove filter from facets categories menu
             var addRemoveFilterTimeout;
-            $scope.addRemoveFilter = function(categoryIndex, facetIndex){
+            $scope.addRemoveFilter = function(categoryIndex, facetIndex) {
                 $timeout.cancel(addRemoveFilterTimeout);
                 if ($scope.filtersCategories[categoryIndex].data[facetIndex].checked === false) {
                     $scope.removeFilter($scope.filtersCategories[categoryIndex].searchString, $scope.filtersCategories[categoryIndex].data[facetIndex].facetName);
@@ -447,7 +446,7 @@ define(['angular'], function(){
                     facetName: $scope.filtersCategories[categoryIndex].data[facetIndex].facetName
                 }
                 $scope.activeFilters.push(newFilter);
-                if(angular.isUndefined($scope.searchData[$scope.filtersCategories[categoryIndex].searchString])){
+                if (angular.isUndefined($scope.searchData[$scope.filtersCategories[categoryIndex].searchString])) {
                     $scope.searchData[$scope.filtersCategories[categoryIndex].searchString] = newFilter.facetName;
                 } else {
                     var temp = $scope.searchData[$scope.filtersCategories[categoryIndex].searchString].split(',');
@@ -456,7 +455,7 @@ define(['angular'], function(){
                 }
 
                 $scope.searchData.offset = 0;
-                addRemoveFilterTimeout = $timeout(function(){
+                addRemoveFilterTimeout = $timeout(function() {
                     $location.search($scope.searchData);
                 }, 1000);
 
@@ -466,7 +465,7 @@ define(['angular'], function(){
             }
 
             //Click on article to add it to search filters
-            $scope.addSearchArticle = function(article){
+            $scope.addSearchArticle = function(article) {
                 var article = encodeURIComponent(article.split(' ').join('_'));
                 if ($scope.searchData.article) {
                     var articles = $scope.searchData.article.split(',');
@@ -484,7 +483,7 @@ define(['angular'], function(){
             }
 
             //Remove article from search filters
-            $scope.removeArticle = function(article){
+            $scope.removeArticle = function(article) {
                 var article = encodeURIComponent(article.split(' ').join('_')),
                     articles = $scope.searchData.article.split(',');
                 if (articles.length == 1) {
@@ -492,7 +491,7 @@ define(['angular'], function(){
                 } else {
                     for (var i = 0; i < articles.length; i++) {
                         if (articles[i] == article) {
-                            articles.splice(i,1);
+                            articles.splice(i, 1);
                             $scope.searchData.article = articles.join(',');
                             break;
                         }
@@ -502,7 +501,7 @@ define(['angular'], function(){
             }
 
             //Click on Category to add it to search filters
-            $scope.addCategory = function(category){
+            $scope.addCategory = function(category) {
                 var category = encodeURIComponent(category.split(' ').join('_'));
                 if ($scope.searchData.category) {
                     var categories = $scope.searchData.category.split(',');
@@ -520,7 +519,7 @@ define(['angular'], function(){
             }
 
             //Remove category from search filters
-            $scope.removeCategory = function(category){
+            $scope.removeCategory = function(category) {
                 var category = encodeURIComponent(category.split(' ').join('_')),
                     categories = $scope.searchData.category.split(',');
                 if (categories.length == 1) {
@@ -528,7 +527,7 @@ define(['angular'], function(){
                 } else {
                     for (var i = 0; i < categories.length; i++) {
                         if (categories[i] == category) {
-                            categories.splice(i,1);
+                            categories.splice(i, 1);
                             $scope.searchData.category = categories.join(',');
                             break;
                         }
@@ -538,7 +537,7 @@ define(['angular'], function(){
             }
 
             //Click on Place to add it to search filters
-            $scope.addPlace = function(place){
+            $scope.addPlace = function(place) {
                 var place = encodeURIComponent(place.split(' ').join('_'));
                 if ($scope.searchData.place) {
                     var places = $scope.searchData.place.split(',');
@@ -556,7 +555,7 @@ define(['angular'], function(){
             }
 
             //Remove place from search filters
-            $scope.removePlace = function(place){
+            $scope.removePlace = function(place) {
                 var place = encodeURIComponent(place.split(' ').join('_')),
                     places = $scope.searchData.place.split(',');
                 if (places.length == 1) {
@@ -564,7 +563,7 @@ define(['angular'], function(){
                 } else {
                     for (var i = 0; i < places.length; i++) {
                         if (places[i] == place) {
-                            places.splice(i,1);
+                            places.splice(i, 1);
                             $scope.searchData.place = places.join(',');
                             break;
                         }
@@ -574,9 +573,9 @@ define(['angular'], function(){
             }
 
             //Open/Close category // Show/Hide Subcategories and articles
-            $scope.openCategory = function(category, path, clickEvent){
+            $scope.openCategory = function(category, path, clickEvent) {
                 clickEvent.stopImmediatePropagation();
-                var category  = category,
+                var category = category,
                     path = path,
                     categories = $scope.categories.categoryFacet;
 
@@ -590,10 +589,9 @@ define(['angular'], function(){
                     }
                 }
 
-
                 for (var i = 0; i < categories.length; i++) {
                     //Find current category
-                    if (category == categories[i].facetName){
+                    if (category == categories[i].facetName) {
                         if (categories[i].open) {
                             //Close category
                             categories[i].open = false;
@@ -617,9 +615,9 @@ define(['angular'], function(){
             }
 
             //Open/Close place // Show/Hide Subplaces
-            $scope.openPlace = function(place, path, clickEvent){
+            $scope.openPlace = function(place, path, clickEvent) {
                 clickEvent.stopImmediatePropagation();
-                var place  = place,
+                var place = place,
                     path = path,
                     places = $scope.places.categoryFacet;
 
@@ -636,7 +634,7 @@ define(['angular'], function(){
 
                 for (var i = 0; i < places.length; i++) {
                     //Find current category
-                    if (place== places[i].facetName){
+                    if (place == places[i].facetName) {
                         if (places[i].open) {
                             //Close category
                             places[i].open = false;
@@ -661,8 +659,8 @@ define(['angular'], function(){
 
             //Change result page
             var changePageTimeout;
-            $scope.changePage = function(number){
-                if (number && $scope.results.page){
+            $scope.changePage = function(number) {
+                if (number && $scope.results.page) {
                     if (number > 0 && $scope.results.page < $scope.totalPages) {
                         $scope.results.page++;
                     } else if (number < 0 && $scope.results.page > 1) {
@@ -672,7 +670,7 @@ define(['angular'], function(){
                 //Cancel previous timeout to wait for user to choose page
                 $timeout.cancel(changePageTimeout);
                 //Wait 2 seconds before change page (offset) in URL to give time to user to add more digits or click several times on page selector
-                changePageTimeout = $timeout(function(){
+                changePageTimeout = $timeout(function() {
                     if ($scope.results.page) {
                         $scope.offset = $scope.limit * ($scope.results.page - 1);
                         $scope.searchData.offset = parseInt($scope.offset);
@@ -686,8 +684,8 @@ define(['angular'], function(){
             }
 
             //Go to Resource page
-            $scope.loadResource = function(resource){
-                $location.path('/app/resource/'+ encodeURIComponent(resource)).search($scope.searchData);
+            $scope.loadResource = function(resource) {
+                $location.path('/app/resource/' + encodeURIComponent(resource)).search($scope.searchData);
             }
 
             //First load
@@ -711,20 +709,19 @@ define(['angular'], function(){
                 localStorageService.set('panelSettings', $scope.panelSettings);
             }
 
-            $scope.toggleOpen = function(index){
+            $scope.toggleOpen = function(index) {
                 $scope.panelSettings[index] = !$scope.panelSettings[index];
                 localStorageService.set('panelSettings', $scope.panelSettings);
             }
 
-            $scope.removeQuery = function(){
+            $scope.removeQuery = function() {
                 $scope.searchData.query = '';
                 $location.path('/app/search').search($scope.searchData);
             }
         }
     ]);
 
-    efdControllers.controller('ResourceCtrl',
-        ["$scope",
+    efdControllers.controller('ResourceCtrl', ["$scope",
         '$routeParams',
         '$http',
         '$location',
@@ -735,69 +732,70 @@ define(['angular'], function(){
         'localStorageService',
         function($scope, $routeParams, $http, $location, $window, $timeout, $modal, toastr, localStorageService) {
 
-        $scope.loader = true;
-        $scope.params = $routeParams;
-        $scope.resourceId = decodeURIComponent($scope.params.resourceId);
-        $scope.searchData = $location.search();
-        $scope.searchQuery = $scope.searchData.query;
-        $scope.resource = {};
-        $scope.aggregatedCHO = decodeURIComponent($scope.params.resourceId);
+            $scope.loader = true;
+            $scope.params = $routeParams;
+            $scope.resourceId = decodeURIComponent($scope.params.resourceId);
+            $scope.searchData = $location.search();
+            $scope.searchQuery = $scope.searchData.query;
+            $scope.resource = {};
+            $scope.aggregatedCHO = decodeURIComponent($scope.params.resourceId);
 
-        $scope.getResource = function(){
-            $http.get('/app/rest/resource?uri=' + $scope.params.resourceId).
+            $scope.getResource = function() {
+                $http.get('/app/rest/resource?uri=' + $scope.params.resourceId).
                 then(function(response) {
                     $scope.resource = response.data;
                     $scope.loader = false;
-                }, function(response){
+                }, function(response) {
                     toastr.error('Resource not found', '');
-                    var t = $timeout(function(){
+                    var t = $timeout(function() {
                         $location.path('/app/search').search($scope.searchData);
                     }, 2000);
                     $scope.$on("$destroy", function(event) {
                         $timeout.cancel(t);
                     });
                 })
-        }
+            }
 
-        $scope.toSearchResults = function(){
-            $location.path('/app/search').search($scope.searchData);
-        }
+            $scope.toSearchResults = function() {
+                $location.path('/app/search').search($scope.searchData);
+            }
 
-        $scope.search = function(){
-            $location.path('/app/search').search({query: $scope.searchQuery, limit: 24});
-        }
+            $scope.search = function() {
+                $location.path('/app/search').search({ query: $scope.searchQuery, limit: 24 });
+            }
 
-        ///Copy to clipboard popover options
-        $scope.copyToClipboard = function(URI){
-            var modalInstance = $modal.open({
-                templateUrl: 'app/resources/templates/copyToClipboard.html',
-                controller: 'CopyToClipboardModalCtrl',
-                resolve: {
-                    URI: function () {
-                        return URI;
+            ///Copy to clipboard popover options
+            $scope.copyToClipboard = function(URI) {
+                var modalInstance = $modal.open({
+                    templateUrl: 'app/resources/templates/copyToClipboard.html',
+                    controller: 'CopyToClipboardModalCtrl',
+                    resolve: {
+                        URI: function() {
+                            return URI;
+                        }
                     }
-                }
-            });
+                });
 
-            modalInstance.opened.then(function(){
-                $timeout(function(){
-                    document.getElementById('clipboardURI').select();
-                }, 100)
-            })
+                modalInstance.opened.then(function() {
+                    $timeout(function() {
+                        document.getElementById('clipboardURI').select();
+                    }, 100)
+                })
+            }
+
+            $scope.getResource();
         }
-
-        $scope.getResource();
-    }]);
+    ]);
 
     efdControllers.controller('CopyToClipboardModalCtrl', ["$scope", "$modalInstance", "URI", function($scope, $modalInstance, URI) {
 
         $scope.clipboardURI = URI;
 
-        $scope.ok = function () {
+        $scope.ok = function() {
             $modalInstance.close();
         };
 
-        $scope.cancel = function () {
+        $scope.cancel = function() {
             $modalInstance.dismiss('cancel');
         };
     }]);

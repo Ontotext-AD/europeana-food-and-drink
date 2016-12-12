@@ -1,4 +1,3 @@
-
 <div class="row one-edge-shadow">
     <div class="col-xs-2" style="margin: 20px 0;">
         <logo></logo>
@@ -9,7 +8,7 @@
         <button class="btn  btn-info" ng-click="toSearchResults()">Return to search results</button>
     </div>
 </div>
-<div ng-show="loader" class="ot-loader ot-main-loader" onto-loader  size="50"></div>
+<div ng-show="loader" class="ot-loader ot-main-loader" onto-loader size="50"></div>
 <div ng-hide="loader" class="row one-edge-shadow" style="background: #fff;">
     <div class="col-sm-4 col-md-3 panel panel-default" ng-if="resource.isShownBy.length > 0 || resource.hasView.length > 0">
         <carousel interval="4000" no-wrap="true" class="col-xs-12 text-center" disable-animation="true" ng-if="resource.hasView.length > 0 || resource.isShownBy.length > 0 || resource.object.length > 0">
@@ -33,7 +32,7 @@
                     <u>{{CHO}}</u>
                     <i class="fa fa-clipboard"></i>
                 </span>
-                <a ng-href="{{'http://efd.ontotext.com/resource?uri=' + CHO}}" target="_blank" class="btn btn-info btn-xs">EFD RDF</a>
+            <a ng-href="{{'http://efd.ontotext.com/resource?uri=' + CHO}}" target="_blank" class="btn btn-info btn-xs">EFD RDF</a>
             </span>
         </p>
         <p>
@@ -45,7 +44,7 @@
             <a ng-href="{{'http://efd.ontotext.com/resource?uri=' + params.resourceId}}" target="_blank" class="btn btn-info btn-xs">EFD RDF</a>
         </p>
         <h1 ng-if="resource.title.length > 0" ng-repeat="title in resource.title">{{title}}</h1>
-        <div ng-if="resource.description.length > 0" >
+        <div ng-if="resource.description.length > 0">
             <ol class="list-inline">
                 <li ng-repeat="description in resource.description">{{description}} </li>
             </ol>
@@ -56,107 +55,133 @@
             <tbody>
                 <tr ng-if="resource.alternative.length > 0">
                     <td><b>Alternative Title </b></td>
-                    <td><span ng-repeat="alternative in resource.alternative"><add-href href-data="alternative">{{alternative}}</add-href><span ng-if="!$last">;</span> </span></td>
+                    <td><span ng-repeat="alternative in resource.alternative"><add-href href-data="alternative">{{alternative}}</add-href><span ng-if="!$last">;</span> </span>
+                    </td>
                 </tr>
                 <tr ng-if="resource.contributor.length > 0">
                     <td><b>Contributor</b></td>
-                    <td><span ng-repeat="contributor in resource.contributor"><add-href href-data="contributor">{{contributor}}</add-href><span ng-if="!$last">;</span> </span></td>
+                    <td><span ng-repeat="contributor in resource.contributor"><add-href href-data="contributor">{{contributor}}</add-href><span ng-if="!$last">;</span> </span>
+                    </td>
                 </tr>
                 <tr ng-if="resource.coverage.length > 0">
                     <td><b>Coverage</b></td>
-                    <td><span ng-repeat="coverage in resource.coverage"><add-href href-data="coverage">{{coverage}}</add-href><span ng-if="!$last">;</span> </span></td>
+                    <td><span ng-repeat="coverage in resource.coverage"><add-href href-data="coverage">{{coverage}}</add-href><span ng-if="!$last">;</span> </span>
+                    </td>
                 </tr>
                 <tr ng-if="resource.spatial.length > 0">
                     <td><b>Coverage (spatial)</b></td>
-                    <td><span ng-repeat="spatial in resource.spatial"><add-href href-data="spatial">{{coverage}}</add-href><span ng-if="!$last">;</span> </span></td>
+                    <td><span ng-repeat="spatial in resource.spatial"><add-href href-data="spatial">{{coverage}}</add-href><span ng-if="!$last">;</span> </span>
+                    </td>
                 </tr>
                 <tr ng-if="resource.temporal.length > 0">
                     <td><b>Coverage (temporal)</b></td>
-                    <td><span ng-repeat="temporal in resource.temporal"><add-href href-data="temporal">{{temporal}}</add-href><span ng-if="!$last">;</span> </span></td>
+                    <td><span ng-repeat="temporal in resource.temporal"><add-href href-data="temporal">{{temporal}}</add-href><span ng-if="!$last">;</span> </span>
+                    </td>
                 </tr>
                 <tr ng-if="resource.created.length > 0">
                     <td><b>Created (date)</b></td>
-                    <td><span ng-repeat="created in resource.created"><add-href href-data="created">{{created}}</add-href><span ng-if="!$last">;</span> </span></td>
+                    <td><span ng-repeat="created in resource.created"><add-href href-data="created">{{created}}</add-href><span ng-if="!$last">;</span> </span>
+                    </td>
                 </tr>
                 <tr ng-if="resource.creator.length > 0">
                     <td><b>Creator</b></td>
-                    <td><span ng-repeat="creator in resource.creator"><add-href href-data="creator">{{creator}}</add-href><span ng-if="!$last">;</span> </span></td>
+                    <td><span ng-repeat="creator in resource.creator"><add-href href-data="creator">{{creator}}</add-href><span ng-if="!$last">;</span> </span>
+                    </td>
                 </tr>
                 <tr ng-if="resource.currentLocation.length > 0">
                     <td><b>Current Location</b></td>
-                    <td><span ng-repeat="currentLocation in resource.currentLocation"><add-href href-data="currentLocation">{{currentLocation}}</add-href><span ng-if="!$last">;</span> </span></td>
+                    <td><span ng-repeat="currentLocation in resource.currentLocation"><add-href href-data="currentLocation">{{currentLocation}}</add-href><span ng-if="!$last">;</span> </span>
+                    </td>
                 </tr>
                 <tr ng-if="resource.dataProvider.length > 0">
                     <td><b>Data Provider</b></td>
-                    <td><span ng-repeat="dataProvider in resource.dataProvider"><add-href href-data="dataProvider">{{dataProvider}}</add-href><span ng-if="!$last">;</span> </span></td>
+                    <td><span ng-repeat="dataProvider in resource.dataProvider"><add-href href-data="dataProvider">{{dataProvider}}</add-href><span ng-if="!$last">;</span> </span>
+                    </td>
                 </tr>
                 <tr ng-if="resource.date.length > 0">
                     <td><b>Date</b></td>
-                    <td><span ng-repeat="date in resource.date"><add-href href-data="date">{{date}}</add-href><span ng-if="!$last">;</span> </span></td>
+                    <td><span ng-repeat="date in resource.date"><add-href href-data="date">{{date}}</add-href><span ng-if="!$last">;</span> </span>
+                    </td>
                 </tr>
                 <tr ng-if="resource.extent.length > 0">
                     <td><b>Extent</b></td>
-                    <td><span ng-repeat="extent in resource.extent"><add-href href-data="extent">{{extent}}</add-href><span ng-if="!$last">;</span> </span></td>
+                    <td><span ng-repeat="extent in resource.extent"><add-href href-data="extent">{{extent}}</add-href><span ng-if="!$last">;</span> </span>
+                    </td>
                 </tr>
                 <tr ng-if="resource.extent.length > 0">
                     <td><b>Has met</b></td>
-                    <td><span ng-repeat="hasMet in resource.hasMet"><add-href href-data="hasMet">{{hasMet}}</add-href><span ng-if="!$last">;</span> </span></td>
+                    <td><span ng-repeat="hasMet in resource.hasMet"><add-href href-data="hasMet">{{hasMet}}</add-href><span ng-if="!$last">;</span> </span>
+                    </td>
                 </tr>
                 <tr ng-if="resource.format.length > 0">
                     <td><b>Format</b></td>
-                    <td><span ng-repeat="format in resource.format"><add-href href-data="format">{{format}}</add-href><span ng-if="!$last">;</span> </span></td>
+                    <td><span ng-repeat="format in resource.format"><add-href href-data="format">{{format}}</add-href><span ng-if="!$last">;</span> </span>
+                    </td>
                 </tr>
                 <tr ng-if="resource.hasMet.length > 0">
                     <td><b>Has Met</b></td>
-                    <td><span ng-repeat="hasMet in resource.hasMet"><add-href href-data="hasMet">{{hasMet}}</add-href><span ng-if="!$last">;</span> </span></td>
+                    <td><span ng-repeat="hasMet in resource.hasMet"><add-href href-data="hasMet">{{hasMet}}</add-href><span ng-if="!$last">;</span> </span>
+                    </td>
                 </tr>
                 <tr ng-if="resource.identifier.length > 0">
                     <td><b>Identifier</b></td>
-                    <td><span ng-repeat="identifier in resource.identifier"><add-href href-data="identifier">{{identifier}}</add-href><span ng-if="!$last">;</span> </span></td>
+                    <td><span ng-repeat="identifier in resource.identifier"><add-href href-data="identifier">{{identifier}}</add-href><span ng-if="!$last">;</span> </span>
+                    </td>
                 </tr>
                 <tr ng-if="resource.isPartOf.length > 0">
                     <td><b>Is Part Of</b></td>
-                    <td><span ng-repeat="isPartOf in resource.isPartOf"><add-href href-data="isPartOf">{{isPartOf}}</add-href><span ng-if="!$last">;</span> </span></td>
+                    <td><span ng-repeat="isPartOf in resource.isPartOf"><add-href href-data="isPartOf">{{isPartOf}}</add-href><span ng-if="!$last">;</span> </span>
+                    </td>
                 </tr>
                 <tr ng-if="resource.isShownAt.length > 0">
                     <td><b>Is shown at</b></td>
-                    <td><span ng-repeat="isShownAt in resource.isShownAt"><add-href href-data="isShownAt">{{isShownAt}}</add-href><span ng-if="!$last">;</span> </span></td>
+                    <td><span ng-repeat="isShownAt in resource.isShownAt"><add-href href-data="isShownAt">{{isShownAt}}</add-href><span ng-if="!$last">;</span> </span>
+                    </td>
                 </tr>
                 <tr ng-if="resource.language.length > 0">
                     <td><b>Language</b></td>
-                    <td><span ng-repeat="language in resource.language"><add-href href-data="language">{{language}}</add-href><span ng-if="!$last">;</span> </span></td>
+                    <td><span ng-repeat="language in resource.language"><add-href href-data="language">{{language}}</add-href><span ng-if="!$last">;</span> </span>
+                    </td>
                 </tr>
                 <tr ng-if="resource.medium.length > 0">
                     <td><b>Medium (material)</b></td>
-                    <td><span ng-repeat="medium in resource.medium"><add-href href-data="medium">{{medium}}</add-href><span ng-if="!$last">;</span> </span></td>
+                    <td><span ng-repeat="medium in resource.medium"><add-href href-data="medium">{{medium}}</add-href><span ng-if="!$last">;</span> </span>
+                    </td>
                 </tr>
                 <tr ng-if="resource.provider.length > 0">
                     <td><b>Provider</b></td>
-                    <td><span ng-repeat="provider in resource.provider"><add-href href-data="provider">{{provider}}</add-href><span ng-if="!$last">;</span> </span></td>
+                    <td><span ng-repeat="provider in resource.provider"><add-href href-data="provider">{{provider}}</add-href><span ng-if="!$last">;</span> </span>
+                    </td>
                 </tr>
                 <tr ng-if="resource.publisher.length > 0">
                     <td><b>Publisher</b></td>
-                    <td><span ng-repeat="publisher in resource.publisher"><add-href href-data="publisher">{{publisher}}</add-href><span ng-if="!$last">;</span> </span></td>
+                    <td><span ng-repeat="publisher in resource.publisher"><add-href href-data="publisher">{{publisher}}</add-href><span ng-if="!$last">;</span> </span>
+                    </td>
                 </tr>
                 <tr ng-if="resource.relation.length > 0">
                     <td><b>Relation</b></td>
-                    <td><span ng-repeat="relation in resource.relation"><add-href href-data="relation">{{relation}}</add-href><span ng-if="!$last">;</span> </span></td>
+                    <td><span ng-repeat="relation in resource.relation"><add-href href-data="relation">{{relation}}</add-href><span ng-if="!$last">;</span> </span>
+                    </td>
                 </tr>
                 <tr ng-if="resource.rights.length > 0">
                     <td><b>Rights</b></td>
-                    <td><span ng-repeat="copyright in resource.rights"><add-href href-data="copyright">{{copyright}}</add-href><span ng-if="!$last">;</span> </span></td>
+                    <td><span ng-repeat="copyright in resource.rights"><add-href href-data="copyright">{{copyright}}</add-href><span ng-if="!$last">;</span> </span>
+                    </td>
                 </tr>
                 <tr ng-if="resource.EDMRights.length > 0">
                     <td><b>Rights (URL)</b></td>
-                    <td><span ng-repeat="EDMRights in resource.EDMRights"><add-href href-data="EDMRights">{{EDMRights}}</add-href><span ng-if="!$last">;</span> </span></td>
+                    <td><span ng-repeat="EDMRights in resource.EDMRights"><add-href href-data="EDMRights">{{EDMRights}}</add-href><span ng-if="!$last">;</span> </span>
+                    </td>
                 </tr>
                 <tr ng-if="resource.source.length > 0">
                     <td><b>Source</b></td>
-                    <td><span ng-repeat="source in resource.source"><add-href href-data="source">{{source}}</add-href><span ng-if="!$last">;</span> </span></td>
+                    <td><span ng-repeat="source in resource.source"><add-href href-data="source">{{source}}</add-href><span ng-if="!$last">;</span> </span>
+                    </td>
                 </tr>
                 <tr ng-if="resource.coverage.length > 0">
                     <td><b>Coverage</b></td>
-                    <td><span ng-repeat="source in resource.source"><add-href href-data="coverage">{{coverage}}</add-href><span ng-if="!$last">;</span> </span></td>
+                    <td><span ng-repeat="source in resource.source"><add-href href-data="coverage">{{coverage}}</add-href><span ng-if="!$last">;</span> </span>
+                    </td>
                 </tr>
                 <tr ng-if="resource.subject.length > 0 || resource.termsSubject.length > 0">
                     <td><b>Subject</b></td>
@@ -168,15 +193,18 @@
                 </tr>
                 <tr ng-if="resource.type.length > 0">
                     <td><b>Type (object)</b></td>
-                    <td><span ng-repeat="type in resource.type"><add-href href-data="type">{{type}}</add-href><span ng-if="!$last">;</span> </span></td>
+                    <td><span ng-repeat="type in resource.type"><add-href href-data="type">{{type}}</add-href><span ng-if="!$last">;</span> </span>
+                    </td>
                 </tr>
                 <tr ng-if="resource.EDMType.length > 0">
                     <td><b>Type (resource)</b></td>
-                    <td><span ng-repeat="EDMType in resource.EDMType"><add-href href-data="EDMType">{{EDMType}}</add-href><span ng-if="!$last">;</span> </span></td>
+                    <td><span ng-repeat="EDMType in resource.EDMType"><add-href href-data="EDMType">{{EDMType}}</add-href><span ng-if="!$last">;</span> </span>
+                    </td>
                 </tr>
                 <tr ng-if="resource.year.length > 0">
                     <td><b>Year</b></td>
-                    <td><span ng-repeat="year in resource.year"><add-href href-data="year">{{year}}</add-href><span ng-if="!$last">;</span> </span></td>
+                    <td><span ng-repeat="year in resource.year"><add-href href-data="year">{{year}}</add-href><span ng-if="!$last">;</span> </span>
+                    </td>
                 </tr>
             </tbody>
         </table>

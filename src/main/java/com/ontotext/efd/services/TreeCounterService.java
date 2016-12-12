@@ -53,7 +53,6 @@ public class TreeCounterService {
         this.evdScore1Pred = factory.createURI(EFDTaxonomy.EFD_EVD_PROP_1);
         this.evdScore2Pred = factory.createURI(EFDTaxonomy.EFD_EVD_PROP_2);
         
-        // TODO: Allow these variables to be set by the user.
         this.calcCategoryLevel = true;
         this.countDescArticles = true;
         this.countDescCategories = true;
